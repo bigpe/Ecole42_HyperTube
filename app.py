@@ -3,6 +3,7 @@ from flasgger import Swagger, swag_from, LazyJSONEncoder
 import requests
 from flask_cors import CORS
 import api
+import globalUtils
 
 
 class HyperTubeApp(Flask):
@@ -90,4 +91,4 @@ def discoverMovie():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8081)
+    app.run(**globalUtils.addressInit())

@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Union
 from pathlib import Path
 import base64
+import sys
 
 MessageLimitLen = 100
 
@@ -68,3 +69,10 @@ def saveFile(fileData, fileName, directory: [str, Path] = '.'):
     with open(f'{directory}/{fileName}', 'wb') as f:
         f.write(fileData)
         return f.name
+
+def addressInit(debug=True):
+    data = {'debug': debug}
+    if len(sys.argv) > 1:
+        temp = sys.argv[1].split(':')
+        data.update({'host': temp[0], 'port': temp[1]})
+    return data
