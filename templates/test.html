@@ -1,0 +1,20 @@
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+<script src="/static/player/build/mediaelement-and-player.js"></script>
+<link rel="stylesheet" href="/static/player/build/mediaelementplayer.min.css">
+
+
+<video class="mejs__player" id="video" width="100%" controls preload="auto">
+    <source src="/downloads/test/test.mp4">
+    <track label="English" kind="subtitles" srclang="en" src="/downloads/test/test.vtt" default>
+</video>
+
+
+<script type="text/javascript">
+    $(document).ready(function() {
+      $('video').mediaelementplayer({
+        alwaysShowControls: true,
+        videoVolume: 'horizontal',
+        features: ['playpause','progress', 'volume', 'fullscreen']
+      });
+    });
+</script>

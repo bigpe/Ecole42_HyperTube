@@ -1,0 +1,9 @@
+requests
+flask
+flask-Cors
+sqlalchemy==1.2.18
+flask-SQLAlchemy
+deluge_client
+flasgger
+pyperclip
+colorama

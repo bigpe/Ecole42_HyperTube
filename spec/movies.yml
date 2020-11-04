@@ -1,0 +1,50 @@
+tags:
+  ['Movies']
+summary: "Get movie list"
+parameters:
+  - name: limit
+    type: integer
+    minimum: 1
+    maximum: 50
+    default: 20
+    in: query
+    description: Between 1 - 50 (inclusive)
+  - name: page
+    type: integer
+    default: 1
+    in: query
+  - name: quality
+    type: string
+    enum: [720p, 1080p, 2160p, 3D]
+    default: all
+    in: query
+  - name: minimum_rating
+    type: integer
+    description: Between 0 - 9 (inclusive)
+    minimum: 0
+    maximum: 9
+    in: query
+  - name: query_term
+    type: string
+    description: Movie Title/IMDb Code, Actor Name/IMDb Code, Director Name/IMDb Code
+    in: query
+  - name: sort_by
+    type: string
+    enum: [title, year, rating, peers, seeds, download_count, like_count, date_added]
+    default: date_added
+    in: query
+  - name: order_by
+    type: string
+    enum: [desc, asc]
+    default: desc
+    in: query
+  - name: with_rt_ratings
+    type: boolean
+    default: false
+    description: Returns the list with the Rotten Tomatoes rating included
+    in: query
+responses:
+  200:
+    description: Movie list
+    examples:
+      rgb: ['red', 'green', 'blue']
