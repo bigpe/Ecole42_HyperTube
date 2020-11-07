@@ -57,6 +57,18 @@ def getGenres():
     return jsonify(api.getGenres())
 
 
+def startLoadMovie():
+    ...
+
+
+def stopLoadMovie():
+    ...
+
+
+def removeMovie():
+    ...
+
+
 # language <String>
 # region <String>
 # sort_by

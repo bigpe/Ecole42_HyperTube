@@ -1,6 +1,10 @@
 tags:
   ['Genres']
 summary: "Get genres list"
+parameters:
+  - name: language
+    type: string
+    in: query
 responses:
   200:
     description: Genres list

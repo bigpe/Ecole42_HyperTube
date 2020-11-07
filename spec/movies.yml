@@ -28,6 +28,8 @@ parameters:
     type: string
     description: Movie Title/IMDb Code, Actor Name/IMDb Code, Director Name/IMDb Code
     in: query
+  - name: genre
+    type: string
   - name: sort_by
     type: string
     enum: [title, year, rating, peers, seeds, download_count, like_count, date_added]
