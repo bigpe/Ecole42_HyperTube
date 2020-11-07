@@ -30,6 +30,7 @@ parameters:
     in: query
   - name: genre
     type: string
+    in: query
   - name: sort_by
     type: string
     enum: [title, year, rating, peers, seeds, download_count, like_count, date_added]
