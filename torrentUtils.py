@@ -9,10 +9,10 @@ import globalUtils
 
 class TorrentUtils:
     client = None
-    methods = None
-    torrents = None
+    methods = []
+    torrents = []
 
-    def __init__(self, username=None, password=None, host='127.0.0.1', port=58846):
+    def __init__(self, username='root', password='root', host='127.0.0.1', port=58846):
         self.checkDelugeExist()
         if username and password:
             self.client = DelugeRPCClient(host, port, username, password)
@@ -68,8 +68,8 @@ class TorrentUtils:
         return bool(torrentHash in self.torrents)
 
     @staticmethod
-    def saveTorrentFile(url, fileName):
-        torrentData = requests.get(url).content
+    def saveTorrentFile(torrentUrl, fileName):
+        torrentData = requests.get(torrentUrl).content
         path = globalUtils.saveFile(torrentData, fileName, 'torrentFiles')
         return path
 

@@ -57,8 +57,10 @@ def getGenres():
     return jsonify(api.getGenres())
 
 
+@app.route('/movie/start/', methods=['POST', 'OPTIONS'])
+@swag_from('spec/movie-start.yml')
 def startLoadMovie():
-    ...
+    return jsonify(api.startLoadMovie())
 
 
 def stopLoadMovie():

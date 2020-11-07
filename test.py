@@ -3,6 +3,12 @@ import api
 import globalUtils
 
 torrent = TorrentUtils('root', 'root')
+methods = TorrentUtils().getMethods()
+for m in methods:
+    print(m)
+
+
+exit()
 
 api.PARAMS = {'params': {'limit': 5, 'query_term': 'Black Panther'}}
 movies = api.getMovies()
