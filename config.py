@@ -38,6 +38,7 @@ SWAGGER = {
         "tags": [
             {"name": "Movies", "description": "Actions with movies"},
             {"name": "Persons", "description": "Actions with persons"},
+            {"name": "Genres", "description": "Actions with genres"},
         ]
     }
 }

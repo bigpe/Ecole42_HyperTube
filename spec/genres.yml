@@ -1,0 +1,6 @@
+tags:
+  ['Genres']
+summary: "Get genres list"
+responses:
+  200:
+    description: Genres list

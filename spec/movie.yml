@@ -19,5 +19,3 @@ parameters:
 responses:
   200:
     description: Movie list
-    examples:
-      rgb: ['red', 'green', 'blue']
