@@ -74,5 +74,5 @@ def addressInit(debug=True):
     data = {'debug': debug}
     if len(sys.argv) > 1:
         temp = sys.argv[1].split(':')
-        data.update({'host': temp[0], 'port': temp[1]})
+        data.update({'host': temp[0], 'port': int(temp[1])})
     return data

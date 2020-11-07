@@ -52,6 +52,7 @@ def getPerson(person_id):
 
 
 @app.route('/genres/', methods=['POST', 'OPTIONS'])
+@swag_from('spec/genres.yml')
 def getGenres():
     return jsonify(api.getGenres())
 
