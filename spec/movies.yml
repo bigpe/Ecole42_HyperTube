@@ -31,6 +31,7 @@ parameters:
   - name: genre
     type: string
     in: query
+    description: All genre list in /genres/
   - name: sort_by
     type: string
     enum: [title, year, rating, peers, seeds, download_count, like_count, date_added]
