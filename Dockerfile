@@ -5,6 +5,8 @@ COPY requirements.txt /app
 RUN apt update && apt install -y nocache python3 python3-pip deluge
 RUN pip3 install --no-cache-dir -r requirements.txt
 RUN apt install -y deluged
+CMD "echo root:root:10 > ~/.config/deluge/auth"
+CMD "cat ~/.config/deluge/auth"
 CMD python3 delugeSetup.py
 EXPOSE 5006
 
