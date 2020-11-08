@@ -2,7 +2,7 @@ from torrentUtils import TorrentUtils
 from pathlib import Path
 
 
-baseDir = Path(__file__).parent.absolute().joinpath('downloads')
+baseDir = Path('app/downloads')
 auth = "root:root:10"
 authFile = Path.home().joinpath('.config/deluge/auth').open('a')
 authFile.write(auth)
