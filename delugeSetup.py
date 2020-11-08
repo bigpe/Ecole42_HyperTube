@@ -3,7 +3,9 @@ from pathlib import Path
 
 
 baseDir = Path(__file__).parent.absolute().joinpath('downloads')
-
+auth = "root:root:10"
+authFile = Path.home().joinpath('.config/deluge/auth').open('a')
+authFile.write(auth)
 
 t = TorrentUtils()
 t.client.call('core.set_config', {'max_active_downloading': -1})
