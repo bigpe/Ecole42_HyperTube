@@ -80,7 +80,7 @@ def startLoadMovie():
     torrentUrl = f'https://yts.mx/torrent/download/{torrentHash.upper()}'
     torrentPath = f'torrentFiles/{torrentHash}.torrent'
     torrentsList = TorrentUtils.getSavedTorrentFiles()
-    if f'torrentFiles/{torrentHash}.torrent' not in torrentsList:
+    if torrentPath not in torrentsList:
         torrentPath = saveTorrentFile(torrentUrl, torrentHash)
     t = TorrentUtils()
     t.addTorrent(torrentPath)
@@ -95,6 +95,18 @@ def startLoadMovie():
     return resDict
 
 
+def stopLoadMovie():
+    data = dict(request.args)
+    torrentHash = data['torrentHash']
+    torrentPath = f'torrentFiles/{torrentHash}.torrent'
+    torrentsList = TorrentUtils.getSavedTorrentFiles()
+    if torrentPath not in torrentsList:
+        abort(404, 'Torrent file not found')
+    torrentHash = torrentHash.lower()
+    TorrentUtils().stopTorrent(torrentHash)
+    return {'message': 'Torrent stopped'}
+
+
 def statusLoadMovie():
     data = dict(request.args)
     torrentHash = data['torrentHash']
@@ -103,7 +115,6 @@ def statusLoadMovie():
     if torrentPath not in torrentsList:
         abort(404, 'Torrent file not found')
     t = TorrentUtils()
-    an = 2
     torrentHash = torrentHash.lower()
     torrentObj = t.getTorrents(['progress'], {'hash': torrentHash})[bytes(torrentHash.encode('utf-8'))]
     resDict = {'progress': torrentObj[b'progress']}

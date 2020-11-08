@@ -1,6 +1,5 @@
-from flask import Flask, jsonify, request, Response, render_template, stream_with_context, send_from_directory
+from flask import Flask, jsonify, render_template, send_from_directory
 from flasgger import Swagger, swag_from, LazyJSONEncoder
-import requests
 from flask_cors import CORS
 import api
 import globalUtils
@@ -63,8 +62,10 @@ def startLoadMovie():
     return jsonify(api.startLoadMovie())
 
 
+@app.route('/movie/stop/', methods=['POST', 'OPTIONS'])
+@swag_from('spec/movie-stop.yml')
 def stopLoadMovie():
-    ...
+    return jsonify(api.stopLoadMovie())
 
 
 def removeMovie():
@@ -77,39 +78,5 @@ def statusMovie():
     return jsonify(api.statusLoadMovie())
 
 
-# language <String>
-# region <String>
-# sort_by
-    # popularity.asc | .desc
-    # release_date.asc | .desc
-    # revenue.asc | .desc
-    # primary_release_date.asc | .desc
-    # original_title.asc | .desc
-    # vote_average.asc | .desc
-    # vote_count.asc | .desc
-# certification_country <String>
-# certification <String>
-# include_adult <Boolean>
-# include_video <Boolean>
-# page <Integer>
-# primary_release_year <Integer>
-# with_release_type <Integer>
-# year <Integer>
-# with_cast <String>
-# with_crew <String>
-# with_people <String>
-# with_companies <String>
-# with_genres <String>
-# without_genres <String>
-# with_keywords <String>
-# without_keywords <String>
-# with_original_language <String>
-
-@app.route('/discover/movie/', methods=['POST', 'OPTIONS'])
-def discoverMovie():
-    url = f'https://api.themoviedb.org/3/genre/movie/list/discover/movie'
-    return api.getData(url)
-
-
 if __name__ == '__main__':
-    app.run(**globalUtils.addressInit())
+    app.run(**globalUtils.addressInit(), threaded=True)

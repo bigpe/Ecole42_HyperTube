@@ -45,6 +45,7 @@ class TorrentUtils:
 
     def addTorrent(self, path: Union[str, Path]) -> str:
         torrent = Torrent.from_file(path)
+        torrentId = torrent.info_hash
         if not self.checkTorrentExist(torrent.info_hash):
             fileEncoded = globalUtils.openFile(path)
             torrentId = self.client.call('core.add_torrent_file', '', fileEncoded, {
@@ -52,7 +53,15 @@ class TorrentUtils:
                 'prioritize_first_last': True})
             globalUtils.messageHandler(self.getTorrentName(path), '+ Download', tp='msg')
             return torrentId
-        globalUtils.messageHandler(self.getTorrentName(path), '+ Exist', tp='msg')
+        globalUtils.messageHandler(self.getTorrentName(path), 'Exist', tp='err')
+        self.resumeTorrent(torrentId)
+        return torrentId
+
+    def stopTorrent(self, torrentHash: str):
+        self.client.call('core.pause_torrent', [torrentHash])
+
+    def resumeTorrent(self, torrentHash: str):
+        self.client.call('core.resume_torrent', [torrentHash])
 
     def setTorrentOptions(self, torrentId: list, options: dict):
         self.client.call('core.set_torrent_options', [torrentId], options)
