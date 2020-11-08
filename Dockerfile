@@ -1,8 +1,9 @@
-FROM python:alpine
+FROM debian
 
 WORKDIR /app
 COPY requirements.txt /app
-RUN pip install --no-cache-dir -r requirements.txt && apk add deluge
+RUN apt install -y nocache python3 python3-pip deluge
+RUN pip3 install --no-cache-dir -r requirements.txt
 RUN python3 delugeSetup.py
 EXPOSE 5006
 
