@@ -70,6 +70,7 @@ def saveFile(fileData, fileName, directory: [str, Path] = '.'):
         f.write(fileData)
         return f.name
 
+
 def addressInit(debug=True):
     data = {'debug': debug}
     if len(sys.argv) > 1:
