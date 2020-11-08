@@ -1,12 +1,11 @@
 from torrentUtils import TorrentUtils
+import globalUtils
 from pathlib import Path
 
 
 baseDir = Path('app/downloads')
 auth = "root:root:10"
-authFile = Path.home().joinpath('.config/deluge/auth')
-with authFile.open("w") as f:
-    f.write(auth)
+globalUtils.saveFile(auth, 'auth', '~/.config/deluge/')
 
 t = TorrentUtils()
 t.client.call('core.set_config', {'max_active_downloading': -1})
