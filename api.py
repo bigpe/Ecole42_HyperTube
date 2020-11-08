@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, abort
 import requests
 from torrentUtils import TorrentUtils
 from functools import reduce
@@ -76,25 +76,62 @@ def saveTorrentFile(torrentUrl, torrentHash):
 
 def startLoadMovie():
     data = dict(request.args)
-    torrentHash = data['torrentHash'].lower()
-    torrentUrl = f'https://yts.mx/torrent/download/{torrentHash}'
+    torrentHash = data['torrentHash']
+    torrentUrl = f'https://yts.mx/torrent/download/{torrentHash.upper()}'
     torrentPath = f'torrentFiles/{torrentHash}.torrent'
     torrentsList = TorrentUtils.getSavedTorrentFiles()
     if f'torrentFiles/{torrentHash}.torrent' not in torrentsList:
         torrentPath = saveTorrentFile(torrentUrl, torrentHash)
     t = TorrentUtils()
     t.addTorrent(torrentPath)
+    torrentHash = torrentHash.lower()
     torrentObj = t.getTorrents(['save_path', 'files'], {'hash': torrentHash})[bytes(torrentHash.encode('utf-8'))]
     saveFolderPath = torrentObj[b'save_path'].decode('utf-8')
     files = torrentObj[b'files']
-    filesPath = {'videoPath': None, 'subtitlesPath': None}
+    resDict = {'videoPath': None, 'subtitlesPath': None}
     for f in files:
         filePath = f"{saveFolderPath}/{f[b'path'].decode('utf-8')}"
-        if filePath.split('.')[-1].lower() == 'mp4':
-            filesPath.update({'videoPath': filePath})
-        if filePath.split('.')[-1].lower() == 'srt':
-            filesPath.update({'subtitlesPath': filePath})
-    return filesPath
+        resDict = findMetaFiles(resDict, filePath)
+    return resDict
+
+
+def statusLoadMovie():
+    data = dict(request.args)
+    torrentHash = data['torrentHash']
+    torrentPath = f'torrentFiles/{torrentHash}.torrent'
+    torrentsList = TorrentUtils.getSavedTorrentFiles()
+    if torrentPath not in torrentsList:
+        abort(404, 'Torrent file not found')
+    t = TorrentUtils()
+    an = 2
+    torrentHash = torrentHash.lower()
+    torrentObj = t.getTorrents(['progress'], {'hash': torrentHash})[bytes(torrentHash.encode('utf-8'))]
+    resDict = {'progress': torrentObj[b'progress']}
+    return resDict
+
+
+def findMetaFiles(resDict, filePath):
+    if findVideo(filePath):
+        resDict.update({'videoPath': filePath})
+    if findSubtitles(filePath):
+        resDict.update({'subtitlesPath': filePath})
+    return resDict
+
+
+def findVideo(filePath):
+    formats = {'mp4', 'avi'}
+    ext = filePath.split('.')[-1].lower()
+    if ext in formats:
+        return True
+    return False
+
+
+def findSubtitles(filePath):
+    formats = {'srt'}
+    ext = filePath.split('.')[-1].lower()
+    if ext in formats:
+        return True
+    return False
 
 
 def getTorrentsByMovieList(movie: dict):

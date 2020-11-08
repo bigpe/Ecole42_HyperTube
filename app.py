@@ -71,6 +71,12 @@ def removeMovie():
     ...
 
 
+@app.route('/movie/status/', methods=['POST', 'OPTIONS'])
+@swag_from('spec/movie-status.yml')
+def statusMovie():
+    return jsonify(api.statusLoadMovie())
+
+
 # language <String>
 # region <String>
 # sort_by
