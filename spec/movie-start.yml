@@ -9,3 +9,10 @@ parameters:
 responses:
   200:
     description: Path to movie and subtitle files
+    schema:
+      type: object
+      properties:
+        videoPath:
+          type: string
+        subtitlesPath:
+          type: string

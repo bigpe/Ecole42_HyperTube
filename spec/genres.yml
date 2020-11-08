@@ -5,6 +5,14 @@ parameters:
   - name: language
     type: string
     in: query
+    default: en-US
 responses:
   200:
     description: Genres list
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string

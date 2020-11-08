@@ -57,7 +57,7 @@ def getPerson(person_id):
 
 def getGenres():
     url = f'https://api.themoviedb.org/3/genre/movie/list'
-    return getData(url)
+    return getData(url, ['genres'])
 
 
 def saveTorrentsFileByTorrentList(torrents: list):
