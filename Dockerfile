@@ -7,7 +7,7 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 RUN apt install -y deluged
 RUN apt install -y nodejs
 COPY package.json /app
-RUN npm i --legacy-peer-deps && npm run build
+RUN apt install -y curl && curl -L https://npmjs.org/install.sh | sh && npm i --legacy-peer-deps && npm run build
 EXPOSE 5006
 CMD "deluged"
 
