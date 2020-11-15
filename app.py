@@ -18,31 +18,12 @@ class HyperTubeApp(Flask):
         setupApp()
 
 
-IS_DEV = environ["FLASK_ENV"] == "development"
-WEBPACK_DEV_SERVER_HOST = "http://localhost:3000"
 app = HyperTubeApp(__name__)
-
-def proxy(host, path):
-    response = get(f"{host}{path}")
-    excluded_headers = [
-        "content-encoding",
-        "content-length",
-        "transfer-encoding",
-        "connection",
-    ]
-    headers = {
-        name: value
-        for name, value in response.raw.headers.items()
-        if name.lower() not in excluded_headers
-    }
-    return response.content, response.status_code, headers
 
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def index(path):
-    if IS_DEV:
-        return proxy(WEBPACK_DEV_SERVER_HOST, request.path)
     return render_template('index.html')
 
 
