@@ -1,8 +1,11 @@
-from flask import Flask, jsonify, render_template, send_from_directory
+from flask import Flask, jsonify, render_template, send_from_directory, request
 from flasgger import Swagger, swag_from, LazyJSONEncoder
 from flask_cors import CORS
 import api
 import globalUtils
+from delugeSetup import setupApp
+from requests import get
+from os import environ
 
 
 class HyperTubeApp(Flask):
@@ -12,14 +15,35 @@ class HyperTubeApp(Flask):
         self.json_encoder = LazyJSONEncoder
         Swagger(self, **self.config['SWAGGER'])
         CORS(self)
+        setupApp()
 
 
+IS_DEV = environ["FLASK_ENV"] == "development"
+WEBPACK_DEV_SERVER_HOST = "http://localhost:3000"
 app = HyperTubeApp(__name__)
+
+
+def proxy(host, path):
+    response = get(f"{host}{path}")
+    excluded_headers = [
+        "content-encoding",
+        "content-length",
+        "transfer-encoding",
+        "connection",
+    ]
+    headers = {
+        name: value
+        for name, value in response.raw.headers.items()
+        if name.lower() not in excluded_headers
+    }
+    return response.content, response.status_code, headers
 
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def index(path):
+    if IS_DEV:
+        return proxy(WEBPACK_DEV_SERVER_HOST, request.path)
     return render_template('index.html')
 
 
