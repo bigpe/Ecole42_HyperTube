@@ -1,0 +1,21 @@
+tags:
+  ['Movies']
+summary: "Get movie detail"
+parameters:
+  - name: movie_id
+    type: integer
+    required: true
+    in: query
+  - name: with_images
+    type: boolean
+    default: false
+    description: When set the data returned will include the added image URLs
+    in: query
+  - name: with_cast
+    type: boolean
+    in: query
+    default: false
+    description: When set the data returned will include the added information about the cast
+responses:
+  200:
+    description: Movie list

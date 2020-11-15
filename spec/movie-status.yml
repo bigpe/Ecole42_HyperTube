@@ -1,0 +1,19 @@
+tags:
+  ['Movies']
+summary: "Status loading movie by torrent hash (ID)"
+parameters:
+  - name: torrentHash
+    type: string
+    in: query
+    description: Torrent ID (hash string)
+responses:
+  200:
+    description: Status loading movie in %
+    schema:
+      type: object
+      properties:
+        progress:
+          type: integer
+          format: float
+  400:
+    description: Torrent not found on local storage

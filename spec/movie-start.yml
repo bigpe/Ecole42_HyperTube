@@ -1,0 +1,18 @@
+tags:
+  ['Movies']
+summary: "Start load movie by torrent hash (ID)"
+parameters:
+  - name: torrentHash
+    type: string
+    in: query
+    description: Torrent ID (hash string)
+responses:
+  200:
+    description: Path to movie and subtitle files
+    schema:
+      type: object
+      properties:
+        videoPath:
+          type: string
+        subtitlesPath:
+          type: string

@@ -1,0 +1,16 @@
+tags:
+  ['Movies']
+summary: "Stop load movie by torrent hash (ID)"
+parameters:
+  - name: torrentHash
+    type: string
+    in: query
+    description: Torrent ID (hash string)
+responses:
+  200:
+    description: OK
+    schema:
+      type: object
+      properties:
+        message:
+          type: string

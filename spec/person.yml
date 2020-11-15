@@ -1,0 +1,18 @@
+tags:
+  ['Persons']
+summary: "Get Person Detail"
+parameters:
+  - name: person_id
+    type: integer
+    in: path
+    required: true
+  - name: language
+    type: string
+    in: query
+    default: en-US
+    description: Language Code
+responses:
+  200:
+    description: Movie list
+    examples:
+      rgb: ['red', 'green', 'blue']
