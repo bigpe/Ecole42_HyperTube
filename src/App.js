@@ -14,7 +14,7 @@ import AuthPage from "./pages/AuthPage";
 import MoviePage from "./pages/MoviePage";
 
 const App = ({user})  => {
-
+    debugger
     if (user.auth) return (
     <div className="App m-0 p-0" >
         <Router>
