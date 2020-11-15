@@ -12,6 +12,7 @@ RUN curl -L https://npmjs.org/install.sh | sh && npm i --legacy-peer-deps
 COPY .babelrc /app
 COPY . /app
 RUN npm run build
+COPY . /app
 EXPOSE 5006
 CMD "deluged"
 
