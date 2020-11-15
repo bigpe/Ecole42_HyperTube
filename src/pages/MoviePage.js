@@ -6,12 +6,11 @@ import {CurrentMovieSelector} from "../selectors/movie";
 const SearchPage = ({curMovie, location}) => {
     const dispatch = useDispatch();
     const movieId= location.search.slice(1)
-
+    console.log(movieId, location);
     useEffect(()=> {
         dispatch(getMovieById(movieId))
     }, [movieId])
 
-    console.log(curMovie);
     return(
             <h1></h1>
     )

@@ -22,7 +22,6 @@ IS_DEV = environ["FLASK_ENV"] == "development"
 WEBPACK_DEV_SERVER_HOST = "http://localhost:3000"
 app = HyperTubeApp(__name__)
 
-
 def proxy(host, path):
     response = get(f"{host}{path}")
     excluded_headers = [

@@ -50,5 +50,8 @@ export const movieByIdSuccess = movie => dispatch => {
 export const getMovieById = (id) => (dispatch) => {
     dispatch(movieByIdRequest());
     getRequest('/movie/', {movie_id: id})
-        .then(res => dispatch(movieByIdSuccess(res.data)));
+        .then(res => {
+            console.log(res);
+            dispatch(movieByIdSuccess(res.data))
+        });
 }
