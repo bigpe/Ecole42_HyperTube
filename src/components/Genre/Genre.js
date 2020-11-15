@@ -4,6 +4,7 @@ import {connect, useDispatch} from "react-redux";
 import {GenreLoadSelector, StateSelector} from "../../selectors/movie";
 import {Image, Spinner, Col, Row, Accordion, Card, useAccordionToggle, Button} from "react-bootstrap";
 import {Link} from "react-router-dom";
+import ReactPlayer from 'react-player'
 
 const Genre = ({title, genreKey, state, genreLoad}) => {
     const dispatch = useDispatch();
@@ -26,18 +27,7 @@ const Genre = ({title, genreKey, state, genreLoad}) => {
                         <Link to={`/movie/?${children.id}`}><Button>Watch</Button></Link>
                     </Col>
                     <Col>
-                    {/*<MediaElement*/}
-                    {/*    autoplay*/}
-                    {/*    duration*/}
-                    {/*    id="player1"*/}
-                    {/*    mediaType="video"*/}
-                    {/*    width={window.innerWidth / 2}*/}
-                    {/*    height={window.innerHeight/2}*/}
-                    {/*    poster=""*/}
-                    {/*    sources={JSON.stringify(sources)}*/}
-                    {/*    options={JSON.stringify(config)}*/}
-                    {/*    tracks={JSON.stringify(tracks)}*/}
-                    {/*/>*/}
+                    <ReactPlayer url="https://www.youtube.com/watch?v=ysz5S6PUM-U" />
                     </Col>
                 </Row>
             )
