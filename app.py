@@ -4,8 +4,6 @@ from flask_cors import CORS
 import api
 import globalUtils
 from delugeSetup import setupApp
-from requests import get
-from os import environ
 
 
 class HyperTubeApp(Flask):
