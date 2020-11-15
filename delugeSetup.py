@@ -3,6 +3,7 @@ from pathlib import Path
 
 
 def setupApp():
+    TorrentUtils.checkDelugeExist()
     auth = "root:root:10\n"
     authFile = Path().home().joinpath('.config/deluge/auth')
     with authFile.open('w') as f:

@@ -1,10 +1,7 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
 //const dir =  {path: '/dist', filename: '/dist'}; //для dev
-const dir =  {
-    path: path.join(__dirname, '/static'),
-    filename: path.join(__dirname, "/templates/index.html")
-}; // для build
+const dir =  {path: '/static', filename: "../templates/index.html"}; // для build
 
 module.exports = {
     entry: "./src/index.js",

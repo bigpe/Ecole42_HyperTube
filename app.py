@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, send_from_directory, request
+from flask import Flask, jsonify, render_template, send_from_directory
 from flasgger import Swagger, swag_from, LazyJSONEncoder
 from flask_cors import CORS
 import api
