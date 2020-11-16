@@ -11,7 +11,7 @@ PARAMS = {}
 def getData(url, pointer=None):
     # Унифицированный обработчик запросов, работает в контексте реквеста и без него
     # Траслирует все именованные аргументы в будущий запрос, так же можно передать указатель
-    # для рекурсивного поиска по вложенному словарю, чтобы фильровать начальную точку входа
+    # для рекурсивного поиска по вложенному словарю, чтобы фильтровать начальную точку входа
     global PARAMS
     context = True
     try:
@@ -28,7 +28,14 @@ def getData(url, pointer=None):
     # Распаковываем и передаем в запрос все именнованные аргументы
     r = requests.get(url, **data)
     PARAMS = {}
-    return getDataRecursive(r.json(), pointer) if pointer else r.json()
+    # Если прошел неуспешный запрос
+    if r.status_code != requests.codes['ok']:
+        return {'error': 1, 'message': 'Destination unreachable, maybe IP is blocked'}
+    response = {
+        'data':     getDataRecursive(r.json(), pointer) if pointer else r.json(),
+        'error':    0, 'message': 'Success'
+    }
+    return response
 
 
 def findAPI(url):
@@ -75,7 +82,7 @@ def saveTorrentFile(torrentUrl, torrentHash):
 
 
 def startLoadMovie():
-    data = dict(request.args)
+    data = dict(request.json) if request.json else dict(request.args)
     torrentHash = data['torrentHash']
     torrentUrl = f'https://yts.mx/torrent/download/{torrentHash.upper()}'
     torrentPath = f'torrentFiles/{torrentHash}.torrent'
