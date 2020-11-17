@@ -1,10 +1,27 @@
 version: "3"
 
 services:
-  app:
-    build: .
+  frontend:
+    container_name: HyperTube-front
+    build: ./frontend
     volumes:
-      - ./:/app
+      - ./frontend:/app
+  backend:
+    volumes_from:
+      - frontend-builder
+    depends_on:
+      - frontend-builder
+    container_name: HyperTube-back
+    build: ./backend
+    volumes:
+      - ./backend:/app
     ports:
       - 5006:5006
     restart: always
+  frontend-builder:
+    container_name: HyperTube-front-build
+    build:
+      ./frontend/builder
+    volumes:
+    - /app/templates
+    - /app/static
