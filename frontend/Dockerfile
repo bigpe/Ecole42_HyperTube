@@ -1,4 +1,4 @@
-FROM node:alpine AS HyperTubeFront
+FROM node:alpine
 
 WORKDIR /app
 

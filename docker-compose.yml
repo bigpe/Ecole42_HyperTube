@@ -4,6 +4,7 @@ services:
   frontend:
     container_name: HyperTube-front
     build: ./frontend
+    image: HyperTubeFront
     volumes:
       - ./frontend:/app
   frontend-builder:
