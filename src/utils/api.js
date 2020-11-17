@@ -1,6 +1,5 @@
 import axios from "axios";
 
-const localhost = "http://127.0.0.1:5000"
+const localhost = "http://0.0.0.0:5006"
 
-export const getRequest = (url, options) => axios.post(`${localhost}${url}`,
-    { ...options});
+export const getRequest = (url, options) => axios.post(`${localhost}${url}`, { ...options});

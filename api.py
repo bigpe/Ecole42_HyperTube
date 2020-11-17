@@ -75,7 +75,7 @@ def saveTorrentFile(torrentUrl, torrentHash):
 
 
 def startLoadMovie():
-    data = dict(request.args)
+    data = dict(request.json)
     torrentHash = data['torrentHash']
     torrentUrl = f'https://yts.mx/torrent/download/{torrentHash.upper()}'
     torrentPath = f'torrentFiles/{torrentHash}.torrent'

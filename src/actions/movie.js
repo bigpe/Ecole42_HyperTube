@@ -1,4 +1,13 @@
-import {GENRE_MOVIE_REQUEST, GENRE_MOVIE_SUCCESS, MOVIE_BY_GENRE_SUCCESS, MOVIE_BY_GENRE_REQUEST, MOVIE_BY_ID_REQUEST, MOVIE_BY_ID_SUCCESS} from "../constants/actions/movie";
+import {
+    GENRE_MOVIE_REQUEST,
+    GENRE_MOVIE_SUCCESS,
+    MOVIE_BY_GENRE_SUCCESS,
+    MOVIE_BY_GENRE_REQUEST,
+    MOVIE_BY_ID_REQUEST,
+    MOVIE_BY_ID_SUCCESS,
+    MOVIE_BY_ID_TORRENT_SUCCESS,
+    MOVIE_BY_ID_TORRENT_REQUEST
+} from "../constants/actions/movie";
 import {getRequest} from "../utils/api";
 
 export const getGenreRequest = () => ({ type: GENRE_MOVIE_REQUEST});
@@ -39,19 +48,24 @@ export const getMovieByGenre = (genre) => (dispatch) => {
 export const movieByIdRequest = () => ({ type: MOVIE_BY_ID_REQUEST});
 
 
-export const movieByIdSuccess = movie => dispatch => {
-    debugger;
-    return dispatch({
+export const movieByIdSuccess = movie => dispatch => dispatch({
         type: MOVIE_BY_ID_SUCCESS,
         payload: movie
-    })
-}
+    });
+
+export const getUrlMovieRequest = () => ({ type: MOVIE_BY_ID_TORRENT_REQUEST});
+export const getUrlMovieSuccess = url => dispatch => dispatch({
+    type: MOVIE_BY_ID_TORRENT_SUCCESS,
+    payload: url
+});
 
 export const getMovieById = (id) => (dispatch) => {
     dispatch(movieByIdRequest());
     getRequest('/movie/', {movie_id: id})
         .then(res => {
-            console.log(res);
-            dispatch(movieByIdSuccess(res.data))
-        });
+            dispatch(movieByIdSuccess(res.data));
+            dispatch(getUrlMovieRequest());
+            getRequest('/movie/start/', { "torrentHash" : res.data.torrents[1].hash })
+                .then(r => dispatch(getUrlMovieSuccess(r.data)))
+        })
 }

@@ -1,7 +1,7 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
-//const dir =  {path: '/dist', filename: '/dist'}; //для dev
-const dir =  {path: '/static', filename: "../templates/index.html"}; // для build
+const dir =  {path: '/dist', filename: '/dist'}; //для dev
+//const dir =  {path: '/static', filename: "../templates/index.html"}; // для build
 
 module.exports = {
     entry: "./src/index.js",
@@ -43,7 +43,7 @@ module.exports = {
                 }]
             },
             {
-                test: /\.(png|svg|jpg|gif)$/,
+                test: /\.(png|svg|jpg|gif|swf)$/,
                 use: ["file-loader"]
             },
         ]
@@ -52,7 +52,6 @@ module.exports = {
         new HtmlWebpackPlugin({
             inject: true,
             template: "./public/index.html",
-            filename: dir.filename
         })
     ],
     devServer: {
