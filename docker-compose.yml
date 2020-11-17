@@ -7,14 +7,13 @@ services:
     volumes:
       - ./frontend:/app
   backend:
-    volumes_from:
-      - frontend-builder
     depends_on:
       - frontend-builder
     container_name: HyperTube-back
     build: ./backend
     volumes:
       - ./backend:/app
+      - frontend-builder
     ports:
       - 5006:5006
     restart: always
