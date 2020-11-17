@@ -15,13 +15,12 @@ services:
       - /app/templates
       - /app/static
   backend:
-    links:
+    depends_on:
       - frontend-builder
     container_name: HyperTube-back
     build: ./backend
     volumes:
       - ./backend:/app
-    volumes_from:
       - frontend-builder
     ports:
       - 5006:5006
