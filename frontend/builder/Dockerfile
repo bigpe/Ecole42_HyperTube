@@ -1,3 +1,3 @@
-FROM hypertube_frontend
+FROM HyperTubeFront
 
 CMD ["sh", "-c", "tail -f /dev/null"]
