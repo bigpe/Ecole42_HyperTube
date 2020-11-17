@@ -2,6 +2,8 @@ version: "3"
 
 services:
   frontend:
+    depends_on:
+      - frontend-builder
     container_name: HyperTube-front
     build: ./frontend
     volumes:
