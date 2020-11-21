@@ -1,6 +1,7 @@
 /backend/downloads
 /backend/torrentFiles
 /backend/__pycache__
+/backend/torrentool/__pycache__
 /backend/venv
 /frontend/node_modules
 /.DS_Store
