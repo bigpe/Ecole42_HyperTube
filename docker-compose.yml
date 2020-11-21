@@ -12,8 +12,10 @@ services:
     build:
       ./frontend/builder
     volumes:
-      - /app/templates
       - /app/static
+      - ./frontend/src:/app/src
+    ports:
+      - 8888:8888
   backend:
     depends_on:
       - frontend-builder
@@ -21,6 +23,7 @@ services:
     build: ./backend
     volumes:
       - ./backend:/app
+    volumes_from:
       - frontend-builder
     ports:
       - 5006:5006

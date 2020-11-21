@@ -1,12 +1,10 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
-const dir =  {path: '/dist', filename: '/dist'}; //для dev
-//const dir =  {path: '/static', filename: "../templates/index.html"}; // для build
 
 module.exports = {
     entry: "./src/index.js",
     output: {
-        path: path.join(__dirname, dir.path),
+        path: path.join(__dirname, 'static'),
         filename: "bundle.js"
     },
     module: {
@@ -55,10 +53,10 @@ module.exports = {
         })
     ],
     devServer: {
-        contentBase: path.join(__dirname, "dist"),
+        contentBase: path.join(__dirname, 'static'),
         compress: true,
+        host: "0.0.0.0",
         port: 8888,
-        watchContentBase: true,
-        progress: true
+        writeToDisk: true,
     },
 };
