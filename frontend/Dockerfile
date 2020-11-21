@@ -8,8 +8,5 @@ COPY public ./public
 COPY webpack.config.js .
 COPY .babelrc .
 
-ONBUILD RUN npm i
-ONBUILD RUN npm run build
-
-
-CMD ["sh", "-c", "tail -f /dev/null"]
+ONBUILD RUN yarn install
+ONBUILD RUN yarn run build
