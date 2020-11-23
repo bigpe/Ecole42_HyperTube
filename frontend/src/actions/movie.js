@@ -29,7 +29,7 @@ export const MovieByGenreRequestSuccess = (movie, title) => dispatch => dispatch
 export const getGenre = () => (dispatch) => {
     dispatch(getGenreRequest());
     getRequest('/genres/')
-        .then(res => dispatch(genreMovieSuccess(res.data)));
+        .then(res => dispatch(genreMovieSuccess(res.data.data)));
 }
 
 export const getMovieByGenre = (genre) => (dispatch) => {
@@ -42,7 +42,7 @@ export const getMovieByGenre = (genre) => (dispatch) => {
         genre: genre,
         sort_by: 'rating'
     })
-        .then(res => dispatch(MovieByGenreRequestSuccess(res.data, genre)));
+        .then(res => dispatch(MovieByGenreRequestSuccess(res.data.data, genre)));
 }
 
 export const movieByIdRequest = () => ({ type: MOVIE_BY_ID_REQUEST});
@@ -66,6 +66,6 @@ export const getMovieById = (id) => (dispatch) => {
             dispatch(movieByIdSuccess(res.data));
             dispatch(getUrlMovieRequest());
             getRequest('/movie/start/', { "torrentHash" : res.data.torrents[1].hash })
-                .then(r => dispatch(getUrlMovieSuccess(r.data)))
+                .then(r => dispatch(getUrlMovieSuccess(r.data.data)))
         })
 }

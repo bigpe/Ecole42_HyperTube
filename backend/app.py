@@ -22,7 +22,7 @@ app = HyperTubeApp(__name__)
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def index(path):
-    return render_template('index.html')
+    return render_template('base.html')
 
 
 @app.route('/downloads/<path:path>')
@@ -78,3 +78,4 @@ def statusMovie():
 
 if __name__ == '__main__':
     app.run(**globalUtils.addressInit(), threaded=True)
+

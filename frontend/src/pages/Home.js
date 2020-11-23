@@ -11,14 +11,14 @@ const Home = ({movie, genre}) => {
 
     useEffect(() => {
         if(!genre.length) dispatch(getGenre());
-    }, [genre])
+    }, [])
 
     return (
         <Container fluid className="justify-content-center">
             {
                 !!genre.length && genre.map((item, i) => (
-                        <Genre key={i} title={item.name} genreKey={i+1}/>
-                        ))
+                    <Genre key={i} title={item.name} genreKey={i+1}/>
+                ))
             }
             <Modal
                 size="lg"
@@ -32,6 +32,7 @@ const Home = ({movie, genre}) => {
                 </Modal.Header>
                 <Modal.Body>...</Modal.Body>
             </Modal>
+
         </Container>
     )
 }
