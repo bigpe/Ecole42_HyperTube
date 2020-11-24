@@ -54,6 +54,7 @@ export const movieByIdSuccess = movie => dispatch => dispatch({
     });
 
 export const getUrlMovieRequest = () => ({ type: MOVIE_BY_ID_TORRENT_REQUEST});
+
 export const getUrlMovieSuccess = url => dispatch => dispatch({
     type: MOVIE_BY_ID_TORRENT_SUCCESS,
     payload: url
@@ -63,9 +64,9 @@ export const getMovieById = (id) => (dispatch) => {
     dispatch(movieByIdRequest());
     getRequest('/movie/', {movie_id: id})
         .then(res => {
-            dispatch(movieByIdSuccess(res.data));
+            dispatch(movieByIdSuccess(res.data.data));
             dispatch(getUrlMovieRequest());
-            getRequest('/movie/start/', { "torrentHash" : res.data.torrents[1].hash })
-                .then(r => dispatch(getUrlMovieSuccess(r.data.data)))
+            getRequest('/movie/start/', { "torrentHash" : res.data.data.torrents[0].hash })
+                .then(r => dispatch(getUrlMovieSuccess(r.data)))
         })
 }

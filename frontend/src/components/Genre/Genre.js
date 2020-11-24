@@ -5,6 +5,7 @@ import {GenreLoadSelector, StateSelector} from "../../selectors/movie";
 import {Image, Spinner, Col, Row, Accordion, Card, useAccordionToggle, Button} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import ReactPlayer from 'react-player'
+import MediaElement from "../MediaElement/MediaElement";
 
 const Genre = ({title, genreKey, state, genreLoad}) => {
     const dispatch = useDispatch();
@@ -15,7 +16,7 @@ const Genre = ({title, genreKey, state, genreLoad}) => {
         const decoratedOnClick = useAccordionToggle(eventKey, () => {
             const
                 sources = [
-                    {src: `http://www.youtube.com/watch?v=${children.yt_trailer_code}`, type: 'video/x-youtube'},
+                        {src: `http://www.youtube.com/watch?v=${children.yt_trailer_code}`, type: 'video/x-youtube'},
                 ],
                 config = {autoplay: true, mute: true, controls: ""},
                 tracks = {}
@@ -27,7 +28,16 @@ const Genre = ({title, genreKey, state, genreLoad}) => {
                         <Link to={`/movie/?${children.id}`}><Button>Watch</Button></Link>
                     </Col>
                     <Col>
-                    <ReactPlayer url="https://www.youtube.com/watch?v=ysz5S6PUM-U" />
+                    <MediaElement 		  id="children.id"
+                                               mediaType="video"
+                                               preload="none"
+                                               controls
+                                               width="640"
+                                               height="360"
+                                               poster=""
+                                               sources={JSON.stringify(sources)}
+                                               options={JSON.stringify(config)}
+                                               tracks={JSON.stringify(tracks)}/>
                     </Col>
                 </Row>
             )
