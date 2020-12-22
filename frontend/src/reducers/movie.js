@@ -1,10 +1,21 @@
 import {
-    GENRE_MOVIE_REQUEST, GENRE_MOVIE_SUCCESS, MOVIE_BY_GENRE_SUCCESS, MOVIE_BY_GENRE_REQUEST, MOVIE_BY_ID_SUCCESS, MOVIE_BY_ID_REQUEST
+    GENRE_MOVIE_REQUEST,
+    GENRE_MOVIE_SUCCESS,
+    MOVIE_BY_GENRE_SUCCESS,
+    MOVIE_BY_GENRE_REQUEST,
+    MOVIE_BY_ID_SUCCESS,
+    MOVIE_BY_ID_REQUEST,
+    MOVIE_BY_ID_TORRENT_REQUEST,
+    MOVIE_BY_ID_TORRENT_SUCCESS
 } from '../constants/actions/movie';
 
 const initialState = {
     genreMovie: [],
-    error: ''
+    error: '',
+    curMovie: {
+        loading: false,
+        ready: false
+    }
 }
 
 const movie = (state= initialState, action) => {
@@ -35,13 +46,29 @@ const movie = (state= initialState, action) => {
         case MOVIE_BY_ID_REQUEST:
             return {
                 ...state,
-                curMovie: { loading: false }
+                curMovie: { ...state.curMovie, loading: false }
             };
-        case MOVIE_BY_GENRE_SUCCESS:
+        case MOVIE_BY_ID_SUCCESS:
             return {
                 ...state,
-                curMovie: { loading: true,
-                    movie: action.payload.movie,
+                curMovie: {
+                    ...state.curMovie,
+                    loading: true,
+                    movie: action.payload,
+                }
+            };
+        case MOVIE_BY_ID_TORRENT_REQUEST:
+            return {
+                ...state,
+                curMovie: { ...state.curMovie, ready: false }
+            };
+        case MOVIE_BY_ID_TORRENT_SUCCESS:
+            return {
+                ...state,
+                curMovie: {
+                    ...state.curMovie,
+                    ready: true,
+                    urlTorr: action.payload
                 }
             };
         default: return state;

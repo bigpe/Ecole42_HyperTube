@@ -16,6 +16,7 @@ services:
       - ./frontend/src:/app/src
     ports:
       - 8888:8888
+    restart: always
   backend:
     depends_on:
       - frontend-builder

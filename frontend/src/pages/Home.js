@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {connect, useDispatch} from "react-redux";
 import {GenreSelector, MovieSelector} from "../selectors/movie";
 import {getGenre} from "../actions/movie";
-import {Row, Container, Modal} from "react-bootstrap";
+import {Container, Modal} from "react-bootstrap";
 import Genre from "../components/Genre/Genre";
 
 const Home = ({movie, genre}) => {
@@ -11,15 +11,14 @@ const Home = ({movie, genre}) => {
 
     useEffect(() => {
         if(!genre.length) dispatch(getGenre());
-    }, [genre])
+    }, [])
+
     return (
         <Container fluid className="justify-content-center">
             {
                 !!genre.length && genre.map((item, i) => (
-                        <Genre key={i} title={item.name} genreKey={i+1}/>
-                    )
-                )
-
+                    <Genre key={i} title={item.name} genreKey={i+1}/>
+                ))
             }
             <Modal
                 size="lg"
@@ -33,6 +32,7 @@ const Home = ({movie, genre}) => {
                 </Modal.Header>
                 <Modal.Body>...</Modal.Body>
             </Modal>
+
         </Container>
     )
 }
