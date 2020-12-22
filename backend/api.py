@@ -93,7 +93,7 @@ def startLoadMovie():
     t.addTorrent(torrentPath)
     torrentHash = torrentHash.lower()
     torrentObj = t.getTorrents(['save_path', 'files'], {'hash': torrentHash})[bytes(torrentHash.encode('utf-8'))]
-    saveFolderPath = torrentObj[b'save_path'].decode('utf-8')
+    saveFolderPath = 'downloads'
     files = torrentObj[b'files']
     resDict = {'videoPath': None, 'subtitlesPath': None}
     for f in files:
