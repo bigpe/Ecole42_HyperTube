@@ -7,6 +7,7 @@ import MediaElement from "../components/MediaElement/MediaElement";
 import Actor from "../components/Actor";
 
 const SearchPage = ({curMovie, loading, location, movieReady}) => {
+    console.log(curMovie);
     const dispatch = useDispatch();
     const movieId= location.search.slice(1)
     useEffect(()=> {
