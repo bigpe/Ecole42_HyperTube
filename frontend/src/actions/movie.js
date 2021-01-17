@@ -62,7 +62,7 @@ export const getUrlMovieSuccess = url => dispatch => dispatch({
 
 export const getMovieById = (id) => (dispatch) => {
     dispatch(movieByIdRequest());
-    getRequest('/movie/', {movie_id: id})
+    getRequest('/movie/', {movie_id: id, with_images:"true", with_cast:"true"})
         .then(res => {
             dispatch(movieByIdSuccess(res.data.data));
             dispatch(getUrlMovieRequest());
