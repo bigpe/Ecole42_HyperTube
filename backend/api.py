@@ -173,8 +173,9 @@ def getUser():
     if 'login' not in data:
         return {'message': 'Login must be filled'}
     login = data['login']
-    user = User.query.filter_by(login=login).one()
-    if not user:
+    try:
+        user = User.query.filter_by(login=login).one()
+    except:
         return {'message': 'User not exist'}
     userInfo = {
         'firstName': user.firstName,
