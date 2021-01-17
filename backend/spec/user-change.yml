@@ -2,7 +2,10 @@ tags:
   ['Users']
 summary: "Change User Info"
 parameters:
-  - name: fullName
+  - name: firstName
+    type: string
+    in: query
+  - name: lastName
     type: string
     in: query
   - name: password

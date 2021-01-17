@@ -7,8 +7,8 @@ HyperTube Project
 **Run stand alone**
 
 _Frontend_
-- Install deps from frontend ``npm i``
-- Build frontend ``npm run build``
+- Install deps from frontend ``yarn install``
+- Build frontend ``yarn run build``
 - Move /static and /templates folder to backend
 
 _Backend_

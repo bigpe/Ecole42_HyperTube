@@ -8,7 +8,10 @@ parameters:
   - name: password
     type: string
     in: query
-  - name: fullName
+  - name: firstName
+    type: string
+    in: query
+  - name: lastName
     type: string
     in: query
   - name: email
