@@ -87,7 +87,7 @@ def getUser():
 @app.route('/user/', methods=['POST'])
 @swag_from('spec/user-change.yml')
 def changeUser():
-    return jsonify({api.changeUser()})
+    return jsonify(api.changeUser())
 
 
 @app.route('/user/', methods=['PUT'])
@@ -105,7 +105,7 @@ def checkLoginExist():
 @app.route('/user/email', methods=['POST'])
 @swag_from('spec/user-check-email-exist.yml')
 def checkEmailExist():
-    return jsonify({})
+    return jsonify(api.checkEmailExist())
 
 
 if __name__ == '__main__':

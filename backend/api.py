@@ -186,11 +186,13 @@ def getUser():
 
 def changeUser():
     data = dict(request.args)
-    return updateDbByDict(data, User)
+    return {'message': 'Not authed'}
 
 
 def checkLoginExist():
     data = dict(request.args)
+    if 'login' not in data:
+        return {'message': 'Login must be filled'}
     login = data['login']
     user = checkDataDb(db.session.query(User).filter_by(login=login))
     return {'exist': True if user else False}
@@ -198,6 +200,8 @@ def checkLoginExist():
 
 def checkEmailExist():
     data = dict(request.args)
+    if 'email' not in data:
+        return {'message': 'Email must be filled'}
     email = data['email']
     user = checkDataDb(db.session.query(User).filter_by(email=email))
     return {'exist': True if user else False}
