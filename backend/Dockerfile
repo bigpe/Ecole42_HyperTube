@@ -1,11 +1,10 @@
-FROM python:3-alpine
+FROM python
 
 WORKDIR /app
 
 COPY requirements.txt .
 
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
-RUN apk add --update --no-cache deluge
+RUN apt update && apt install deluge
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 EXPOSE 5006

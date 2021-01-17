@@ -76,6 +76,36 @@ def statusMovie():
     return jsonify(api.statusLoadMovie())
 
 
+@app.route('/user/', methods=['GET'])
+@swag_from('spec/user-info.yml')
+def getUser():
+    return jsonify({})
+
+
+@app.route('/user/', methods=['POST'])
+@swag_from('spec/user-change.yml')
+def changeUser():
+    return jsonify({})
+
+
+@app.route('/user/', methods=['PUT'])
+@swag_from('spec/user-create.yml')
+def createUser():
+    return jsonify({})
+
+
+@app.route('/user/login', methods=['POST'])
+@swag_from('spec/user-check-login-exist.yml')
+def checkLoginExist():
+    return jsonify({})
+
+
+@app.route('/user/email', methods=['POST'])
+@swag_from('spec/user-check-email-exist.yml')
+def checkEmailExist():
+    return jsonify({})
+
+
 if __name__ == '__main__':
     app.run(**globalUtils.addressInit(), threaded=True)
 

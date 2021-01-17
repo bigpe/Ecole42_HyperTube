@@ -1,0 +1,14 @@
+tags:
+  ['Users']
+summary: "Check Email Exist"
+parameters:
+  - name: email
+    type: string
+    in: query
+responses:
+  200:
+    schema:
+      type: object
+      properties:
+        exist:
+          type: boolean

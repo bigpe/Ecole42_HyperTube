@@ -1,0 +1,28 @@
+tags:
+  ['Users']
+summary: "Create User"
+parameters:
+  - name: login
+    type: string
+    in: query
+  - name: password
+    type: string
+    in: query
+  - name: fullName
+    type: string
+    in: query
+  - name: email
+    type: string
+    in: query
+responses:
+  200:
+    description: User Info
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        fullName:
+          type: string

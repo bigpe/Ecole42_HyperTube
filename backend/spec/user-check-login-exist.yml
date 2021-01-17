@@ -1,0 +1,15 @@
+tags:
+  ['Users']
+summary: "Check Login Exist"
+parameters:
+  - name: login
+    type: string
+    in: query
+responses:
+  200:
+    description: User Info
+    schema:
+      type: object
+      properties:
+        exist:
+          type: boolean

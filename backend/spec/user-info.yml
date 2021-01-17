@@ -1,0 +1,19 @@
+tags:
+  ['Users']
+summary: "Get User Info"
+parameters:
+  - name: login
+    type: string
+    in: query
+responses:
+  200:
+    description: User Info
+    schema:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        fullName:
+          type: string
