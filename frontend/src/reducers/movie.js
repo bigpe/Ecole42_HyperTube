@@ -1,4 +1,6 @@
 import {
+    SEARCH_MOVIE_SUCCESS,
+    SEARCH_MOVIE_REQUEST,
     GENRE_MOVIE_REQUEST,
     GENRE_MOVIE_SUCCESS,
     MOVIE_BY_GENRE_SUCCESS,
@@ -29,6 +31,17 @@ const movie = (state= initialState, action) => {
                 ...state,
                 loadingGenre: true,
                 genreMovie: action.payload,
+                error: ''
+            };
+        case SEARCH_MOVIE_REQUEST:
+            return { ...state,
+                loading: true
+            };
+        case SEARCH_MOVIE_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                searchMovie: action.payload,
                 error: ''
             };
         case MOVIE_BY_GENRE_REQUEST:

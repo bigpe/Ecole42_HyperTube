@@ -1,18 +1,24 @@
-import React from "react";
-import {Button, FormControl, InputGroup} from "react-bootstrap";
+import React, {useState} from "react";
+import { Button, FormControl, InputGroup } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { getSearch } from "../../actions/movie";
 
-const Search = () => (
-    <>
-        <FormControl
-            placeholder="Search movie"
-            aria-label="Search  movie"
-            aria-describedby="basic-addon2"
-            className="w-50"
-        />
-        <InputGroup.Append>
-            <Button variant="outline-secondary" >Search</Button>
-        </InputGroup.Append>
-    </>
-)
+const Search = () => {
+    const [query, setQuery] = useState('');
+    const dispatch = useDispatch();
 
+    return (
+        <>
+            <InputGroup.Append className="w-50">
+                <FormControl
+                placeholder="Search movie"
+                aria-label="Search movie"
+                aria-describedby="basic-addon2"
+                onChange={(e) => setQuery(e.target.value)}
+            />
+                <Button variant="outline-secondary" onClick={() => dispatch(getSearch(query))}>Search</Button>
+            </InputGroup.Append>
+        </>
+    )
+}
 export default Search;
