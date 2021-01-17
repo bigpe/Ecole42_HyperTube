@@ -7,7 +7,6 @@ import MediaElement from "../components/MediaElement/MediaElement";
 import Actor from "../components/Actor";
 
 const SearchPage = ({curMovie, loading, location, movieReady}) => {
-    console.log(curMovie);
     const dispatch = useDispatch();
     const movieId= location.search.slice(1)
     useEffect(()=> {
@@ -17,8 +16,12 @@ const SearchPage = ({curMovie, loading, location, movieReady}) => {
         sources = [
             { src: movieReady && `http://0.0.0.0:5006/${curMovie.urlTorr.videoPath}`, type: 'video/mp4' },
         ],
-        config = {autoplay: true, mute: true, controls: ""},
-        tracks = {}
+        config = {features: ['playpause', 'current', 'progress', 'duration', 'volume', 'tracks','settings', 'fullscreen']},
+        tracks = [{ src: movieReady && `http://0.0.0.0:5006/${curMovie.urlTorr.subtitlesPath}`,
+            label:'English',
+            lang:"English",
+            kind:"subtitles"
+    }]
     return loading && movieReady && (
         <Container className="justify-content-center align-items-center">
             <Row>
@@ -41,7 +44,7 @@ const SearchPage = ({curMovie, loading, location, movieReady}) => {
                                            controls
                                            width="100%"
                                            height="360"
-                                           poster=""
+                                           poster={curMovie.movie.background_image_original}
                                            sources={JSON.stringify(sources)}
                                            options={JSON.stringify(config)}
                                            tracks={JSON.stringify(tracks)}/>

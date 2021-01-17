@@ -12,7 +12,7 @@ export default class MediaElement extends Component {
     state = {}
 
     success(media, node, instance) {
-        // Your action when media was successfully loaded
+        console.log(instance);
     }
 
     error(media) {
@@ -38,7 +38,7 @@ export default class MediaElement extends Component {
             const track = tracks[i];
             tracksTags.push(`<track src="${track.src}" kind="${track.kind}" srclang="${track.lang}"${(track.label ? ` label=${track.label}` : '')}>`);
         }
-
+        console.log(sources.length);
         const
             mediaBody = `${sourceTags.join("\n")}
 				${tracksTags.join("\n")}`,
