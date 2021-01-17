@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-RUN apt update && apt install deluge
+RUN apt update && apt install -y deluge
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 EXPOSE 5006

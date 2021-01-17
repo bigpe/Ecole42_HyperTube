@@ -2,17 +2,18 @@ tags:
   ['Users']
 summary: "Change User Info"
 parameters:
-  - name: language
+  - name: fullName
     type: string
     in: query
-    default: en-US
+  - name: password
+    type: string
+    in: query
 responses:
   200:
-    description: Genres list
     schema:
       type: object
       properties:
-        id:
-          type: integer
-        name:
+        message:
           type: string
+        success:
+          type: boolean
