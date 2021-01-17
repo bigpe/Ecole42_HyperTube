@@ -2,6 +2,7 @@ from flask import request, abort
 import requests
 from torrentUtils import TorrentUtils
 from functools import reduce
+from database import updateDb, updateDbByDict, deleteById, checkDataDb, User, db
 
 API_MAP = {'themoviedb': {'api_key': '6c60e65c45de8fc3495acac976c567ce'}}
 # Параметры переданные вне контекста реквест, в основном используется для тестирования
@@ -159,3 +160,49 @@ def getTorrentsByMovieList(movie: dict):
 
 def getDataRecursive(dataDict, mapList):
     return reduce(dict.get, mapList, dataDict)
+
+
+def createUser():
+    data = dict(request.args)
+    userId = updateDbByDict(data, User, insert=True)
+    return {'id': userId}
+
+
+def getUser():
+    data = dict(request.args)
+    if 'login' not in data:
+        return {'message': 'Login must be filled'}
+    login = data['login']
+    try:
+        user = User.query.filter_by(login=login).one()
+    except:
+        return {'message': 'User not exist'}
+    userInfo = {
+        'firstName': user.firstName,
+        'lastName': user.lastName,
+        'email': user.email
+    }
+    return userInfo
+
+
+def changeUser():
+    data = dict(request.args)
+    return {'message': 'Not authed'}
+
+
+def checkLoginExist():
+    data = dict(request.args)
+    if 'login' not in data:
+        return {'message': 'Login must be filled'}
+    login = data['login']
+    user = checkDataDb(db.session.query(User).filter_by(login=login))
+    return {'exist': True if user else False}
+
+
+def checkEmailExist():
+    data = dict(request.args)
+    if 'email' not in data:
+        return {'message': 'Email must be filled'}
+    email = data['email']
+    user = checkDataDb(db.session.query(User).filter_by(email=email))
+    return {'exist': True if user else False}

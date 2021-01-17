@@ -4,6 +4,7 @@ from flask_cors import CORS
 import api
 import globalUtils
 from delugeSetup import setupApp
+from flask_sqlalchemy import SQLAlchemy
 
 
 class HyperTubeApp(Flask):
@@ -14,6 +15,7 @@ class HyperTubeApp(Flask):
         Swagger(self, **self.config['SWAGGER'])
         CORS(self)
         setupApp()
+        self.db = SQLAlchemy(self)
 
 
 app = HyperTubeApp(__name__)
@@ -79,31 +81,31 @@ def statusMovie():
 @app.route('/user/', methods=['GET'])
 @swag_from('spec/user-info.yml')
 def getUser():
-    return jsonify({})
+    return jsonify(api.getUser())
 
 
 @app.route('/user/', methods=['POST'])
 @swag_from('spec/user-change.yml')
 def changeUser():
-    return jsonify({})
+    return jsonify(api.changeUser())
 
 
 @app.route('/user/', methods=['PUT'])
 @swag_from('spec/user-create.yml')
 def createUser():
-    return jsonify({})
+    return jsonify(api.createUser())
 
 
 @app.route('/user/login', methods=['POST'])
 @swag_from('spec/user-check-login-exist.yml')
 def checkLoginExist():
-    return jsonify({})
+    return jsonify(api.checkLoginExist())
 
 
 @app.route('/user/email', methods=['POST'])
 @swag_from('spec/user-check-email-exist.yml')
 def checkEmailExist():
-    return jsonify({})
+    return jsonify(api.checkEmailExist())
 
 
 if __name__ == '__main__':
