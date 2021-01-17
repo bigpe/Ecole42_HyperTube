@@ -58,7 +58,7 @@ export default class MediaElement extends Component {
 
     componentDidMount() {
 
-        const {MediaElementPlayer} = global;
+        const { MediaElementPlayer } = global;
 
         if (!MediaElementPlayer) {
             return;

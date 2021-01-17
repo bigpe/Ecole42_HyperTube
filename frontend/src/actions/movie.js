@@ -1,12 +1,9 @@
 import {
-    GENRE_MOVIE_REQUEST,
-    GENRE_MOVIE_SUCCESS,
-    MOVIE_BY_GENRE_SUCCESS,
-    MOVIE_BY_GENRE_REQUEST,
-    MOVIE_BY_ID_REQUEST,
-    MOVIE_BY_ID_SUCCESS,
-    MOVIE_BY_ID_TORRENT_SUCCESS,
-    MOVIE_BY_ID_TORRENT_REQUEST
+    SEARCH_MOVIE_REQUEST, SEARCH_MOVIE_SUCCESS,
+    GENRE_MOVIE_REQUEST, GENRE_MOVIE_SUCCESS,
+    MOVIE_BY_GENRE_SUCCESS, MOVIE_BY_GENRE_REQUEST,
+    MOVIE_BY_ID_REQUEST, MOVIE_BY_ID_SUCCESS,
+    MOVIE_BY_ID_TORRENT_SUCCESS, MOVIE_BY_ID_TORRENT_REQUEST
 } from "../constants/actions/movie";
 import {getRequest} from "../utils/api";
 
@@ -14,6 +11,12 @@ export const getGenreRequest = () => ({ type: GENRE_MOVIE_REQUEST});
 
 export const genreMovieSuccess = movie => dispatch => dispatch({
     type: GENRE_MOVIE_SUCCESS,
+    payload: movie
+})
+export const getSearchRequest = (query) => dispatch => dispatch({ type: SEARCH_MOVIE_REQUEST, payload: query });
+
+export const SearchSuccess = movie => dispatch => dispatch({
+    type: SEARCH_MOVIE_SUCCESS,
     payload: movie
 })
 
@@ -60,7 +63,7 @@ export const getUrlMovieSuccess = url => dispatch => dispatch({
     payload: url
 });
 
-export const getMovieById = (id) => (dispatch) => {
+export const getMovieById = id => dispatch => {
     dispatch(movieByIdRequest());
     getRequest('/movie/', {movie_id: id, with_images:"true", with_cast:"true"})
         .then(res => {
@@ -69,4 +72,10 @@ export const getMovieById = (id) => (dispatch) => {
             getRequest('/movie/start/', { "torrentHash" : res.data.data.torrents[0].hash })
                 .then(r => dispatch(getUrlMovieSuccess(r.data)))
         })
+}
+
+export const getSearch = query => dispatch => {
+    dispatch(getSearchRequest(query));
+    getRequest('/movies/', {limit: 20, page:1, quality:"all",sort_by:"date_added",order_by:"desc",with_rt_ratings: false, query_term: query})
+        .then(res => dispatch(SearchSuccess(res.data.data)));
 }

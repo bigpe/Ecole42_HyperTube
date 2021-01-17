@@ -1,11 +1,18 @@
 import React from "react";
+import { connect } from "react-redux";
+import { MovieSearchSelector } from "../../selectors/movie";
 
-const SearchList = () => {
-    const movieList = [{id: 3, title: "movie"}];
+const SearchList = ({movieList}) => {
+    console.log(movieList);
     return (
         <div>
-            {movieList.length && movieList.map(movie => <Movie movie={movie} />)}
+            {movieList?.length && movieList.map(movie => <div> {movie.title}</div>)}
         </div>
     )
-}
-export default SearchList;
+};
+
+const mapStateToProps = state => ({
+    movieList: MovieSearchSelector(state)
+})
+
+export default connect(mapStateToProps)(SearchList);
