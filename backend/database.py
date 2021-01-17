@@ -58,6 +58,7 @@ def checkDataDb(query):
         a = query.all()
     return a
 
+
 db.create_all()
 
 

@@ -4,7 +4,12 @@ from torrentUtils import TorrentUtils
 from functools import reduce
 from database import updateDb, updateDbByDict, deleteById, checkDataDb, User, db
 
-API_MAP = {'themoviedb': {'api_key': '6c60e65c45de8fc3495acac976c567ce'}}
+
+# ^H в ключе - отправка заголовком
+API_MAP = {
+    'themoviedb': {'api_key': '6c60e65c45de8fc3495acac976c567ce'},
+    'opensubtitles': {'Api-Key^H': '1xPMLpBzqrPAU893YsgmO65rDblq05Yd'}
+}
 # Параметры переданные вне контекста реквест, в основном используется для тестирования
 PARAMS = {}
 
@@ -24,8 +29,12 @@ def getData(url, pointer=None):
     domain = findAPI(url)
     if domain in API_MAP:
         # Исполняем дополнительные инструкции для API, содержащегося в в карте
-        # Например добавляем уникальный ключ в запрос для этого ресурса
-        data['params'].update(API_MAP[domain])
+        # Например добавляем уникальный ключ в тело запроса/заголовки для этого ресурса
+        for k in API_MAP[domain]:
+            if '^H' in k:
+                data.update({'headers': {k.split('^H')[0]: API_MAP[domain][k]}})
+            else:
+                data.update({'params': API_MAP[domain][k]})
     # Распаковываем и передаем в запрос все именнованные аргументы
     r = requests.get(url, **data)
     PARAMS = {}
@@ -34,7 +43,8 @@ def getData(url, pointer=None):
         return {'error': 1, 'message': 'Destination unreachable, maybe IP is blocked'}
     response = {
         'data':     getDataRecursive(r.json(), pointer) if pointer else r.json(),
-        'error':    0, 'message': 'Success'
+        'error':    0,
+        'message':  'Success'
     }
     return response
 
@@ -50,6 +60,12 @@ def findAPI(url):
 def getMovies():
     url = f'https://yts.mx/api/v2/list_movies.json'
     data = getData(url, ['data', 'movies'])
+    return data
+
+
+def getSubtitles():
+    url = 'https://www.opensubtitles.com/api/v1/subtitles'
+    data = getData(url, ['data'])
     return data
 
 
@@ -171,13 +187,14 @@ def createUser():
 def getUser():
     data = dict(request.args)
     if 'login' not in data:
-        return {'message': 'Login must be filled'}
+        return {'error': 1, 'message': 'Login must be filled'}
     login = data['login']
     try:
         user = User.query.filter_by(login=login).one()
     except:
-        return {'message': 'User not exist'}
+        return {'error': 1, 'message': 'User not exist'}
     userInfo = {
+        'error': 0,
         'firstName': user.firstName,
         'lastName': user.lastName,
         'email': user.email
@@ -193,7 +210,7 @@ def changeUser():
 def checkLoginExist():
     data = dict(request.args)
     if 'login' not in data:
-        return {'message': 'Login must be filled'}
+        return {'error': 1, 'message': 'Login must be filled'}
     login = data['login']
     user = checkDataDb(db.session.query(User).filter_by(login=login))
     return {'exist': True if user else False}
