@@ -1,9 +1,12 @@
 import React from "react";
 import { Button, Dropdown, FormControl, InputGroup, Nav, Navbar } from "react-bootstrap";
+import {useDispatch} from "react-redux";
+import {userLogOut} from "../../actions/user";
 import { Link } from "react-router-dom";
 
 const Header = () => {
     const route = window.location.pathname;
+    const dispatch = useDispatch();
     return (
         <>
             <Navbar bg="light" expand="lg">
@@ -13,8 +16,10 @@ const Header = () => {
                         <Link to="/">Hypertube </Link>
                         <Link to="/search">Search </Link>
                         <Link to="/user">User </Link>
+                        <Link to="/edit_profile">Logout </Link>
                     </Nav>
                 </Navbar.Collapse>
+                <Button onClick={() => dispatch(userLogOut())}>Log out</Button>
                 { route !== '/search' &&
                 <InputGroup className="w-25 ml-0">
                     <FormControl

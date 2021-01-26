@@ -4,14 +4,18 @@ import {
     Switch,
     Route,
 } from "react-router-dom";
-import Home from "./pages/Home";
-import User from "./pages/User";
-import SearchPage from "./pages/SearchPage";
-import Header from "./components/Header";
 import {connect} from "react-redux";
 import { UserSelector } from "./selectors/user";
-import AuthPage from "./pages/AuthPage";
+import Header from "./components/Header";
+import Home from "./pages/Home";
+import SearchPage from "./pages/SearchPage";
 import MoviePage from "./pages/MoviePage";
+import User from "./pages/User";
+import EditProfile from "./pages/EditProfile";
+import Auth from "./pages/Auth";
+import Sign from "./pages/Sign";
+import Remind from "./pages/Remind";
+import Restore from "./pages/Restore";
 
 const App = ({user})  => {
     if (user.auth) return (
@@ -23,13 +27,21 @@ const App = ({user})  => {
                 <Route path="/search" component={SearchPage}/>
                 <Route path="/user" component={User}/>
                 <Route path="/movie/" component={MoviePage}/>
+                <Route path="/edit_profile" component={EditProfile}/>
             </Switch>
         </Router>
     </div>
   )
     else
         return (
-            <AuthPage />
+            <Router>
+                <Switch>
+                    <Route exact path="/" component={Auth}/>
+                    <Route path="/sign" component={Sign}/>
+                    <Route path="/remind" component={Remind}/>
+                    <Route path="/restore" component={Restore}/>
+                </Switch>
+            </Router>
         )
 }
 const mapStateToProps = (state) => ({
