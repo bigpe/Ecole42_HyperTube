@@ -2,6 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { NavLink, Card, CardBody, Row, Col, FormGroup, Label, Input, FormFeedback, Button, Container, Alert } from 'reactstrap';
 import { isValidInput, isValidPassword } from '../utils/Check_valid';
+import {getRequest} from "../utils/api";
 
 function InputForm(props) {
     const [isValid, toggleValid] = useState('');
@@ -37,6 +38,36 @@ function InputForm(props) {
 }
 
 function InputFormWithFetch(props) {
+    const [isValid, toggleValid] = useState('');
+    //const [feedback, setFeedback] = useState('Oopsy');
+
+    const checkExist = (name, value) => {
+        getRequest(`/user/login?${name}=${value}`)
+            .then(result => {
+                    if (result.exist === true) {
+                        toggleValid('is-invalid');
+                        console.log(`${name} is taken`);
+                        //setFeedback(`${name} is taken`)
+                    }
+                    else
+                        console.log(`${name} is free`);
+                }
+            )
+    }
+
+    const inputChange = (e) => {
+        const { name, value } = e.target;
+        if (isValidInput(name, value) === true && value.length > 2) {
+            toggleValid('is-valid');
+            checkExist(name, value);
+            //props.set(value);
+        }
+        else {
+            toggleValid('is-invalid');
+            //setFeedback(`${name} is invalid`)
+        }
+    };
+
     return (
         <FormGroup>
             <Label>
@@ -45,9 +76,12 @@ function InputFormWithFetch(props) {
                 <Input
                     type="text"
                     name={props.labelName}
+                    onChange={inputChange}
                     onBlur={() => props.onBlur()}
                     placeholder={props.placeholder}
                     required
+                    //feedback={feedback}
+                    className={isValid}
                 />
         </FormGroup>
     )
@@ -115,7 +149,7 @@ function Password(props) {
 }
 
 const Sign = (props) => {
-    const [isActiveBtn, toggleBtn] = useState(false);
+    const [isActiveBtn, toggleBtn] = useState(true);
 
     const handleSubmit = () => {
         const { userName, lastName, firstName, email, password } = props.sign;
@@ -132,7 +166,7 @@ const Sign = (props) => {
     const checkBtn = () => {
         const countValidInputs = document.querySelectorAll(".is-valid").length;
         const countInvalidInputs = document.querySelectorAll(".is-invalid").length;
-        if (countValidInputs === 4 && countInvalidInputs === 0)
+        if (countValidInputs === 6 && countInvalidInputs === 0)
             toggleBtn(false);
         else
             toggleBtn(true);
@@ -159,7 +193,7 @@ const Sign = (props) => {
                                         onBlur={checkBtn} labelName='First name'
                                         name='firstName' type='text' feedback='Only symbols are required'
                                     />
-                                    <InputFormWithFetch onBlur={checkBtn} labelName='Username'/>
+                                    <InputFormWithFetch onBlur={checkBtn} labelName='Login'/>
                                     <InputFormWithFetch onBlur={checkBtn} labelName='Email'/>
                                     <Password onBlur={checkBtn} />
                                     <Button color="secondary" type="submit" disabled={isActiveBtn} onClick={handleSubmit} onBlur={checkBtn} block>Sign Up</Button>

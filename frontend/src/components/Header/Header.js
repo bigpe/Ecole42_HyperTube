@@ -16,7 +16,7 @@ const Header = () => {
                         <Link to="/">Hypertube </Link>
                         <Link to="/search">Search </Link>
                         <Link to="/user">User </Link>
-                        <Link to="/edit_profile">Logout </Link>
+                        <Link to="/edit_profile">Edit_profile</Link>
                     </Nav>
                 </Navbar.Collapse>
                 <Button onClick={() => dispatch(userLogOut())}>Log out</Button>

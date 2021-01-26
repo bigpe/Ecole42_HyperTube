@@ -71,6 +71,8 @@ function Password() {
 }
 
 const AuthPage = () => {
+    const dispatch = useDispatch();
+
     return (
         <section className="conteiner login">
             <Container>
@@ -90,7 +92,7 @@ const AuthPage = () => {
                                     <LoginInput/>
                                     <Password/>
                                     <Col>
-                                        <Button className="login-btn" color="secondary" block>Sign in</Button>
+                                        <Button onClick={() => dispatch(userLogIn())} className="login-btn" color="secondary" block>Sign in</Button>
                                     </Col>
                                 </form>
                                 <Col>
