@@ -28,11 +28,11 @@ def getData(url, pointer=None):
     data = {'params': request.get_json() if request.get_data() else dict(request.args)} if context else PARAMS
     domain = findAPI(url)
     if domain in API_MAP:
-        # Исполняем дополнительные инструкции для API, содержащегося в в карте
+        # Исполняем дополнительные инструкции для API, содержащегося в карте
         # Например добавляем уникальный ключ в тело запроса/заголовки для этого ресурса
         for k in API_MAP[domain]:
             if '^H' in k:
-                data.update({'headers': {k.split('^H')[0]: API_MAP[domain][k]}})
+                data['headers'].update({k.split('^H')[0]: API_MAP[domain][k]})
             else:
                 data['params'].update({k: API_MAP[domain][k]})
     # Распаковываем и передаем в запрос все именнованные аргументы
