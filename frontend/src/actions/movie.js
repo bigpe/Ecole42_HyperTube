@@ -77,5 +77,5 @@ export const getMovieById = id => dispatch => {
 export const getSearch = query => dispatch => {
     dispatch(getSearchRequest(query));
     getRequest('/movies/', {limit: 20, page:1, quality:"all",sort_by:"date_added",order_by:"desc",with_rt_ratings: false, query_term: query})
-        .then(res => dispatch(SearchSuccess(res.data.data)));
+        .then(res => dispatch(SearchSuccess(res.data)));
 }
