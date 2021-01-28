@@ -34,8 +34,7 @@ def getData(url, pointer=None):
             if '^H' in k:
                 data.update({'headers': {k.split('^H')[0]: API_MAP[domain][k]}})
             else:
-                data.update({'params': {k: API_MAP[domain][k]}})
-    print(data)
+                data['params'].update({k: API_MAP[domain][k]})
     # Распаковываем и передаем в запрос все именнованные аргументы
     r = requests.get(url, **data)
     PARAMS = {}
