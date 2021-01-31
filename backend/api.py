@@ -253,7 +253,6 @@ def logoutUser():
 
 
 def checkAuth():
-    print(session['login'])
     return createAnswer('Authed') if 'login' in session else createAnswer('Not Authed', True)
 
 
@@ -269,9 +268,10 @@ def checkPassword():
     return createAnswer('Password correct') if user else createAnswer('Password Incorrect')
 
 
+# Обработчик backend ответов
 def createAnswer(message, err=False, additions=None):
     answer = {'error': 1 if err else 0, 'message': message}
-    if additions:
+    if additions:  # Можно передать дополнительный словарь чтобы расширить стандартный ответ
         answer.update(additions)
     return answer
 
