@@ -8,7 +8,7 @@ import Home from "./pages/Home";
 import User from "./pages/User";
 import SearchPage from "./pages/SearchPage";
 import Header from "./components/Header";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 import { UserSelector } from "./selectors/user";
 import AuthPage from "./pages/AuthPage";
 import MoviePage from "./pages/MoviePage";

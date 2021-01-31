@@ -29,9 +29,9 @@ export const MovieByGenreRequestSuccess = (movie, title) => dispatch => dispatch
     payload: {movie, title}
 })
 
-export const getGenre = () => (dispatch) => {
+export const getGenre = (lang) => (dispatch) => {
     dispatch(getGenreRequest());
-    getRequest('/genres/')
+    getRequest('/genres/', {language: lang})
         .then(res => dispatch(genreMovieSuccess(res.data.data)));
 }
 
@@ -74,8 +74,18 @@ export const getMovieById = id => dispatch => {
         })
 }
 
-export const getSearch = query => dispatch => {
+export const getSearch = ({sort_by = "date_added", query = '', genre = '', rating = 0}) => dispatch => {
     dispatch(getSearchRequest(query));
-    getRequest('/movies/', {limit: 20, page:1, quality:"all",sort_by:"date_added",order_by:"desc",with_rt_ratings: false, query_term: query})
+    getRequest('/movies/', {
+        limit: 20,
+        page:1,
+        quality:"all",
+        sort_by: sort_by,
+        order_by:"desc",
+        with_rt_ratings: false,
+        query_term: query,
+        genre,
+        minimum_rating: Math.floor(rating/10),
+    })
         .then(res => dispatch(SearchSuccess(res.data)));
 }

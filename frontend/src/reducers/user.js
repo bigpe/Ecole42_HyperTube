@@ -4,6 +4,7 @@ import { USER_AUTH_STATUS, USER_LOG_IN } from "../constants/actions/user";
 const initialState = {
     auth: true,
     login: '',
+    langv: 'ru',
 }
 
 export const user = (state= initialState, action) => {
