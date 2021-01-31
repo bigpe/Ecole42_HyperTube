@@ -1,11 +1,8 @@
 tags:
   ['Users']
-summary: "Change User Info"
+summary: "Auth User"
 parameters:
-  - name: firstName
-    type: string
-    in: query
-  - name: lastName
+  - name: login
     type: string
     in: query
   - name: password

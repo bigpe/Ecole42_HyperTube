@@ -11,4 +11,4 @@ EXPOSE 5006
 
 CMD "deluged"
 
-ENTRYPOINT deluged && python3 app.py 0.0.0.0:5006
+ENTRYPOINT deluged && python3 app.py localhost:5006
