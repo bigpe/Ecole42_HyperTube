@@ -17,16 +17,23 @@ const SearchPage = ({genre, langv}) => {
     const [orderBy, setOrderBy] = useState('');
     const [rating, setRating] = useState('');
 
-    const options = { sort_by: sortBy, query: query, genre: genres, rating: rating }
-
     const genreToggle = (val) => setGenres(val);
     const sortByToggle = (val) => setSortBy(val);
     const orderByToggle = (val) => setOrderBy(val);
     const ratingToggle = (val) => setRating(val.target.value);
 
-    const genreArr = genre.length && genre.map(gen => gen.name)
+    const genreArr = genre.length && genre.map(gen => gen.name);
 
-        useEffect(() => {
+    const fetchSearch = () => {
+        console.log(lang[langv].genreRuEng[genres]);
+        const options = langv === 'eng' ? { sort_by: sortBy, order_by: orderBy, query: query, genre: genres, rating: rating } :
+            {
+                sort_by: sortBy && lang[langv].sortByRuEng[sortBy], order_by: orderBy && lang[langv].orderByRuEng[orderBy],
+                query: query, genre: genres && lang[langv].genreRuEng[genres], rating: rating
+            }
+        dispatch(getSearch(options));
+    };
+    useEffect(() => {
         if(!genre.length) dispatch(getGenre('ru-RU'));
     }, [])
 
@@ -51,7 +58,7 @@ const SearchPage = ({genre, langv}) => {
             </Row>
             <Row className="mt-5 justify-content-center">
                 <Search langv={langv} changeValue={setQuery}/>
-                <Button variant="outline-secondary" onClick={() => dispatch(getSearch(options))}>{lang[langv].search}</Button>
+                <Button variant="outline-secondary" onClick={fetchSearch}>{lang[langv].search}</Button>
             </Row>
             <Row className="mt-5 justify-content-center">
                 <SearchList />
