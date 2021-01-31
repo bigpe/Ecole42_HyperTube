@@ -126,6 +126,12 @@ def logoutUser():
     return jsonify(api.logoutUser())
 
 
+@app.route('/user/password/check', methods=['POST'])
+@swag_from('spec/user-check-password.yml')
+def checkPassword():
+    return jsonify(api.checkPassword())
+
+
 if __name__ == '__main__':
     app.run(**globalUtils.addressInit(), threaded=True)
 

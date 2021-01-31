@@ -187,7 +187,7 @@ def createUser():
     data = getParams(request)
     data['password'] = createHash(data['password'])
     userId = updateDbByDict(data, User, insert=True)
-    return {'id': userId}
+    return createAnswer('User created', False, {'id': userId}) if userId else createAnswer('User not created', True)
 
 
 def getUser():
@@ -199,23 +199,21 @@ def getUser():
     if not user:
         return createAnswer('User not Exist', True)
     userInfo = {
-        'error': 0,
         'firstName': user.firstName,
         'lastName': user.lastName,
         'email': user.email
     }
-    return userInfo
+    return createAnswer('User Founded', False, userInfo)
 
 
 def changeUser():
     data = getParams(request)
-    if 'login' in session:
-        login = session['login']
-        user = User.query.filter_by(login=login).first()
-        updateDbByDict(data, user)
-        return createAnswer('Info change successful')
-    else:
+    if 'login' not in session:
         return createAnswer('Not Authed', True)
+    login = session['login']
+    user = User.query.filter_by(login=login).first()
+    updateDbByDict(data, user)
+    return createAnswer('Info change successful')
 
 
 def checkLoginExist():
@@ -255,10 +253,26 @@ def logoutUser():
 
 
 def checkAuth():
+    print(session['login'])
     return createAnswer('Authed') if 'login' in session else createAnswer('Not Authed', True)
 
 
-def createAnswer(message, err=False):
-    return {'error': 1 if err else 0, 'message': message}
+def checkPassword():
+    data = getParams(request)
+    if 'login' not in session:
+        return createAnswer('Not Authed', True)
+    if 'password' not in data:
+        return createAnswer('Password must be filled', True)
+    password = createHash(data['password'])
+    login = session['login']
+    user = User.query.filter_by(login=login, password=password).first()
+    return createAnswer('Password correct') if user else createAnswer('Password Incorrect')
+
+
+def createAnswer(message, err=False, additions=None):
+    answer = {'error': 1 if err else 0, 'message': message}
+    if additions:
+        answer.update(additions)
+    return answer
 
 
