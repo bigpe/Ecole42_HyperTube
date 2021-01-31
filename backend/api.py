@@ -104,7 +104,7 @@ def saveTorrentFile(torrentUrl, torrentHash):
 
 
 def startLoadMovie():
-    data = dict(request.json) if request.json else dict(request.args)
+    data = getParams(request)
     torrentHash = data['torrentHash']
     torrentUrl = f'https://yts.mx/torrent/download/{torrentHash.upper()}'
     torrentPath = f'torrentFiles/{torrentHash}.torrent'
@@ -125,7 +125,7 @@ def startLoadMovie():
 
 
 def stopLoadMovie():
-    data = dict(request.args)
+    data = getParams(request)
     torrentHash = data['torrentHash']
     torrentPath = f'torrentFiles/{torrentHash}.torrent'
     torrentsList = TorrentUtils.getSavedTorrentFiles()
@@ -137,7 +137,7 @@ def stopLoadMovie():
 
 
 def statusLoadMovie():
-    data = dict(request.args)
+    data = getParams(request)
     torrentHash = data['torrentHash']
     torrentPath = f'torrentFiles/{torrentHash}.torrent'
     torrentsList = TorrentUtils.getSavedTorrentFiles()
