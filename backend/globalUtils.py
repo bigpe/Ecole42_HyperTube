@@ -6,6 +6,7 @@ from typing import Union
 from pathlib import Path
 import base64
 import sys
+from hashlib import sha256
 
 MessageLimitLen = 100
 
@@ -77,3 +78,7 @@ def addressInit(debug=True):
         temp = sys.argv[1].split(':')
         data.update({'host': temp[0], 'port': int(temp[1])})
     return data
+
+
+def createHash(hashString: str):
+    return sha256(hashString.encode('UTF-8')).hexdigest()

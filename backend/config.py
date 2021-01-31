@@ -46,3 +46,4 @@ SWAGGER = {
         ]
     }
 }
+SECRET_KEY = '87,mad#124##$2139nmawjdnhH$#21'

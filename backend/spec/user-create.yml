@@ -22,5 +22,9 @@ responses:
     schema:
       type: object
       properties:
+        message:
+          type: string
+        error:
+          type: integer
         id:
           type: integer
