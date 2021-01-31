@@ -3,10 +3,8 @@ import { connect } from "react-redux";
 import { MovieSearchSelector } from "../../selectors/movie";
 import { Image } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import Dropdown from 'react-bootstrap/Dropdown'
 
 const SearchList = ({movieList}) => {
-    console.log(movieList);
     return (
         <div>
             {movieList?.search?.length && movieList.search.map(movie => <Link to={`/movie/?${movie.id}`}><Image class="ml-5" src={movie.medium_cover_image} /></Link>)}

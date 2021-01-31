@@ -5,12 +5,12 @@ import {getGenre} from "../actions/movie";
 import {Container, Modal} from "react-bootstrap";
 import Genre from "../components/Genre/Genre";
 
-const Home = ({movie, genre}) => {
+const Home = ({genre}) => {
     const dispatch = useDispatch();
     const [lgShow, setLgShow] = useState(false);
 
     useEffect(() => {
-        if(!genre.length) dispatch(getGenre());
+        if(!genre.length) dispatch(getGenre('ru-RU'));
     }, [])
 
     return (
