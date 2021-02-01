@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card, CardBody, Row, Col, Container, Input, Button, FormFeedback, Label, FormGroup, NavLink } from 'reactstrap';
-import {getRequest, putRequest} from "../utils/api";
-import { isValidInput } from '../utils/Check_valid';
+import {getRequest} from "../utils/api";
+import { isValidInput } from '../utils/checkValid';
 import "../App.css"
 
 

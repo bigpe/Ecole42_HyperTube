@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { NavLink, Card, CardBody, Row, Col, FormGroup, Label, Input, FormFeedback, Button, Container, Alert } from 'reactstrap';
 //import { setLogin, setFirstName, setLastName, setEmail, setPassword, setRepassword} from '../actions/user';
-import { isValidInput, isValidPassword } from '../utils/Check_valid';
+import { isValidInput, isValidPassword } from '../utils/checkValid';
 import {getRequest, putRequest} from "../utils/api";
 //import {connect} from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -68,12 +68,6 @@ function InputFormWithFetch(props) {
                     if (result.data.exist == true) {
                         toggleValid('is-invalid');
                         setFeedback(`${name} is taken`)
-                        console.log(`${name} is taken`);
-                    }
-                    else
-                    {
-                        console.log(`${name} is free`);
-                        console.log(result);
                     }
                 }
             )
