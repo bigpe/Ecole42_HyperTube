@@ -1,10 +1,6 @@
 tags:
   ['Users']
-summary: "Check Login Exist"
-parameters:
-  - name: login
-    type: string
-    in: query
+summary: "Check Auth User"
 responses:
   200:
     schema:

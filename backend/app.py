@@ -108,6 +108,30 @@ def checkEmailExist():
     return jsonify(api.checkEmailExist())
 
 
+@app.route('/user/auth', methods=['POST'])
+@swag_from('spec/user-auth.yml')
+def authUser():
+    return jsonify(api.authUser())
+
+
+@app.route('/user/auth', methods=['GET'])
+@swag_from('spec/user-check-auth.yml')
+def checkAuthUser():
+    return jsonify(api.checkAuth())
+
+
+@app.route('/user/logout', methods=['GET'])
+@swag_from('spec/user-logout.yml')
+def logoutUser():
+    return jsonify(api.logoutUser())
+
+
+@app.route('/user/password/check', methods=['POST'])
+@swag_from('spec/user-check-password.yml')
+def checkPassword():
+    return jsonify(api.checkPassword())
+
+
 if __name__ == '__main__':
     app.run(**globalUtils.addressInit(), threaded=True)
 

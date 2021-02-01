@@ -1,8 +1,9 @@
-from flask import request, abort
+from flask import request, abort, session
 import requests
 from torrentUtils import TorrentUtils
 from functools import reduce
 from database import updateDb, updateDbByDict, deleteById, checkDataDb, User, db
+from globalUtils import createHash
 
 
 # ^H в ключе - отправка заголовком
@@ -25,17 +26,16 @@ def getData(url, pointer=None):
     except RuntimeError:  # Выставляем отрицательный флаг отсутсвия контекста,
         # если функция была вызвана в тестовом режиме
         context = False
-    data = {'params': request.get_json() if request.get_data() else dict(request.args)} if context else PARAMS
+    data = {'params': getParams(request)} if context else PARAMS
     domain = findAPI(url)
     if domain in API_MAP:
-        # Исполняем дополнительные инструкции для API, содержащегося в в карте
+        # Исполняем дополнительные инструкции для API, содержащегося в карте
         # Например добавляем уникальный ключ в тело запроса/заголовки для этого ресурса
         for k in API_MAP[domain]:
             if '^H' in k:
-                data.update({'headers': {k.split('^H')[0]: API_MAP[domain][k]}})
+                data['headers'].update({k.split('^H')[0]: API_MAP[domain][k]})
             else:
-                data.update({'params': {k: API_MAP[domain][k]}})
-    print(data)
+                data['params'].update({k: API_MAP[domain][k]})
     # Распаковываем и передаем в запрос все именнованные аргументы
     r = requests.get(url, **data)
     PARAMS = {}
@@ -48,6 +48,10 @@ def getData(url, pointer=None):
         'message':  'Success'
     }
     return response
+
+
+def getParams(r):
+    return r.get_json() if r.get_data() else dict(r.args)
 
 
 def findAPI(url):
@@ -100,7 +104,7 @@ def saveTorrentFile(torrentUrl, torrentHash):
 
 
 def startLoadMovie():
-    data = dict(request.json) if request.json else dict(request.args)
+    data = getParams(request)
     torrentHash = data['torrentHash']
     torrentUrl = f'https://yts.mx/torrent/download/{torrentHash.upper()}'
     torrentPath = f'torrentFiles/{torrentHash}.torrent'
@@ -121,7 +125,7 @@ def startLoadMovie():
 
 
 def stopLoadMovie():
-    data = dict(request.args)
+    data = getParams(request)
     torrentHash = data['torrentHash']
     torrentPath = f'torrentFiles/{torrentHash}.torrent'
     torrentsList = TorrentUtils.getSavedTorrentFiles()
@@ -133,7 +137,7 @@ def stopLoadMovie():
 
 
 def statusLoadMovie():
-    data = dict(request.args)
+    data = getParams(request)
     torrentHash = data['torrentHash']
     torrentPath = f'torrentFiles/{torrentHash}.torrent'
     torrentsList = TorrentUtils.getSavedTorrentFiles()
@@ -180,47 +184,95 @@ def getDataRecursive(dataDict, mapList):
 
 
 def createUser():
-    data = dict(request.args)
+    data = getParams(request)
+    data['password'] = createHash(data['password'])
     userId = updateDbByDict(data, User, insert=True)
-    return {'id': userId}
+    return createAnswer('User created', False, {'id': userId}) if userId else createAnswer('User not created', True)
 
 
 def getUser():
-    data = dict(request.args)
+    data = getParams(request)
     if 'login' not in data:
         return {'error': 1, 'message': 'Login must be filled'}
     login = data['login']
-    try:
-        user = User.query.filter_by(login=login).one()
-    except:
-        return {'error': 1, 'message': 'User not exist'}
+    user = User.query.filter_by(login=login).first()
+    if not user:
+        return createAnswer('User not Exist', True)
     userInfo = {
-        'error': 0,
         'firstName': user.firstName,
         'lastName': user.lastName,
         'email': user.email
     }
-    return userInfo
+    return createAnswer('User Founded', False, userInfo)
 
 
 def changeUser():
-    data = dict(request.args)
-    return {'message': 'Not authed'}
+    data = getParams(request)
+    if 'login' not in session:
+        return createAnswer('Not Authed', True)
+    login = session['login']
+    user = User.query.filter_by(login=login).first()
+    updateDbByDict(data, user)
+    return createAnswer('Info change successful')
 
 
 def checkLoginExist():
-    data = dict(request.args)
+    data = getParams(request)
     if 'login' not in data:
         return {'error': 1, 'message': 'Login must be filled'}
     login = data['login']
     user = checkDataDb(db.session.query(User).filter_by(login=login))
-    return {'exist': True if user else False}
+    return createAnswer('Login exist') if user else createAnswer('Login vacant')
 
 
 def checkEmailExist():
-    data = dict(request.args)
+    data = getParams(request)
     if 'email' not in data:
         return {'message': 'Email must be filled'}
     email = data['email']
     user = checkDataDb(db.session.query(User).filter_by(email=email))
-    return {'exist': True if user else False}
+    return createAnswer('Email exist') if user else createAnswer('Email vacant')
+
+
+def authUser():
+    data = getParams(request)
+    if 'login' not in data:
+        return createAnswer('Login must be filled', True)
+    login = data['login']
+    password = createHash(data['password'])
+    user = User.query.filter_by(login=login, password=password).first()
+    if user:
+        session['login'] = login
+    return createAnswer('Authed') if user else createAnswer('Login or password incorrect', True)
+
+
+def logoutUser():
+    if 'login' in session:
+        del session['login']
+    return createAnswer('Logout complete')
+
+
+def checkAuth():
+    return createAnswer('Authed') if 'login' in session else createAnswer('Not Authed', True)
+
+
+def checkPassword():
+    data = getParams(request)
+    if 'login' not in session:
+        return createAnswer('Not Authed', True)
+    if 'password' not in data:
+        return createAnswer('Password must be filled', True)
+    password = createHash(data['password'])
+    login = session['login']
+    user = User.query.filter_by(login=login, password=password).first()
+    return createAnswer('Password correct') if user else createAnswer('Password Incorrect')
+
+
+# Обработчик backend ответов
+def createAnswer(message, err=False, additions=None):
+    answer = {'error': 1 if err else 0, 'message': message}
+    if additions:  # Можно передать дополнительный словарь чтобы расширить стандартный ответ
+        answer.update(additions)
+    return answer
+
+

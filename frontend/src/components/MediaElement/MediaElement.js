@@ -38,7 +38,6 @@ export default class MediaElement extends Component {
             const track = tracks[i];
             tracksTags.push(`<track src="${track.src}" kind="${track.kind}" srclang="${track.lang}"${(track.label ? ` label=${track.label}` : '')}>`);
         }
-        console.log(sources.length);
         const
             mediaBody = `${sourceTags.join("\n")}
 				${tracksTags.join("\n")}`,
@@ -78,7 +77,7 @@ export default class MediaElement extends Component {
 
     componentWillUnmount() {
         if (this.state.player) {
-            this.state.player.remove();
+            this.state.player?.remove();
             this.setState({player: null});
         }
     }

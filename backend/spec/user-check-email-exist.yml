@@ -10,5 +10,7 @@ responses:
     schema:
       type: object
       properties:
-        exist:
-          type: boolean
+        message:
+          type: string
+        error:
+          type: integer

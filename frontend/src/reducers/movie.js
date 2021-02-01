@@ -41,7 +41,7 @@ const movie = (state= initialState, action) => {
             return {
                 ...state,
                 loading: false,
-                searchMovie: action.payload,
+                searchMovie: { search: action.payload.data, message: action.payload.message },
                 error: ''
             };
         case MOVIE_BY_GENRE_REQUEST:
