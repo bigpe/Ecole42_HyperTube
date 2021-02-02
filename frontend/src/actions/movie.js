@@ -3,7 +3,8 @@ import {
     GENRE_MOVIE_REQUEST, GENRE_MOVIE_SUCCESS,
     MOVIE_BY_GENRE_SUCCESS, MOVIE_BY_GENRE_REQUEST,
     MOVIE_BY_ID_REQUEST, MOVIE_BY_ID_SUCCESS,
-    MOVIE_BY_ID_TORRENT_SUCCESS, MOVIE_BY_ID_TORRENT_REQUEST
+    MOVIE_BY_ID_TORRENT_SUCCESS, MOVIE_BY_ID_TORRENT_REQUEST,
+    MOVIE_BY_ID_TORRENT_READY
 } from "../constants/actions/movie";
 import {getRequest} from "../utils/api";
 
@@ -62,6 +63,10 @@ export const getUrlMovieSuccess = url => dispatch => dispatch({
     type: MOVIE_BY_ID_TORRENT_SUCCESS,
     payload: url
 });
+export const getUrlMovieReady = url => dispatch => dispatch({
+    type: MOVIE_BY_ID_TORRENT_READY,
+    payload: url
+});
 
 export const getMovieById = id => dispatch => {
     dispatch(movieByIdRequest());
@@ -70,7 +75,12 @@ export const getMovieById = id => dispatch => {
             dispatch(movieByIdSuccess(res.data.data));
             dispatch(getUrlMovieRequest());
             getRequest('/movie/start/', { "torrentHash" : res.data.data.torrents[0].hash })
-                .then(r => dispatch(getUrlMovieSuccess(r.data)))
+                .then(r => {
+
+                    getRequest('/movie/status/', { "torrentHash" : res.data.data.torrents[0].hash })
+                        .then(response => dispatch(getUrlMovieReady(response.data)))
+                    return dispatch(getUrlMovieSuccess(r.data))
+                })
         })
 }
 
