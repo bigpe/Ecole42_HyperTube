@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Dropdown, FormControl, InputGroup, Nav, Navbar } from "react-bootstrap";
+import { Button, Col, Dropdown, FormControl, InputGroup, Nav, Navbar } from "react-bootstrap";
 import {useDispatch} from "react-redux";
 import {userLogOut} from "../../actions/user";
 import { Link } from "react-router-dom";

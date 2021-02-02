@@ -12,7 +12,7 @@ const mapStateToProps = (state) => {
         sign: state.sign
     }
 }
-
+// гриша крутой поц
 const mapDispatchToProps = (dispatch) => ({
     setLogin: (Login) => dispatch(setLogin(Login)),
     setFirstName: (FirstName) => dispatch(setFirstName(FirstName)),
@@ -62,15 +62,26 @@ function InputFormWithFetch(props) {
 
     const checkExist = (name, value) => {
 
-        //getRequest(`/user/${name}`, { login : value })
-        getRequest(`/user/${name}?${name}=${value}`)
-            .then(result => {
-                    if (result.data.exist == true) {
+        if (name == 'login') {
+            getRequest(`/user/login`, { login : value })
+                .then(result => {
+                    if (result.data.message == 'Login exist') {
                         toggleValid('is-invalid');
-                        setFeedback(`${name} is taken`)
+                        setFeedback(`login is taken`);
+                        console.log(result);
                     }
+                })
+        }
+        else if (name == 'email') {
+            getRequest(`/user/email`, { email : value })
+            .then(result => {
+                if (result.data.message == 'Email exist') {
+                    toggleValid('is-invalid');
+                    setFeedback(`email is taken`);
+                    console.log(result);
                 }
-            )
+            })
+        }
     }
 
     const inputChange = (e) => {
@@ -189,6 +200,7 @@ const Sign = (props) => {
             history.push('/');
             //setMsg("Account has created successfully");
         })
+
     }
 
     const checkBtn = () => {

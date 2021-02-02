@@ -1,49 +1,50 @@
-import React from "react";
+import React from 'react';
+import { useState } from 'react';
 import { Card, CardBody, Container, Row, Col, Button, FormGroup, Label, Input, NavLink, CardTitle} from 'reactstrap';
-import {useDispatch} from "react-redux";
-import {userLogIn} from "../actions/user";
-//import "../App.css";
+import { useDispatch } from "react-redux";
+import { userLogIn } from "../actions/user";
 import logo_42 from "./42_logo.svg";
 import { GoogleLogin } from 'react-google-login';
 import { refreshTokenSetup } from '../utils/refreshToken';
-import {getGetRequest} from "../utils/api";
+import { getIntraRequest } from "../utils/api";
+import {getRequest } from "../utils/api";
+import Cookies from "js-cookie";
 
 const clientId = '241696023762-9cvk3687223kn9kqklfb5bjv20jsc920.apps.googleusercontent.com';
 
 function LoginGoogle() {
-  const onSuccess = (res) => {
-    console.log('Login Success: currentUser:', res.profileObj);
-    alert(
-      `Logged in successfully welcome ${res.profileObj.name} 😍. \n See console for full profile object.`
+    const onSuccess = (res) => {
+        console.log('Login Success: currentUser:', res.profileObj);
+        //alert(`Logged in successfully welcome ${res.profileObj.name} 😍.`);
+        refreshTokenSetup(res);
+    };
+    const onFailure = (res) => {
+        console.log('Login failed: res:', res);
+    };
+
+    return (
+            <GoogleLogin
+              clientId={clientId}
+              buttonText=""
+              onSuccess={onSuccess}
+              onFailure={onFailure}
+              cookiePolicy={'single_host_origin'}
+              //style={{ marginTop: '100px', marginRight: '-10px'}}
+              isSignedIn={true}
+            />
     );
-    refreshTokenSetup(res);
-  };
-
-  const onFailure = (res) => {
-    console.log('Login failed: res:', res);
-  };
-
-  return (
-          <GoogleLogin
-            clientId={clientId}
-            //buttonText=""
-            onSuccess={onSuccess}
-            onFailure={onFailure}
-            cookiePolicy={'single_host_origin'}
-            //style={{ marginTop: '100px', marginRight: '-10px'}}
-            isSignedIn={true}
-          />
-  );
 }
 
-function LoginInput() {
+function LoginInput(props) {
+
     return (
         <Col>
             <FormGroup>
                     <Input
                         type="text"
                         name="Login"
-                        placeholder="Your email"
+                        placeholder="Your login"
+                        onChange={e => props.set(e.target.value)}
                         required
                     />
             </FormGroup>
@@ -51,13 +52,14 @@ function LoginInput() {
     )
 }
 
-function Password() {
+function Password(props) {
     return (
         <Col>
             <FormGroup>
                 <Input
                         type="password"
                         name='password'
+                        onChange={e => props.set(e.target.value)}
                         placeholder="Your password"
                         required
                     />
@@ -67,13 +69,29 @@ function Password() {
 }
 
 const AuthPage = () => {
+    const [login, setLogin] = useState('');
+    const [password, setPassword] = useState('');
     const dispatch = useDispatch();
+    Cookies.set('access_token', '');
 
     const IntraOauth = () => {
-        getGetRequest(`https://api.intra.42.fr/oauth/authorize?client_id=db5cd84b784b4c4998f4131c353ef1828345aa1ce5ed3b6ebac9f7e4080be068&redirect_uri=http%3A%2F%2F0.0.0.0%3A8888&response_type=code`)
+        getIntraRequest(`https://api.intra.42.fr/oauth/authorize?client_id=db5cd84b784b4c4998f4131c353ef1828345aa1ce5ed3b6ebac9f7e4080be068&redirect_uri=http%3A%2F%2F0.0.0.0%3A8888&response_type=code`)
     
     }
 
+    const handleSubmit = () => {
+        getRequest('/user/auth', {
+            login : login, 
+            password: password
+        })
+        .then(result => {
+            if(result.data.message == 'Authed' && !result.data.error){
+                console.log(result);
+                dispatch(userLogIn());
+            }
+        })
+
+    }
     return (
         <section className="conteiner login">
             <Container>
@@ -84,16 +102,16 @@ const AuthPage = () => {
                                 <div className="sign">
                                     <Row>
                                         <Col>
-                                            <Button className="login-btn" color="secondary" onClick={IntraOauth}><img width={25} src={logo_42}></img><span>      Sign in with Intra</span></Button>
-                                            <LoginGoogle/>
+                                            <Button className="login-btn" color="secondary" onClick={IntraOauth}><img width={25} src={logo_42}></img></Button>
+                                            
                                         </Col>
                                     </Row>                            
                                 </div>
                                 <form >
-                                    <LoginInput/>
-                                    <Password/>
+                                    <LoginInput set={setLogin}/>
+                                    <Password set={setPassword}/>
                                     <Col>
-                                        <Button onClick={() => dispatch(userLogIn())} className="login-btn" color="secondary" block>Sign in</Button>
+                                        <Button onClick={handleSubmit} className="login-btn" color="secondary" block>Sign in</Button>
                                     </Col>
                                 </form>
                                 <Col>
@@ -111,4 +129,7 @@ const AuthPage = () => {
 }
 
 export default AuthPage;
+//<LoginGoogle/>
 //<Button onClick={() => dispatch(userLogIn())}>Log in </Button>
+
+//
