@@ -15,7 +15,8 @@ export const getRequest = (url, options) => {
     };
     return axios(config);
 };
-export const getGetRequest = (url, options) => {
+
+export const getIntraRequest = (url, options) => {
     const config = {
         method: 'GET',
         headers: {
@@ -24,7 +25,10 @@ export const getGetRequest = (url, options) => {
             'credentials': 'include'
         },
         data: options,
-        url: `${localhost}${url}`,
+        url: url,
     };
     return axios(config);
 };
+
+export const putRequest = (url, content) => axios.put(`${localhost}${url}`, {...content});
+export const getGetRequest = (url, content) => axios.get(`${localhost}${url}`);
