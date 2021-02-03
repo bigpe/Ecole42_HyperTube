@@ -13,7 +13,7 @@ class HyperTubeApp(Flask):
         self.config.from_object('config')
         self.json_encoder = LazyJSONEncoder
         Swagger(self, **self.config['SWAGGER'])
-        CORS(self)
+        CORS(self, supports_credentials=True)
         setupApp()
         self.db = SQLAlchemy(self)
 
