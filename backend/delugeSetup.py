@@ -14,4 +14,5 @@ def setupApp():
     t.client.call('core.set_config', {'max_active_downloading': -1})
     t.client.call('core.set_config', {'max_active_limit': -1})
     t.client.call('core.set_config', {'queue_new_to_top': True})
+    t.client.call('core.set_config', {'prioritize_first_last_pieces': True})
     t.client.call('core.set_config', {'download_location': bytes(f'{currentPath}/downloads'.encode('utf-8'))})

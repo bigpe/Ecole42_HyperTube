@@ -15,7 +15,7 @@ API_MAP = {
 PARAMS = {}
 
 
-def getData(url, pointer=None):
+def getData(url: str, pointer: list = None):
     # Унифицированный обработчик запросов, работает в контексте реквеста и без него
     # Траслирует все именованные аргументы в будущий запрос, так же можно передать указатель
     # для рекурсивного поиска по вложенному словарю, чтобы фильтровать начальную точку входа
@@ -41,20 +41,23 @@ def getData(url, pointer=None):
     PARAMS = {}
     # Если прошел неуспешный запрос
     if r.status_code != requests.codes['ok']:
-        return {'error': 1, 'message': 'Destination unreachable, maybe IP is blocked'}
-    response = {
-        'data':     getDataRecursive(r.json(), pointer) if pointer else r.json(),
-        'error':    0,
-        'message':  'Success'
-    }
-    return response
+        return createAnswer('Destination unreachable, maybe IP is blocked', True)
+    return createAnswer('Success', False, {'data': getDataRecursive(r.json(), pointer) if pointer else r.json()})
 
 
-def getParams(r):
+def getParams(r: request):
     return r.get_json() if r.get_data() else dict(r.args)
 
 
-def findAPI(url):
+# Обработчик backend ответов
+def createAnswer(message: str, err: bool = False, additions: dict = None):
+    answer = {'error': 1 if err else 0, 'message': message}
+    if additions:  # Можно передать дополнительный словарь чтобы расширить стандартный ответ
+        answer.update(additions)
+    return answer
+
+
+def findAPI(url: str):
     cleanUrl = url.split('//')[1].split('/')[0]
     zone = cleanUrl.split('.')[-1]
     domain = cleanUrl.split(f'.{zone}')[0]
@@ -130,10 +133,10 @@ def stopLoadMovie():
     torrentPath = f'torrentFiles/{torrentHash}.torrent'
     torrentsList = TorrentUtils.getSavedTorrentFiles()
     if torrentPath not in torrentsList:
-        abort(404, 'Torrent file not found')
+        return createAnswer('Torrent file not found', True)
     torrentHash = torrentHash.lower()
     TorrentUtils().stopTorrent(torrentHash)
-    return {'message': 'Torrent stopped'}
+    return createAnswer('Torrent stopped')
 
 
 def statusLoadMovie():
@@ -142,7 +145,7 @@ def statusLoadMovie():
     torrentPath = f'torrentFiles/{torrentHash}.torrent'
     torrentsList = TorrentUtils.getSavedTorrentFiles()
     if torrentPath not in torrentsList:
-        abort(404, 'Torrent file not found')
+        return createAnswer('Torrent file not found', True)
     t = TorrentUtils()
     torrentHash = torrentHash.lower()
     torrentObj = t.getTorrents(['progress'], {'hash': torrentHash})[bytes(torrentHash.encode('utf-8'))]
@@ -266,13 +269,5 @@ def checkPassword():
     login = session['login']
     user = User.query.filter_by(login=login, password=password).first()
     return createAnswer('Password correct') if user else createAnswer('Password Incorrect')
-
-
-# Обработчик backend ответов
-def createAnswer(message, err=False, additions=None):
-    answer = {'error': 1 if err else 0, 'message': message}
-    if additions:  # Можно передать дополнительный словарь чтобы расширить стандартный ответ
-        answer.update(additions)
-    return answer
 
 
