@@ -12,11 +12,12 @@ export default class MediaElement extends Component {
     state = {}
 
     success(media, node, instance) {
-        console.log(instance);
+        console.log("succsers", media.getReadyState());
+
     }
 
     error(media) {
-        // Your action when media had an error loading
+        this.props.onErr(media)
     }
 
     render() {
@@ -76,7 +77,7 @@ export default class MediaElement extends Component {
     }
 
     componentWillUnmount() {
-        if (this.state.player) {
+        if (this.props.testProps) {
             this.state.player?.remove();
             this.setState({player: null});
         }

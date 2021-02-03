@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const localhost = "http://localhost:5006"
+const localhost = "http://0.0.0.0:5006"
 
 export const getRequest = (url, options) => {
     const config = {
@@ -12,6 +12,7 @@ export const getRequest = (url, options) => {
         },
         data: options,
         url: `${localhost}${url}`,
+        withCredentials: true
     };
     return axios(config);
 };

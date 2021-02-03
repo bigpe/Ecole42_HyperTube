@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { connect, useDispatch } from "react-redux";
 import {getMovieById, getUrlMovieReady} from "../actions/movie";
 import {
@@ -10,12 +10,16 @@ import {
 import {CardGroup, Col, Container, Image, Row, Spinner} from "react-bootstrap";
 import MediaElement from "../components/MediaElement/MediaElement";
 import Actor from "../components/Actor";
-import {getRequest} from "../utils/api";
 
 const SearchPage = ({curMovie, loading, location, movieReady, progress}) => {
     const dispatch = useDispatch();
+    const [error, setError] = useState('');
     const movieId= location.search.slice(1);
-
+    const mediaPlayer = useRef();
+    const errorMedia = (e) => {
+        console.log("error", e)
+        setError(e);
+    };
     const
         sources = [
             { src: movieReady && `http://localhost:5006/${curMovie.urlTorr.videoPath}`, type: 'video/mp4' },
@@ -26,17 +30,16 @@ const SearchPage = ({curMovie, loading, location, movieReady, progress}) => {
             lang:"English",
             kind:"subtitles"
     }];
-    console.log(progress?.progress);
     useEffect(()=> {
         dispatch(getMovieById(movieId))
     }, [movieId]);
-
-    useEffect(() => {
-        if (progress?.progress < 20) {
-            getRequest('/movie/status/', { "torrentHash" : curMovie.movie?.torrents[0]?.hash })
-                .then(response => dispatch(getUrlMovieReady(response.data)));
-        }
-    }, [progress]);
+    //
+    // useEffect(() => {
+    //     // if (progress?.progress < 20) {
+    //     //     getRequest('/movie/status/', { "torrentHash" : curMovie.movie?.torrents[0]?.hash })
+    //     //         .then(response => dispatch(getUrlMovieReady(response.data)));
+    //     // }
+    // }, [progress]);
     return loading && movieReady && (
         <Container className="justify-content-center align-items-center">
             <Row>
@@ -53,19 +56,21 @@ const SearchPage = ({curMovie, loading, location, movieReady, progress}) => {
             </Row>
             <Row>
                 <Col className="col-sm col-lg m-5">
-                    {progress?.progress > 20 ? <MediaElement id="player1"
-                                   mediaType="video"
-                                   preload="none"
-                                   controls
-                                   width="100%"
-                                   height="360"
-                                   poster={curMovie.movie.background_image_original}
-                                   sources={JSON.stringify(sources)}
-                                   options={JSON.stringify(config)}
-                                   tracks={JSON.stringify(tracks)}/>
-                    :
-                        <Spinner placeholder="loading"/>
-                    }
+                    <MediaElement
+                        testProps={error}
+                        onErr={errorMedia}
+                        id="player1"
+                        ref={mediaPlayer}
+                        mediaType="video"
+                        preload="none"
+                        controls
+                        width="100%"
+                        height="360"
+                        poster={curMovie.movie.background_image_original}
+                        sources={JSON.stringify(sources)}
+                        options={JSON.stringify(config)}
+                        tracks={JSON.stringify(tracks)}
+                    />
                 </Col>
             </Row>
             <Row>
