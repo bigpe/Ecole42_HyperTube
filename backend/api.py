@@ -196,17 +196,13 @@ def createUser():
 
 def getUser():
     data = getParams(request)
-    if 'login' not in data:
-        return {'error': 1, 'message': 'Login must be filled'}
+    fieldsToCheck = ['login']
+    if checkAnswer := checkRequiredFields(fieldsToCheck, data): return checkAnswer
     login = data['login']
     user = User.query.filter_by(login=login).first()
     if not user:
         return createAnswer('User not Exist', True)
-    userInfo = {
-        'firstName': user.firstName,
-        'lastName': user.lastName,
-        'email': user.email
-    }
+    userInfo = getUserInfo(user)
     return createAnswer('User Founded', False, userInfo)
 
 
@@ -224,8 +220,8 @@ def changeUser():
 
 def checkLoginExist():
     data = getParams(request)
-    if 'login' not in data:
-        return {'error': 1, 'message': 'Login must be filled'}
+    fieldsToCheck = ['login']
+    if checkAnswer := checkRequiredFields(fieldsToCheck, data): return checkAnswer
     login = data['login']
     user = checkDataDb(db.session.query(User).filter_by(login=login))
     return createAnswer('Login exist') if user else createAnswer('Login vacant')
@@ -233,8 +229,8 @@ def checkLoginExist():
 
 def checkEmailExist():
     data = getParams(request)
-    if 'email' not in data:
-        return {'message': 'Email must be filled'}
+    fieldsToCheck = ['email']
+    if checkAnswer := checkRequiredFields(fieldsToCheck, data): return checkAnswer
     email = data['email']
     user = checkDataDb(db.session.query(User).filter_by(email=email))
     return createAnswer('Email exist') if user else createAnswer('Email vacant')
@@ -242,14 +238,17 @@ def checkEmailExist():
 
 def authUser():
     data = getParams(request)
-    if 'login' not in data:
-        return createAnswer('Login must be filled', True)
+    fieldsToCheck = ['login']
+    if checkAnswer := checkRequiredFields(fieldsToCheck, data): return checkAnswer
     login = data['login']
     password = createHash(data['password'])
     user = User.query.filter_by(login=login, password=password).first()
     if user:
         session['login'] = login
-    return createAnswer('Authed') if user else createAnswer('Login or password incorrect', True)
+    if not user:
+        createAnswer('Login or password incorrect', True)
+    userInfo = getUserInfo(user)
+    return createAnswer('Authed', False, userInfo)
 
 
 def logoutUser():
@@ -264,13 +263,31 @@ def checkAuth():
 
 def checkPassword():
     data = getParams(request)
-    if 'login' not in session:
-        return createAnswer('Not Authed', True)
-    if 'password' not in data:
-        return createAnswer('Password must be filled', True)
+    fieldsToCheck = ['login', 'password']
+    if checkAnswer := checkRequiredFields(fieldsToCheck, data): return checkAnswer
     password = createHash(data['password'])
     login = session['login']
     user = User.query.filter_by(login=login, password=password).first()
     return createAnswer('Password correct') if user else createAnswer('Password Incorrect')
+
+
+def getUserInfo(user: User) -> dict:
+    userInfo = {
+        'firstName': user.firstName,
+        'lastName': user.lastName,
+        'email': user.email
+    }
+    return userInfo
+
+
+def checkRequiredFields(fields: list, data: dict):
+    notExistField = []
+    for f in fields:
+        if f not in data:
+            notExistField.append(f)
+    if notExistField:
+        return createAnswer(f"{', '.join(notExistField)} must be filled", True)
+    return False
+
 
 
