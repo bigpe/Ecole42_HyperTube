@@ -4,6 +4,7 @@ from torrentUtils import TorrentUtils
 from functools import reduce
 from database import updateDb, updateDbByDict, deleteById, checkDataDb, User, db
 from globalUtils import createHash
+import sys
 
 
 # ^H в ключе - отправка заголовком
@@ -214,6 +215,8 @@ def changeUser():
     if 'login' not in session:
         return createAnswer('Not Authed', True)
     login = session['login']
+    if 'password' in data:
+        data['password'] = createHash(data['password'])
     user = User.query.filter_by(login=login).first()
     updateDbByDict(data, user)
     return createAnswer('Info change successful')
