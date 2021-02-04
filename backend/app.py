@@ -136,6 +136,16 @@ def createCommentary():
     ...
 
 
+@app.route('/user/auth/42', methods=['POST', 'GET'])
+def authUser42():
+    ...
+
+
+@app.route('/user/auth/google', methods=['POST', 'GET'])
+def authUserGoogle():
+    ...
+
+
 if __name__ == '__main__':
     app.run(**addressInit(), threaded=True, debug=True)
 

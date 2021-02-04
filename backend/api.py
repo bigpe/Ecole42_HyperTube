@@ -173,8 +173,7 @@ def statusLoadMovie(params):
     t = TorrentUtils()
     torrentHash = torrentHash.lower()
     torrentObj = t.getTorrents(['progress'], {'hash': torrentHash})[bytes(torrentHash.encode('utf-8'))]
-    resDict = {'progress': torrentObj[b'progress']}
-    return resDict
+    return createAnswer('Success', False, {'progress': torrentObj[b'progress']})
 
 
 def findMetaFiles(resDict, filePath):
