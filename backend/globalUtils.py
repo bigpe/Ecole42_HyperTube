@@ -7,6 +7,7 @@ from pathlib import Path
 import base64
 import sys
 from hashlib import sha256
+from functools import reduce
 
 MessageLimitLen = 100
 
@@ -41,11 +42,11 @@ def messageHandler(element, prefix=None, postfix=None, tp="msg", xPos=1, yPos=1)
     if tp == "err" or tp == "ttl" or tp == "msg":
         result = f"{Fore.CYAN}{Style.BRIGHT}[{datetime.now().strftime('%H:%M')}]{Style.RESET_ALL} " + result
     result = "".join(yPosS) + "".join(xPosS) + result
-    print(result)
+    print(result, file=sys.stderr)
 
 
 def copyToClipboard(data: Union[dict, list, str]):
-    allowedToCopy = [dict, list, str]
+    allowedToCopy = {dict, list, str}
     if data:
         if type(data) == dict or type(data) == list:
             data = json.dumps(data)  # Dump to Json String if Dict || List Detected
@@ -58,7 +59,7 @@ def copyToClipboard(data: Union[dict, list, str]):
         messageHandler("Not copied data is empty\n", tp="err")
 
 
-def openFile(path: Union[str, Path]) -> base64:
+def readFile(path: Union[str, Path]) -> base64:
     with open(path, 'rb') as f:
         fileEncode = base64.b64encode(f.read())
     return fileEncode
@@ -72,6 +73,12 @@ def saveFile(fileData, fileName, directory: [str, Path] = '.'):
         return f.name
 
 
+def deleteFile(fileName, directory: [str, Path] = '.'):
+    if directory.replace('.', ''):
+        Path(f'{directory}').mkdir(exist_ok=True)
+    Path(f'{directory}/{fileName}').unlink(missing_ok=True)
+
+
 def addressInit(debug=True):
     data = {'debug': debug}
     if len(sys.argv) > 1:
@@ -80,5 +87,11 @@ def addressInit(debug=True):
     return data
 
 
-def createHash(hashString: str):
+# Создание sha256 хэша строки
+def createHash(hashString: str) -> str:
     return sha256(hashString.encode('UTF-8')).hexdigest()
+
+
+# Рекурсивный поиск по словарю, для проверки вложенных ключей
+def getDataRecursive(dataDict: dict, mapList: list):
+    return reduce(dict.get, mapList, dataDict)

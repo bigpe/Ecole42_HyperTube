@@ -59,6 +59,10 @@ def checkDataDb(query):
     return a
 
 
+def getOneByFields(table, **fields):
+    return table.query.filter_by(**fields).first()
+
+
 db.create_all()
 
 
