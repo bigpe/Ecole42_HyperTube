@@ -75,7 +75,7 @@ const AuthPage = () => {
     const dispatch = useDispatch();
 
     const IntraOauth = () => {
-        getIntraRequest(`https://api.intra.42.fr/oauth/authorize?client_id=db5cd84b784b4c4998f4131c353ef1828345aa1ce5ed3b6ebac9f7e4080be068&redirect_uri=http%3A%2F%2F0.0.0.0%3A8888&response_type=code`)
+        getIntraRequest(`https://api.intra.42.fr/oauth/authorize?client_id=db5cd84b784b4c4998f4131c353ef1828345aa1ce5ed3b6ebac9f7e4080be068&redirect_uri=http%3A%2F%2Flocalhost%3A5006&response_type=code`)
     }
 
     const handleSubmit = () => {
@@ -100,8 +100,12 @@ const AuthPage = () => {
                                 <div className="sign">
                                     <Row>
                                         <Col>
-                                            <Button className="login-btn" color="secondary" onClick={IntraOauth}><img width={25} src={logo_42}></img></Button>
-                                           
+                                            <form target="_blank" action="https://api.intra.42.fr/oauth/authorize" method="GET">
+                                                <input type="hidden" name="client_id" value="db5cd84b784b4c4998f4131c353ef1828345aa1ce5ed3b6ebac9f7e4080be068"></input>
+                                                <input type="hidden" name="redirect_uri" value="https://localhost:5006"></input>
+                                                <input type="hidden" name="response_type" value="code"></input>
+                                                <Button className="login-btn" color="secondary"><img width={25} src={logo_42}></img></Button>
+                                            </form>
                                         </Col>
                                     </Row>                            
                                 </div>
