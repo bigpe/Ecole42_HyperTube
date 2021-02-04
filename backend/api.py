@@ -5,12 +5,10 @@ from database import updateDbByDict, deleteById, getOneByFields, User, db
 from globalUtils import createHash, getDataRecursive
 import sys
 from typing import Union
+from app import app
 
-# ^H в ключе - отправка заголовком
-API_MAP = {
-    'themoviedb': {'api_key': '6c60e65c45de8fc3495acac976c567ce'},
-    'opensubtitles': {'Api-Key^H': '1xPMLpBzqrPAU893YsgmO65rDblq05Yd'}
-}
+
+API_MAP = app.config['API_MAP']
 # Параметры переданные вне контекста реквест, в основном используется для тестирования
 PARAMS = {}
 
@@ -286,6 +284,10 @@ def checkPassword(params) -> dict:
     return createAnswer('Password correct') if user else createAnswer('Password Incorrect')
 
 
+def createCommentary():
+    ...
+
+
 def getUserInfo(user: User) -> dict:
     userInfo = {
         'firstName': user.firstName,
@@ -308,3 +310,11 @@ def checkRequiredFields(fields, params: dict) -> Union[dict, bool]:
 def getUserByFields(**fields) -> User:
     user = getOneByFields(User, **fields)
     return user
+
+
+def getCommentariesByMovieIMDBid(IMDBid):
+    ...
+
+
+def updateWatchStatisticByMovieIMDBid(IMDBid):
+    ...

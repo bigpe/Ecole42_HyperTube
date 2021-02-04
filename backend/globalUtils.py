@@ -79,8 +79,8 @@ def deleteFile(fileName, directory: [str, Path] = '.'):
     Path(f'{directory}/{fileName}').unlink(missing_ok=True)
 
 
-def addressInit(debug=True):
-    data = {'debug': debug}
+def addressInit():
+    data = {}
     if len(sys.argv) > 1:
         temp = sys.argv[1].split(':')
         data.update({'host': temp[0], 'port': int(temp[1])})
