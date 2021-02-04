@@ -4,10 +4,24 @@ import {useDispatch} from "react-redux";
 import {userLogOut} from "../../actions/user";
 import { Link } from "react-router-dom";
 import { lang } from '../../utils/location';
+import { getGetRequest } from "../../utils/api";
+import { useHistory } from "react-router-dom";
 
 const Header = () => {
+    const history = useHistory();
     const route = window.location.pathname;
     const dispatch = useDispatch();
+
+    const check = () => {
+
+        getGetRequest('/user/logout')
+        .then((res) => {
+            console.log(res);
+        });
+        dispatch(userLogOut());
+        history.push('/');
+    }
+
     return (
         <>
             <Navbar bg="light" expand="lg">
@@ -16,10 +30,10 @@ const Header = () => {
                     <Nav className="mr-5">
                         <Col><Link to="/">Hypertube </Link></Col>
                         <Col><Link to="/search">{lang.ru.search}</Link></Col>
-                        <Col><Link to="/user">{lang.ru.user}</Link></Col>
+                        <Col><Link to="/profile">{lang.ru.user}</Link></Col>
                     </Nav>
                 </Navbar.Collapse>
-                <Button onClick={() => dispatch(userLogOut())}>Log out</Button>
+                <Button onClick={check}>Log out</Button>
                 { route !== '/search' &&
                 <InputGroup className="w-25 ml-0">
                     <FormControl

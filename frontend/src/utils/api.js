@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const localhost = "http://0.0.0.0:5006"
+const localhost = "http://localhost:5006"
 
 export const getRequest = (url, options) => {
     const config = {
@@ -8,10 +8,11 @@ export const getRequest = (url, options) => {
         headers: {
             'content-type': 'application/json',
             'Access-Control-Allow-Origin': '*',
-            'credentials': 'same-origin'
+            'credentials': 'same-origin',
+            'withCredentials' : 'true'
         },
         data: options,
-        url: `${localhost}${url}`,
+        url: `${localhost}${url}`, 
     };
     return axios(config);
 };
@@ -22,7 +23,8 @@ export const getIntraRequest = (url, options) => {
         headers: {
             'content-type': 'text/plain',
             'Access-Control-Allow-Origin': '*',
-            'credentials': 'include'
+            'credentials': 'include',
+            'withCredentials' : 'true'
         },
         data: options,
         url: url,
@@ -30,5 +32,19 @@ export const getIntraRequest = (url, options) => {
     return axios(config);
 };
 
+export const getGetRequest = (url, options) => {
+    const config = {
+        method: 'GET',
+        headers: {
+            'content-type': 'text/plain',
+            'Access-Control-Allow-Origin': '*',
+            'credentials': 'include',
+            'withCredentials' : 'true'
+        },
+        data: options,
+        url: `${localhost}${url}`,
+    };
+    return axios(config);
+};
+
 export const putRequest = (url, content) => axios.put(`${localhost}${url}`, {...content});
-export const getGetRequest = (url, content) => axios.get(`${localhost}${url}`);

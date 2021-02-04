@@ -7,14 +7,15 @@ import logo_42 from "./42_logo.svg";
 import { GoogleLogin } from 'react-google-login';
 import { refreshTokenSetup } from '../utils/refreshToken';
 import { getIntraRequest } from "../utils/api";
-import {getRequest } from "../utils/api";
-import Cookies from "js-cookie";
+import { getRequest } from "../utils/api";
 
 const clientId = '241696023762-9cvk3687223kn9kqklfb5bjv20jsc920.apps.googleusercontent.com';
 
 function LoginGoogle() {
+    const dispatch = useDispatch();
     const onSuccess = (res) => {
         console.log('Login Success: currentUser:', res.profileObj);
+            dispatch(userLogIn());
         //alert(`Logged in successfully welcome ${res.profileObj.name} 😍.`);
         refreshTokenSetup(res);
     };
@@ -72,11 +73,9 @@ const AuthPage = () => {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
-    Cookies.set('access_token', '');
 
     const IntraOauth = () => {
         getIntraRequest(`https://api.intra.42.fr/oauth/authorize?client_id=db5cd84b784b4c4998f4131c353ef1828345aa1ce5ed3b6ebac9f7e4080be068&redirect_uri=http%3A%2F%2F0.0.0.0%3A8888&response_type=code`)
-    
     }
 
     const handleSubmit = () => {
@@ -85,12 +84,11 @@ const AuthPage = () => {
             password: password
         })
         .then(result => {
-            if(result.data.message == 'Authed' && !result.data.error){
+            if (result.data.message == 'Authed' && !result.data.error){
                 console.log(result);
-                dispatch(userLogIn());
+                dispatch(userLogIn()); 
             }
         })
-
     }
     return (
         <section className="conteiner login">
@@ -103,7 +101,7 @@ const AuthPage = () => {
                                     <Row>
                                         <Col>
                                             <Button className="login-btn" color="secondary" onClick={IntraOauth}><img width={25} src={logo_42}></img></Button>
-                                            
+                                           
                                         </Col>
                                     </Row>                            
                                 </div>
@@ -129,7 +127,5 @@ const AuthPage = () => {
 }
 
 export default AuthPage;
-//<LoginGoogle/>
-//<Button onClick={() => dispatch(userLogIn())}>Log in </Button>
 
-//
+// <LoginGoogle/>
