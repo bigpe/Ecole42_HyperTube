@@ -1,16 +1,16 @@
 import React from "react";
-import {Container, Row, Col, Card, CardBody, CardImg, CardTitle, CardSubtitle, CardText, Button} from 'reactstrap';
+import { Container, Row, Col, Card, CardBody, CardImg, CardTitle, CardSubtitle, CardText, Button } from 'reactstrap';
 import "../App.css"
 import no_photo from "./no_photo.jpg"
 
-const User = () => {
+const Profile = () => {
     let user = {
         nickname : "ffood",
         firstname : "Sofia",
         lastname : "Sherbakova",
         avatar : ""
     };
-   return(
+    return(
         <Container className="conteiner">
                     <Card className="mb-4">
                         <Row>
@@ -29,8 +29,7 @@ const User = () => {
                         </Row>
                     </Card>
         </Container>
-
-   );
+    );
 }
 
-export default User;
+export default Profile;

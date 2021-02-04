@@ -1,28 +1,10 @@
 import React from 'react';
 import { useState } from 'react';
 import { NavLink, Card, CardBody, Row, Col, FormGroup, Label, Input, FormFeedback, Button, Container, Alert } from 'reactstrap';
-//import { setLogin, setFirstName, setLastName, setEmail, setPassword, setRepassword} from '../actions/user';
 import { isValidInput, isValidPassword } from '../utils/checkValid';
 import {getRequest, putRequest} from "../utils/api";
-//import {connect} from "react-redux";
 import { useHistory } from "react-router-dom";
-/*
-const mapStateToProps = (state) => {
-    return {
-        sign: state.sign
-    }
-}
-// гриша крутой поц
-const mapDispatchToProps = (dispatch) => ({
-    setLogin: (Login) => dispatch(setLogin(Login)),
-    setFirstName: (FirstName) => dispatch(setFirstName(FirstName)),
-    setLastName: (LastName) => dispatch(setLastName(LastName)),
-    setEmail: (Email) => dispatch(setEmail(Email)),
-    setPassword: (Password) => dispatch(setPassword(Password)),
-    setRepassword: (Repassword) => dispatch(setRepassword(Repassword)),
-    //fetchRegister: (data) => dispatch(fetchRegister(data))
-});
-*/
+
 function InputForm(props) {
     const [isValid, toggleValid] = useState('');
 
@@ -250,5 +232,4 @@ const Sign = (props) => {
         )
 }
 
-//export default connect(mapStateToProps, mapDispatchToProps)(Sign);
 export default Sign;
