@@ -1,7 +1,7 @@
 import React from "react";
-import { Button, Col, Dropdown, FormControl, InputGroup, Nav, Navbar } from "react-bootstrap";
-import {useDispatch} from "react-redux";
-import {userLogOut} from "../../actions/user";
+import { Button, Col, FormControl, InputGroup, Nav, Navbar } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { userLogOut } from "../../actions/user";
 import { Link } from "react-router-dom";
 import { lang } from '../../utils/location';
 import { getGetRequest } from "../../utils/api";
@@ -41,7 +41,6 @@ const Header = () => {
                         aria-label={lang.ru.search}
                         aria-describedby="basic-addon2"
                     />
-
                     <InputGroup.Append>
                         <Button variant="outline-secondary">Search</Button>
                     </InputGroup.Append>

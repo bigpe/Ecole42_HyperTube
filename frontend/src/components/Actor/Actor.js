@@ -2,9 +2,9 @@ import React from "react";
 import { Card, Col } from "react-bootstrap";
 
 const Actor = ({character_name, imdb_code, name, url_small_image}) => (
-    <Card>
+    <Card className="w-auto">
         { url_small_image ? (
-            <Card.Img variant="top" src={url_small_image} alt={name}/>
+            <Card.Img variant="top"  className="w-30" src={url_small_image} alt={name}/>
             )
         :
             (

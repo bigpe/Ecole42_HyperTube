@@ -7,3 +7,4 @@ deluge_client
 flasgger
 pyperclip
 colorama
+Flask-Mail

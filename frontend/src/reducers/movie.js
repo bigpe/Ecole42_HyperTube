@@ -8,7 +8,7 @@ import {
     MOVIE_BY_ID_SUCCESS,
     MOVIE_BY_ID_REQUEST,
     MOVIE_BY_ID_TORRENT_REQUEST,
-    MOVIE_BY_ID_TORRENT_SUCCESS
+    MOVIE_BY_ID_TORRENT_SUCCESS, MOVIE_BY_ID_TORRENT_READY
 } from '../constants/actions/movie';
 
 const initialState = {
@@ -82,6 +82,14 @@ const movie = (state= initialState, action) => {
                     ...state.curMovie,
                     ready: true,
                     urlTorr: action.payload
+                }
+            };
+            case MOVIE_BY_ID_TORRENT_READY:
+            return {
+                ...state,
+                curMovie: {
+                    ...state.curMovie,
+                    readyMovie: action.payload,
                 }
             };
         default: return state;

@@ -8,11 +8,11 @@ export const getRequest = (url, options) => {
         headers: {
             'content-type': 'application/json',
             'Access-Control-Allow-Origin': '*',
-            'credentials': 'same-origin',
-            'withCredentials' : 'true'
+            'credentials': 'include'
         },
         data: options,
-        url: `${localhost}${url}`, 
+        url: `${localhost}${url}`,
+        withCredentials: true
     };
     return axios(config);
 };

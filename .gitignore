@@ -8,3 +8,4 @@
 /.idea
 /frontend/package-lock.json
 /backend/db.sqlite3
+/frontend/yarn.lock

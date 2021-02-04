@@ -2,7 +2,7 @@ from flask import Flask, jsonify, render_template, send_from_directory
 from flasgger import Swagger, swag_from, LazyJSONEncoder
 from flask_cors import CORS
 import api
-import globalUtils
+from globalUtils import addressInit
 from delugeSetup import setupApp
 from flask_sqlalchemy import SQLAlchemy
 
@@ -13,7 +13,7 @@ class HyperTubeApp(Flask):
         self.config.from_object('config')
         self.json_encoder = LazyJSONEncoder
         Swagger(self, **self.config['SWAGGER'])
-        CORS(self)
+        CORS(self, supports_credentials=True)
         setupApp()
         self.db = SQLAlchemy(self)
 
@@ -132,6 +132,10 @@ def checkPassword():
     return jsonify(api.checkPassword())
 
 
+def createCommentary():
+    ...
+
+
 if __name__ == '__main__':
-    app.run(**globalUtils.addressInit(), threaded=True)
+    app.run(**addressInit(), threaded=True, debug=True)
 

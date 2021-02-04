@@ -50,13 +50,8 @@ def updateDb(query, delete=False):
     return query.id if not delete else True
 
 
-def checkDataDb(query):
-    try:
-        a = query.all()
-    except:
-        db.session.close()
-        a = query.all()
-    return a
+def getOneByFields(table, **fields):
+    return table.query.filter_by(**fields).first()
 
 
 db.create_all()
