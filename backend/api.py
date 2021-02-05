@@ -232,7 +232,7 @@ def changeUser(params: dict, files: dict) -> dict:
         fileName = secure_filename(files[f].filename)
         savePath = f'media/{fileName}'
         files[f].save(savePath)
-        params.update({f: savePath})
+        params.update({f: f'/{savePath}'})
     if answer := checkAuthed():
         return answer
     login = session['login']
