@@ -7,7 +7,6 @@ import sys
 from typing import Union
 from app import app
 
-
 API_MAP = app.config['API_MAP']
 # Параметры переданные вне контекста реквест, в основном используется для тестирования
 PARAMS = {}
@@ -222,7 +221,7 @@ def getUser(params) -> dict:
     return createAnswer('User Founded', False, userInfo)
 
 
-@getParams
+@getParams()
 def changeUser(params) -> dict:
     if 'login' not in session:
         return createAnswer('Not Authed', True)
@@ -291,7 +290,8 @@ def getUserInfo(user: User) -> dict:
     userInfo = {
         'firstName': user.firstName,
         'lastName': user.lastName,
-        'email': user.email
+        'email': user.email,
+        'login': user.login
     }
     return userInfo
 
@@ -317,3 +317,17 @@ def getCommentariesByMovieIMDBid(IMDBid):
 
 def updateWatchStatisticByMovieIMDBid(IMDBid):
     ...
+
+
+@getParams('code')
+def authUser42(params):
+    code = params['code']
+    params = {'grant_type': 'client_credentials',
+              'client_id': 'db5cd84b784b4c4998f4131c353ef1828345aa1ce5ed3b6ebac9f7e4080be068',
+              'client_secret': '8f57b290400dea66eb8f52ca7f189fef0b58f296bfbf4b889c059090e0bee7bc',
+              'code': code
+              }
+    r = requests.post('https://api.intra.42.fr/oauth/token', data=params)
+    token = r.json()['access_token']
+    r = requests.get(f'https://api.intra.42.fr/v2/me/?access_token={token}&token_type=bearer')
+    return r.json()

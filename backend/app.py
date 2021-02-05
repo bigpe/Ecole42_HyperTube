@@ -5,6 +5,7 @@ import api
 from globalUtils import addressInit
 from delugeSetup import setupApp
 from flask_sqlalchemy import SQLAlchemy
+import sys
 
 
 class HyperTubeApp(Flask):
@@ -136,12 +137,12 @@ def createCommentary():
     ...
 
 
-@app.route('/user/auth/42', methods=['POST', 'GET'])
+@app.route('/user/auth/42', methods=['GET'])
 def authUser42():
-    ...
+    return jsonify(api.authUser42())
 
 
-@app.route('/user/auth/google', methods=['POST', 'GET'])
+@app.route('/user/auth/google', methods=['GET'])
 def authUserGoogle():
     ...
 
