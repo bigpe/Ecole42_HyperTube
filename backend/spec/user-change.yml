@@ -11,6 +11,9 @@ parameters:
   - name: password
     type: string
     in: query
+  - name: userPhoto
+    type: file
+    in: formData
 responses:
   200:
     schema:

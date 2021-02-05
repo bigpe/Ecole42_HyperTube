@@ -29,8 +29,13 @@ def index(path):
 
 
 @app.route('/downloads/<path:path>')
-def sendFile(path):
+def sendDownload(path):
     return send_from_directory('downloads', path)
+
+
+@app.route('/media/<path:path>')
+def sendMedia(path):
+    return send_from_directory('media', path)
 
 
 @app.route('/movies/', methods=['POST', 'OPTIONS'])

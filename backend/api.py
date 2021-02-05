@@ -6,25 +6,30 @@ from globalUtils import createHash, getDataRecursive
 import sys
 from typing import Union
 from app import app
+from werkzeug.utils import secure_filename
 
 API_MAP = app.config['API_MAP']
 # Параметры переданные вне контекста реквест, в основном используется для тестирования
 PARAMS = {}
 
 
+
 # Декоратор для передачи данных полученных из тела запроса/аргуменов запроса
 # А так же для проверки обязательных полей для заполнения, которые
 # должны содержаться в теле запроса
-def getParams(*fieldsToCheck):
+def getParams(*fieldsToCheck, files=()):
     def checkFields(func=None):
         def findParams():
             params = findParamsFromRequest(request)
+            if not params:
+                params = {}
             if fieldsToCheck:  # Прерываем выполнение запроса если любое
                 # из обязательных полей переданных в декоратор
                 # не было найдено в теле/аргументах запроса
-                if checkAnswer := checkRequiredFields(fieldsToCheck, params=params):
+                if checkAnswer := checkRequiredFields(fieldsToCheck, params=params, files=request.files):
                     return checkAnswer
-            return func(params) if func else params
+            print(request.files, file=sys.stderr)
+            return func(params, request.files if files else params) if func else params
         return findParams
     return checkFields
 
@@ -221,14 +226,21 @@ def getUser(params) -> dict:
     return createAnswer('User Founded', False, userInfo)
 
 
-@getParams()
-def changeUser(params) -> dict:
+@getParams('userPhoto', files=True)
+def changeUser(params: dict, files: dict) -> dict:
+    for f in files:
+        fileName = secure_filename(files[f].filename)
+        savePath = f'media/{fileName}'
+        files[f].save(savePath)
+        params.update({f: savePath})
     if 'login' not in session:
         return createAnswer('Not Authed', True)
     login = session['login']
     if 'password' in params:
         params['password'] = createHash(params['password'])
     user = getUserByFields(login=login)
+    if not user:
+        return createAnswer('User not Exist', True)
     updateDbByDict(params, user)
     return createAnswer('Info change successful')
 
@@ -291,15 +303,18 @@ def getUserInfo(user: User) -> dict:
         'firstName': user.firstName,
         'lastName': user.lastName,
         'email': user.email,
-        'login': user.login
+        'login': user.login,
+        'userPhoto': user.userPhoto
     }
     return userInfo
 
 
-def checkRequiredFields(fields, params: dict) -> Union[dict, bool]:
+def checkRequiredFields(fields, params: dict, files) -> Union[dict, bool]:
     notExistField = []
+    print(params, file=sys.stderr)
+    print(files, file=sys.stderr)
     for f in fields:
-        if f not in params:
+        if f not in params and f not in files:
             notExistField.append(f)
     if notExistField:
         return createAnswer(f"{', '.join(notExistField)} must be filled", True)
