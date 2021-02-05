@@ -37,7 +37,7 @@ def findParamsFromRequest(r: request):
 # Унифицированный обработчик запросов, работает в контексте реквеста и без него
 # Траслирует все именованные аргументы в будущий запрос, так же можно передать указатель
 # для рекурсивного поиска по вложенному словарю, чтобы фильтровать начальную точку входа
-def getData(url: str, pointer: list = None):
+def getData(url: str, pointer: list = None, method='get', body=None) -> dict:
     global PARAMS
     context = True
     try:
@@ -45,7 +45,7 @@ def getData(url: str, pointer: list = None):
     except RuntimeError:  # Выставляем отрицательный флаг отсутсвия контекста,
         # если функция была вызвана в тестовом режиме
         context = False
-    data = {'params': findParamsFromRequest(request)} if context else PARAMS
+    data = body if body else {'params': findParamsFromRequest(request)} if context else PARAMS
     domain = findAPI(url)
     if domain in API_MAP:
         # Исполняем дополнительные инструкции для API, содержащегося в карте
@@ -56,7 +56,7 @@ def getData(url: str, pointer: list = None):
             else:
                 data['params'].update({k: API_MAP[domain][k]})
     # Распаковываем и передаем в запрос все именнованные аргументы
-    r = requests.get(url, **data)
+    r = getattr(requests, method.lower())(url, **data)
     PARAMS = {}
     # Если прошел неуспешный запрос
     if r.status_code != requests.codes['ok']:
@@ -323,11 +323,11 @@ def updateWatchStatisticByMovieIMDBid(IMDBid):
 def authUser42(params):
     code = params['code']
     params = {'grant_type': 'client_credentials',
-              'client_id': 'db5cd84b784b4c4998f4131c353ef1828345aa1ce5ed3b6ebac9f7e4080be068',
-              'client_secret': '8f57b290400dea66eb8f52ca7f189fef0b58f296bfbf4b889c059090e0bee7bc',
+              'client_id': '173a93db1a07fb5601d44574be15fe05e148dad1eb8f9ab4e6b0041d4f6b4e87',
+              'client_secret': '2940c3b599a7016d2695ea7e7563d72d1f755eb3e178ee5328b001ea2b8060c4',
               'code': code
               }
-    r = requests.post('https://api.intra.42.fr/oauth/token', data=params)
-    token = r.json()['access_token']
-    r = requests.get(f'https://api.intra.42.fr/v2/me/?access_token={token}&token_type=bearer')
-    return r.json()
+    token = getData('https://api.intra.42.fr/oauth/token',
+                    method='POST', body={'data': params})['data']['access_token']
+    return getData(f'https://api.intra.42.fr/v2/me',
+                   body={'headers': {'Authorization': f'Bearer {token}'}})
