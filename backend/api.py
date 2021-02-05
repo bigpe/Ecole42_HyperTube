@@ -13,9 +13,10 @@ API_MAP = app.config['API_MAP']
 PARAMS = {}
 
 
-# Декоратор для передачи данных полученных из тела запроса/аргуменов запроса
+# Декоратор для передачи данных и файлов полученных из тела/аргуменов запроса
 # А так же для проверки обязательных полей для заполнения, которые
-# должны содержаться в теле запроса
+# должны содержаться в теле/файлах запроса
+# Для получения файлов из запроса необходимо передать files=True в функцию, декоратор вернет их вторым аргументом
 def getParams(*fieldsToCheck, files=()):
     def checkFields(func=None):
         def findParams():
@@ -228,13 +229,13 @@ def getUser(params) -> dict:
 
 @getParams(files=True)
 def changeUser(params: dict, files: dict) -> dict:
+    if answer := checkAuthed():
+        return answer
     for f in files:
         fileName = secure_filename(files[f].filename)
         savePath = f'media/{fileName}'
         files[f].save(savePath)
         params.update({f: f'/{savePath}'})
-    if answer := checkAuthed():
-        return answer
     login = session['login']
     if 'password' in params:
         params['password'] = createHash(params['password'])
