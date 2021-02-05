@@ -22,7 +22,7 @@ responses:
     schema:
       allOf:
         - $ref: '#/definitions/AnswerAPI'
-            - type: object
-              properties:
-                data:
-                  type: object
+        - type: object
+          properties:
+            data:
+              type: object
