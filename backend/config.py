@@ -51,5 +51,5 @@ SECRET_KEY = '87,mad#124##$2139nmawjdnhH$#21'
 # ^H в ключе - отправка заголовком
 API_MAP = {
     'themoviedb': {'api_key': '6c60e65c45de8fc3495acac976c567ce'},
-    'opensubtitles': {'Api-Key^H': '1xPMLpBzqrPAU893YsgmO65rDblq05Yd'}
+    'opensubtitles': {'Api-Key^H': '1xPMLpBzqrPAU893YsgmO65rDblq05Yd'},
 }

@@ -323,8 +323,8 @@ def updateWatchStatisticByMovieIMDBid(IMDBid):
 def authUser42(params):
     code = params['code']
     params = {'grant_type': 'client_credentials',
-              'client_id': '173a93db1a07fb5601d44574be15fe05e148dad1eb8f9ab4e6b0041d4f6b4e87',
-              'client_secret': '2940c3b599a7016d2695ea7e7563d72d1f755eb3e178ee5328b001ea2b8060c4',
+              'client_id': 'db5cd84b784b4c4998f4131c353ef1828345aa1ce5ed3b6ebac9f7e4080be068',
+              'client_secret': '8f57b290400dea66eb8f52ca7f189fef0b58f296bfbf4b889c059090e0bee7bc',
               'code': code
               }
     token = getData('https://api.intra.42.fr/oauth/token',
