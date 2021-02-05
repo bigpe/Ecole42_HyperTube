@@ -13,7 +13,6 @@ API_MAP = app.config['API_MAP']
 PARAMS = {}
 
 
-
 # Декоратор для передачи данных полученных из тела запроса/аргуменов запроса
 # А так же для проверки обязательных полей для заполнения, которые
 # должны содержаться в теле запроса
@@ -28,8 +27,9 @@ def getParams(*fieldsToCheck, files=()):
                 # не было найдено в теле/аргументах запроса
                 if checkAnswer := checkRequiredFields(fieldsToCheck, params=params, files=request.files):
                     return checkAnswer
-            print(request.files, file=sys.stderr)
-            return func(params, request.files if files else params) if func else params
+            if files:
+                return func(params, request.files) if func else params
+            return func(params) if func else params
         return findParams
     return checkFields
 
@@ -226,15 +226,15 @@ def getUser(params) -> dict:
     return createAnswer('User Founded', False, userInfo)
 
 
-@getParams('userPhoto', files=True)
+@getParams(files=True)
 def changeUser(params: dict, files: dict) -> dict:
     for f in files:
         fileName = secure_filename(files[f].filename)
         savePath = f'media/{fileName}'
         files[f].save(savePath)
         params.update({f: savePath})
-    if 'login' not in session:
-        return createAnswer('Not Authed', True)
+    if answer := checkAuthed():
+        return answer
     login = session['login']
     if 'password' in params:
         params['password'] = createHash(params['password'])
@@ -272,14 +272,15 @@ def authUser(params) -> dict:
 
 
 def logoutUser() -> dict:
-    if 'login' in session:
-        del session['login']
+    if answer := checkAuthed():
+        return answer
+    del session['login']
     return createAnswer('Logout complete')
 
 
 def checkAuth() -> dict:
-    if 'login' not in session:
-        return createAnswer('Not Authed', True)
+    if answer := checkAuthed():
+        return answer
     login = session['login']
     user = getUserByFields(login=login)
     userInfo = getUserInfo(user)
@@ -288,6 +289,8 @@ def checkAuth() -> dict:
 
 @getParams('password')
 def checkPassword(params) -> dict:
+    if answer := checkAuthed():
+        return answer
     password = createHash(params['password'])
     login = session['login']
     user = getUserByFields(login=login, password=password)
@@ -311,8 +314,6 @@ def getUserInfo(user: User) -> dict:
 
 def checkRequiredFields(fields, params: dict, files) -> Union[dict, bool]:
     notExistField = []
-    print(params, file=sys.stderr)
-    print(files, file=sys.stderr)
     for f in fields:
         if f not in params and f not in files:
             notExistField.append(f)
@@ -346,3 +347,10 @@ def authUser42(params):
                     method='POST', body={'data': params})['data']['access_token']
     return getData(f'https://api.intra.42.fr/v2/me',
                    body={'headers': {'Authorization': f'Bearer {token}'}})
+
+
+def checkAuthed():
+    if 'login' not in session:
+        return createAnswer('Not Authed', True)
+    return False
+
