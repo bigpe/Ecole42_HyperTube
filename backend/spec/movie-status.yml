@@ -10,10 +10,10 @@ responses:
   200:
     description: Status loading movie in %
     schema:
-      type: object
-      properties:
-        progress:
-          type: integer
-          format: float
-  400:
-    description: Torrent not found on local storage
+      allOf:
+        - $ref: '#/definitions/AnswerAPI'
+        - type: object
+          properties:
+            progress:
+              type: integer
+              format: float

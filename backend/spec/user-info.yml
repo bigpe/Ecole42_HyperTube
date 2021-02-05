@@ -9,17 +9,6 @@ responses:
   200:
     description: User Info
     schema:
-      type: object
-      properties:
-        message:
-          type: string
-        error:
-          type: integer
-        id:
-          type: integer
-        email:
-          type: string
-        firstName:
-          type: string
-        lastName:
-          type: string
+      allOf:
+        - $ref: '#/definitions/UserInfo'
+        - $ref: '#/definitions/AnswerAPI'

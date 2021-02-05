@@ -11,9 +11,6 @@ parameters:
 responses:
   200:
     schema:
-      type: object
-      properties:
-        message:
-          type: string
-        error:
-          type: integer
+      allOf:
+       - $ref: '#/definitions/UserInfo'
+       - $ref: '#/definitions/AnswerAPI'

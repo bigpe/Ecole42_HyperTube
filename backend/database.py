@@ -10,6 +10,7 @@ class User(db.Model):
     password = db.Column(db.String(64), index=True)
     firstName = db.Column(db.String(100))
     lastName = db.Column(db.String(100))
+    userPhoto = db.Column(db.String(200), nullable=True)
 
 
 def updateDbByDict(dataDict, table, insert=False):

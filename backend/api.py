@@ -6,25 +6,30 @@ from globalUtils import createHash, getDataRecursive
 import sys
 from typing import Union
 from app import app
-
+from werkzeug.utils import secure_filename
 
 API_MAP = app.config['API_MAP']
 # Параметры переданные вне контекста реквест, в основном используется для тестирования
 PARAMS = {}
 
 
-# Декоратор для передачи данных полученных из тела запроса/аргуменов запроса
+# Декоратор для передачи данных и файлов полученных из тела/аргуменов запроса
 # А так же для проверки обязательных полей для заполнения, которые
-# должны содержаться в теле запроса
-def getParams(*fieldsToCheck):
+# должны содержаться в теле/файлах запроса
+# Для получения файлов из запроса необходимо передать files=True в функцию, декоратор вернет их вторым аргументом
+def getParams(*fieldsToCheck, files=()):
     def checkFields(func=None):
         def findParams():
             params = findParamsFromRequest(request)
+            if not params:
+                params = {}
             if fieldsToCheck:  # Прерываем выполнение запроса если любое
                 # из обязательных полей переданных в декоратор
                 # не было найдено в теле/аргументах запроса
-                if checkAnswer := checkRequiredFields(fieldsToCheck, params=params):
+                if checkAnswer := checkRequiredFields(fieldsToCheck, params=params, files=request.files):
                     return checkAnswer
+            if files:
+                return func(params, request.files) if func else params
             return func(params) if func else params
         return findParams
     return checkFields
@@ -38,7 +43,7 @@ def findParamsFromRequest(r: request):
 # Унифицированный обработчик запросов, работает в контексте реквеста и без него
 # Траслирует все именованные аргументы в будущий запрос, так же можно передать указатель
 # для рекурсивного поиска по вложенному словарю, чтобы фильтровать начальную точку входа
-def getData(url: str, pointer: list = None):
+def getData(url: str, pointer: list = None, method='get', body=None) -> dict:
     global PARAMS
     context = True
     try:
@@ -46,7 +51,7 @@ def getData(url: str, pointer: list = None):
     except RuntimeError:  # Выставляем отрицательный флаг отсутсвия контекста,
         # если функция была вызвана в тестовом режиме
         context = False
-    data = {'params': findParamsFromRequest(request)} if context else PARAMS
+    data = body if body else {'params': findParamsFromRequest(request)} if context else PARAMS
     domain = findAPI(url)
     if domain in API_MAP:
         # Исполняем дополнительные инструкции для API, содержащегося в карте
@@ -57,7 +62,7 @@ def getData(url: str, pointer: list = None):
             else:
                 data['params'].update({k: API_MAP[domain][k]})
     # Распаковываем и передаем в запрос все именнованные аргументы
-    r = requests.get(url, **data)
+    r = getattr(requests, method.lower())(url, **data)
     PARAMS = {}
     # Если прошел неуспешный запрос
     if r.status_code != requests.codes['ok']:
@@ -173,8 +178,7 @@ def statusLoadMovie(params):
     t = TorrentUtils()
     torrentHash = torrentHash.lower()
     torrentObj = t.getTorrents(['progress'], {'hash': torrentHash})[bytes(torrentHash.encode('utf-8'))]
-    resDict = {'progress': torrentObj[b'progress']}
-    return resDict
+    return createAnswer('Success', False, {'progress': torrentObj[b'progress']})
 
 
 def findMetaFiles(resDict, filePath):
@@ -223,14 +227,21 @@ def getUser(params) -> dict:
     return createAnswer('User Founded', False, userInfo)
 
 
-@getParams
-def changeUser(params) -> dict:
-    if 'login' not in session:
-        return createAnswer('Not Authed', True)
+@getParams(files=True)
+def changeUser(params: dict, files: dict) -> dict:
+    if answer := checkAuthed():
+        return answer
+    for f in files:
+        fileName = secure_filename(files[f].filename)
+        savePath = f'media/{fileName}'
+        files[f].save(savePath)
+        params.update({f: f'/{savePath}'})
     login = session['login']
     if 'password' in params:
         params['password'] = createHash(params['password'])
     user = getUserByFields(login=login)
+    if not user:
+        return createAnswer('User not Exist', True)
     updateDbByDict(params, user)
     return createAnswer('Info change successful')
 
@@ -262,14 +273,15 @@ def authUser(params) -> dict:
 
 
 def logoutUser() -> dict:
-    if 'login' in session:
-        del session['login']
+    if answer := checkAuthed():
+        return answer
+    del session['login']
     return createAnswer('Logout complete')
 
 
 def checkAuth() -> dict:
-    if 'login' not in session:
-        return createAnswer('Not Authed', True)
+    if answer := checkAuthed():
+        return answer
     login = session['login']
     user = getUserByFields(login=login)
     userInfo = getUserInfo(user)
@@ -278,6 +290,8 @@ def checkAuth() -> dict:
 
 @getParams('password')
 def checkPassword(params) -> dict:
+    if answer := checkAuthed():
+        return answer
     password = createHash(params['password'])
     login = session['login']
     user = getUserByFields(login=login, password=password)
@@ -293,15 +307,16 @@ def getUserInfo(user: User) -> dict:
         'firstName': user.firstName,
         'lastName': user.lastName,
         'email': user.email,
-        'login': user.login
+        'login': user.login,
+        'userPhoto': user.userPhoto
     }
     return userInfo
 
 
-def checkRequiredFields(fields, params: dict) -> Union[dict, bool]:
+def checkRequiredFields(fields, params: dict, files) -> Union[dict, bool]:
     notExistField = []
     for f in fields:
-        if f not in params:
+        if f not in params and f not in files:
             notExistField.append(f)
     if notExistField:
         return createAnswer(f"{', '.join(notExistField)} must be filled", True)
@@ -319,3 +334,24 @@ def getCommentariesByMovieIMDBid(IMDBid):
 
 def updateWatchStatisticByMovieIMDBid(IMDBid):
     ...
+
+
+@getParams('code')
+def authUser42(params):
+    code = params['code']
+    params = {'grant_type': 'client_credentials',
+              'client_id': 'db5cd84b784b4c4998f4131c353ef1828345aa1ce5ed3b6ebac9f7e4080be068',
+              'client_secret': '8f57b290400dea66eb8f52ca7f189fef0b58f296bfbf4b889c059090e0bee7bc',
+              'code': code
+              }
+    token = getData('https://api.intra.42.fr/oauth/token',
+                    method='POST', body={'data': params})['data']['access_token']
+    return getData(f'https://api.intra.42.fr/v2/me',
+                   body={'headers': {'Authorization': f'Bearer {token}'}})
+
+
+def checkAuthed():
+    if 'login' not in session:
+        return createAnswer('Not Authed', True)
+    return False
+
