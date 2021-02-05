@@ -20,11 +20,9 @@ parameters:
 responses:
   200:
     schema:
-      type: object
-      properties:
-        message:
-          type: string
-        error:
-          type: integer
-        id:
-          type: integer
+      allOf:
+        - $ref: '#/definitions/AnswerAPI'
+        - type: object
+          properties:
+            id:
+              type: integer

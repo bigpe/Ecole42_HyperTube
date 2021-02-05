@@ -43,7 +43,40 @@ SWAGGER = {
             {"name": "Persons", "description": "Actions with persons"},
             {"name": "Genres", "description": "Actions with genres"},
             {"name": "Users", "description": "Actions with users"},
-        ]
+        ],
+        'definitions': {
+            'UserInfo': {
+                'type': 'object',
+                'properties': {
+                    'firstName': {
+                        'type': 'string'
+                    },
+                    'lastName': {
+                        'type': 'string'
+                    },
+                    'email': {
+                        'type': 'string'
+                    },
+                    'login': {
+                        'type': 'string'
+                    },
+                    'userPhoto': {
+                        'type': 'string'
+                    },
+                }
+            },
+            'AnswerAPI': {
+                'type': 'object',
+                'properties': {
+                    'error': {
+                        'type': 'boolean'
+                    },
+                    'message': {
+                        'type': 'string'
+                    }
+                }
+            }
+        }
     }
 }
 SECRET_KEY = '87,mad#124##$2139nmawjdnhH$#21'

@@ -10,9 +10,9 @@ responses:
   200:
     description: Genres list
     schema:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
+      allOf:
+        - $ref: '#/definitions/AnswerAPI'
+        - type: object
+          properties:
+            data:
+              type: array
