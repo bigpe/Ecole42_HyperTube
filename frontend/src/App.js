@@ -25,28 +25,26 @@ import { setUserData } from "./actions/user";
 const App = ({user})  => {
 
     const dispatch = useDispatch();
-/*
-    const data = {
-        auth: true,
-        login: 'ffood',
-        firstName : 'hello', 
-        lastName: 'world', 
-        email: 'helloworld@mail.ru',
-        langv: 'ru',
-    }
-    dispatch(setUserData(data));
-*/
 
     useEffect(() => {
         getGetRequest('/user/auth')
             .then((res) => {
+                const data = {
+                    auth: true,
+                    login: res.data.login,
+                    firstName : res.data.firstName, 
+                    lastName: res.data.lastName, 
+                    email: res.data.email,
+                    photo: res.data.photo,
+                }
                 if( res.data.message == "Authed" )
                 {
                     dispatch(userLogIn());
+                    dispatch(setUserData(data));
                     console.log(res);
                 }
             });
-      },[]);
+      },[user.auth]);
 
     if (user.auth) return (
     <div className="App m-0 p-0" >

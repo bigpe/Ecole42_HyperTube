@@ -7,6 +7,7 @@ const initialState = {
     firstName : '', 
     lastName: '', 
     email: '',
+    photo: '',
     langv: 'ru',
 }
 
@@ -21,7 +22,7 @@ export const user = (state= initialState, action) => {
         case USER_SET_DATA:
             return {...state, ...action.payload}
         case USER_LOG_OUT:
-                return {...state, auth: false}
+                return {...state, ...initialState}
         default:
             return state;
     }

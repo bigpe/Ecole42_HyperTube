@@ -292,7 +292,8 @@ def getUserInfo(user: User) -> dict:
     userInfo = {
         'firstName': user.firstName,
         'lastName': user.lastName,
-        'email': user.email
+        'email': user.email,
+        'login': user.login
     }
     return userInfo
 

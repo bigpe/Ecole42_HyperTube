@@ -94,12 +94,14 @@ const EditProfile = () => {
     const handleSubmitInfo = () => {
         const data = {
             login: login,
+            email: email,
             firstName: firstName,
             lastName: lastName,
-            email: email,
-            newPassword: newPassword
         }
-        getRequest('/user/', data);
+        getRequest('/user/', data)
+        .then((res) => {
+            console.log(res);
+        });
     }
 
     const handleSubmitPassword = () => {
@@ -109,6 +111,27 @@ const EditProfile = () => {
         getRequest('/user/', data);
     }
 
+    function putPhoto(e) {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            const type = e.target.files[0].type;
+            if (!type.match("image/png") && !type.match("image/jpeg") && !type.match("image/jpg")) {
+                alert('Wrong format!');
+                return;
+            }
+            let formData = new FormData();
+            formData.append('photo', file);
+            getRequest('/user/', formData)
+                .then(data => {
+                    if (data) {
+                        console.log(data);
+                    }
+                })
+                .catch(e => {
+                    alert(e.message);
+                })
+        }
+    }
         return (
             <section className="conteiner login">
                 <Container>
@@ -117,19 +140,24 @@ const EditProfile = () => {
                             <Card className="mb-4 shadow-sm">
                                 <CardBody>
                                     <Row>
-                                        <Col>
-                                            <CardTitle tag="h5">Change information</CardTitle>
-                                            <InputForm name='login' placeholder='Login' feedback='Invalid login' set={setLogin} checkBtn={checkBtn} />
-                                            <InputForm name='firstName' placeholder='First name' feedback='Only symbols are required' set={setFirstName} checkBtn={checkBtn}/>
-                                            <InputForm name='lastName' placeholder='Last name' feedback='Only symbols are required' set={setLastName} checkBtn={checkBtn}/>
-                                            <InputForm name='email' placeholder='Email' set={setEmail} feedback='Invalid email' checkBtn={checkBtn}/>
-                                            <Button className="btn-success" type="submit" value="Save" onClick={handleSubmitInfo} disabled={isActiveBtn} block>Save</Button>
+                                        <Col>  
+                                                <CardTitle tag="h5">Change information</CardTitle>
+                                                <InputForm name='login' placeholder='Login' feedback='Invalid login' set={setLogin} checkBtn={checkBtn} />
+                                                <InputForm name='firstName' placeholder='First name' feedback='Only symbols are required' set={setFirstName} checkBtn={checkBtn}/>
+                                                <InputForm name='lastName' placeholder='Last name' feedback='Only symbols are required' set={setLastName} checkBtn={checkBtn}/>
+                                                <InputForm name='email' placeholder='Email' set={setEmail} feedback='Invalid email' checkBtn={checkBtn}/>
+                                                <Button className="btn-success" type="submit" value="Save" onClick={handleSubmitInfo} disabled={isActiveBtn} block>Save</Button>
+
+                                                <CardTitle tag="h5">Change password</CardTitle>
+                                                <InputForm name='currentPass' type='password' placeholder='Current password' feedback='Too weak password. 8 symbols is required' set={setCurrentPassword} checkBtn={checkBtn}/>
+                                                <InputForm name='newPass' type='password' placeholder='New password' feedback='Too weak password. 8 symbols is required' set={setNewPassword} checkBtn={checkBtn}/>
+                                                <Button className="btn-success" type="submit" value="Save" onClick={handleSubmitPassword} disabled={isActiveBtn} block>Save</Button>
+
                                         </Col>
                                         <Col>
-                                            <CardTitle tag="h5">Change password</CardTitle>
-                                            <InputForm name='currentPass' type='password' placeholder='Current password' feedback='Too weak password. 8 symbols is required' set={setCurrentPassword} checkBtn={checkBtn}/>
-                                            <InputForm name='newPass' type='password' placeholder='New password' feedback='Too weak password. 8 symbols is required' set={setNewPassword} checkBtn={checkBtn}/>
-                                            <Button className="btn-success" type="submit" value="Save" onClick={handleSubmitPassword} disabled={isActiveBtn} block>Save</Button>
+                                            <CardTitle tag="h5">Change photo</CardTitle>
+                                            <CardImg width="30%" src={no_photo} className="profile-img"/>
+                                            <Input className="profile-input" type="file" onChange={e => putPhoto(e)} />
                                         </Col>
                                     </Row>
                                     <div className="dropdown-divider"></div>
@@ -144,5 +172,3 @@ const EditProfile = () => {
 }
 
 export default EditProfile;
-
-//<Label><CardImg width="60%" src={no_photo} className="profile-img"/></Label>
