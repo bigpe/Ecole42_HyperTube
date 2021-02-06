@@ -10,22 +10,23 @@ import { getRequest, getGetRequest } from "../utils/api";
 
 const clientId = '241696023762-9cvk3687223kn9kqklfb5bjv20jsc920.apps.googleusercontent.com';
 
-const responseGoogle = (response) => {
-    getGetRequest(`user/auth/google?id_token=${response.tokenId}`)
-        .then(() => {
-            console.log("I've done it!");
-        })
-    console.log(response);
-  }
 
 function LoginGoogle() {
+    /*const responseGoogle = (response) => {
+        getGetRequest(`user/auth/google?id_token=${response.tokenId}`)
+            .then(() => {
+                console.log("I've done it!");
+            })
+        console.log(response);
+      }
+
     const dispatch = useDispatch();
     const onSuccess = (res) => {
         console.log('Login Success: currentUser:', res.profileObj);
             dispatch(userLogIn());
         //alert(`Logged in successfully welcome ${res.profileObj.name} 😍.`);
         refreshTokenSetup(res);
-    };
+    };*/
     const onFailure = (res) => {
         console.log('Login failed: res:', res);
     };
@@ -34,7 +35,7 @@ function LoginGoogle() {
             <GoogleLogin
               clientId={clientId}
               buttonText=""
-              onSuccess={responseGoogle}
+              //onSuccess={responseGoogle}
               onFailure={onFailure}
               cookiePolicy={'single_host_origin'}
               //style={{ marginTop: '100px', marginRight: '-10px'}}

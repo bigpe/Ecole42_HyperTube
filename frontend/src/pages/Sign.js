@@ -217,8 +217,8 @@ const Sign = (props) => {
                                     />
                                     <InputFormWithFetch set={setLogin} onBlur={checkBtn} labelName='Login' name='login'/>
                                     <InputFormWithFetch set={setEmail} onBlur={checkBtn} labelName='Email' name='email'/>
-                                    <Password setPass={setPassword} onBlur={checkBtn} />
-                                    <Button color="secondary" type="submit" disabled={isActiveBtn} onClick={handleSubmit} onBlur={checkBtn} block>Sign Up</Button>
+                                    <Password setPass={setPassword} onChange={checkBtn} />
+                                    <Button color="secondary" type="submit" disabled={isActiveBtn} onClick={handleSubmit} onChange={checkBtn} block>Sign Up</Button>
                                     <Col>
                                         <div className="dropdown-divider"></div>
                                         <NavLink href='/'>Back</NavLink>
