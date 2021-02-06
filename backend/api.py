@@ -195,7 +195,8 @@ def findMetaFiles(resDict, filePath):
     if findVideo(filePath):
         resDict.update({'videoPath': filePath})
     if findSubtitles(filePath):
-        resDict.update({'subtitlesPath': filePath})
+        resDict.update({'subtitlesPath': [{'en': 'test_EN_path.srt', 'fr': 'test_FR_path.srt'}]})
+        # resDict.update({'subtitlesPath': filePath})
     return resDict
 
 
