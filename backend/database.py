@@ -10,6 +10,7 @@ class User(db.Model):
     password = db.Column(db.String(64), index=True)
     firstName = db.Column(db.String(100))
     lastName = db.Column(db.String(100))
+    userPhoto = db.Column(db.String(200), nullable=True)
 
 
 def updateDbByDict(dataDict, table, insert=False):
@@ -50,13 +51,8 @@ def updateDb(query, delete=False):
     return query.id if not delete else True
 
 
-def checkDataDb(query):
-    try:
-        a = query.all()
-    except:
-        db.session.close()
-        a = query.all()
-    return a
+def getOneByFields(table, **fields):
+    return table.query.filter_by(**fields).first()
 
 
 db.create_all()

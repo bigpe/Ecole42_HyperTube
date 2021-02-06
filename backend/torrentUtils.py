@@ -1,5 +1,6 @@
 from deluge_client import DelugeRPCClient
 from torrentool.torrent import Torrent
+from torrentool.exceptions import BencodeDecodingError
 import requests
 from typing import Union
 from pathlib import Path
@@ -43,11 +44,14 @@ class TorrentUtils:
         self.torrents = self.client.call('core.get_torrents_status', filters, fields)
         return self.torrents
 
-    def addTorrent(self, path: Union[str, Path]) -> str:
-        torrent = Torrent.from_file(path)
+    def addTorrent(self, path: Union[str, Path]) -> Union[str, bool]:
+        try:
+            torrent = Torrent.from_file(path)
+        except BencodeDecodingError:
+            return False
         torrentId = torrent.info_hash
         if not self.checkTorrentExist(torrent.info_hash):
-            fileEncoded = globalUtils.openFile(path)
+            fileEncoded = globalUtils.readFile(path)
             torrentId = self.client.call('core.add_torrent_file', '', fileEncoded, {
                 'sequential_download': True,
                 'prioritize_first_last': True})
@@ -67,7 +71,7 @@ class TorrentUtils:
         self.client.call('core.set_torrent_options', [torrentId], options)
 
     def addPlugin(self, path: Union[str, Path]):
-        fileEncoded = globalUtils.openFile(path)
+        fileEncoded = globalUtils.readFile(path)
         fileName = Path(path).name
         self.client.call('core.upload_plugin', fileName, fileEncoded)
 
@@ -81,6 +85,10 @@ class TorrentUtils:
         torrentData = requests.get(torrentUrl).content
         path = globalUtils.saveFile(torrentData, fileName, 'torrentFiles')
         return path
+
+    @staticmethod
+    def deleteTorrentFile(fileName):
+        globalUtils.deleteFile(fileName, 'torrentFiles')
 
     @staticmethod
     def getTorrentName(torrent: Union[str, Path]):

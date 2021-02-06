@@ -30,7 +30,7 @@ const Remind = () => {
                                 </Col>
                                 <Col>
                                     <div className="dropdown-divider"></div>
-                                    <NavLink href='/auth' >Back</NavLink>
+                                    <NavLink href='/' >Back</NavLink>
                                 </Col>
                             </CardBody>
                         </Card>

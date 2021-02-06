@@ -2,9 +2,10 @@ from flask import Flask, jsonify, render_template, send_from_directory
 from flasgger import Swagger, swag_from, LazyJSONEncoder
 from flask_cors import CORS
 import api
-import globalUtils
+from globalUtils import addressInit
 from delugeSetup import setupApp
 from flask_sqlalchemy import SQLAlchemy
+import sys
 
 
 class HyperTubeApp(Flask):
@@ -13,7 +14,7 @@ class HyperTubeApp(Flask):
         self.config.from_object('config')
         self.json_encoder = LazyJSONEncoder
         Swagger(self, **self.config['SWAGGER'])
-        CORS(self)
+        CORS(self, supports_credentials=True)
         setupApp()
         self.db = SQLAlchemy(self)
 
@@ -28,8 +29,13 @@ def index(path):
 
 
 @app.route('/downloads/<path:path>')
-def sendFile(path):
+def sendDownload(path):
     return send_from_directory('downloads', path)
+
+
+@app.route('/media/<path:path>')
+def sendMedia(path):
+    return send_from_directory('media', path)
 
 
 @app.route('/movies/', methods=['POST', 'OPTIONS'])
@@ -132,6 +138,20 @@ def checkPassword():
     return jsonify(api.checkPassword())
 
 
+def createCommentary():
+    ...
+
+
+@app.route('/user/auth/42', methods=['GET'])
+def authUser42():
+    return jsonify(api.authUser42())
+
+
+@app.route('/user/auth/google', methods=['GET'])
+def authUserGoogle():
+    ...
+
+
 if __name__ == '__main__':
-    app.run(**globalUtils.addressInit(), threaded=True)
+    app.run(**addressInit(), threaded=True, debug=True)
 

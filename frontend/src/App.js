@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     BrowserRouter as Router,
     Switch,
@@ -16,22 +16,40 @@ import Auth from "./pages/Auth";
 import Sign from "./pages/Sign";
 import Remind from "./pages/Remind";
 import Restore from "./pages/Restore";
+import { getGetRequest } from "./utils/api";
+import { useDispatch } from "react-redux";
+import { userLogIn } from "./actions/user";
 
 const App = ({user})  => {
-    return user.auth ? (
-        <div className="App m-0 p-0" >
-            <Router>
-                <Header/>
-                <Switch>
-                    <Route exact path="/" component={Home}/>
-                    <Route path="/search" component={SearchPage}/>
-                    <Route path="/profile" component={Profile}/>
-                    <Route path="/movie/" component={MoviePage}/>
-                    <Route path="/edit_profile" component={EditProfile}/>
-                </Switch>
-            </Router>
-        </div>
-    ) : (
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        getGetRequest('/user/auth')
+            .then((res) => {
+                if( res.data.message === "Authed" )
+                {
+                    dispatch(userLogIn());
+                    console.log(res);
+                }
+            });
+    },[]);
+
+    if (user.auth) return (
+    <div className="App m-0 p-0" >
+        <Router>
+            <Header/>
+            <Switch>
+                <Route exact path="/" component={Home}/>
+                <Route path="/search" component={SearchPage}/>
+                <Route path="/profile" component={Profile}/>
+                <Route path="/movie/" component={MoviePage}/>
+                <Route path="/edit_profile" component={EditProfile}/>
+            </Switch>
+        </Router>
+    </div>
+  )
+    else
+        return (
             <Router>
                 <Switch>
                     <Route exact path="/" component={Auth}/>

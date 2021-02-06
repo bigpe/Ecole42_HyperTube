@@ -14,5 +14,10 @@ parameters:
 responses:
   200:
     description: Movie list
-    examples:
-      rgb: ['red', 'green', 'blue']
+    schema:
+      allOf:
+        - $ref: '#/definitions/AnswerAPI'
+        - type: object
+          properties:
+            data:
+              type: object

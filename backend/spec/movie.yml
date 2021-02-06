@@ -19,3 +19,10 @@ parameters:
 responses:
   200:
     description: Movie list
+    schema:
+      allOf:
+        - $ref: '#/definitions/AnswerAPI'
+        - type: object
+          properties:
+            data:
+              type: object

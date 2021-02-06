@@ -11,12 +11,11 @@ parameters:
   - name: password
     type: string
     in: query
+  - name: userPhoto
+    type: file
+    in: formData
 responses:
   200:
     schema:
-      type: object
-      properties:
-        message:
-          type: string
-        error:
-          type: integer
+      allOf:
+        - $ref: '#/definitions/AnswerAPI'
