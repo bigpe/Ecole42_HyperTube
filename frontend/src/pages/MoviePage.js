@@ -16,18 +16,17 @@ const SearchPage = ({ curMovie, loading, location, movieReady }) => {
     const [error, setError] = useState("success");
     const onError = (er) => setError(er);
     const movieId= location.search.slice(1);
-
     const
         sources = [
             { src: movieReady && `http://localhost:5006/${curMovie.urlTorr.videoPath}`, type: 'video/mp4' },
         ],
         config = { features: ['playpause', 'current', 'progress', 'duration', 'volume', 'tracks','settings', 'fullscreen']},
-        tracks = [{
-            src: movieReady && `${window.location.host}${curMovie.urlTorr.subtitlesPath}`,
+        tracks = movieReady && curMovie.urlTorr.subtitlesPath ? [{
+            src: `${window.location}${curMovie.urlTorr.subtitlesPath}`,
             label:'English',
             lang:"English",
             kind:"subtitles",
-    }];
+    }] : [];
 
     useEffect(()=> {
         dispatch(getMovieById(movieId))
@@ -36,7 +35,7 @@ const SearchPage = ({ curMovie, loading, location, movieReady }) => {
     return loading && movieReady && (
         <Container className="justify-content-center align-items-center">
             <Row>
-                <Col className="col-sm">
+                <Col className="col-sm ">
                     <h1>{curMovie.movie.title_long}</h1>
                     <Image className="mr-0" src={curMovie.movie.medium_cover_image}/>
                 </Col>

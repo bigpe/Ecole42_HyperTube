@@ -12,19 +12,16 @@ const MediaElement = (props) => {
     const
         sources = JSON.parse(props.sources),
         tracks = JSON.parse(props.tracks),
-        success = (media, node, instance) => {},
+        success = (media, node, instance) => {
+        },
         error = (media) => {props.onErr("error")}
     ;
     const tracksTags = tracks.length && tracks?.map(track => (`<track src="${track.src}" kind="${track.kind}" srclang="${track.lang}"${(track.label ? ` label=${track.label}` : '')}>`))
     const sourceTags = sources.length && sources?.map(source => (`<source src="${source.src}" type="${source.type}">`))
     window.flvjs = flvjs;
     window.Hls = hlsjs;
-    const mediaBody = `${sourceTags?.join("\n")}${tracksTags?.join("\n")}`;
-    const mediaHtml = `<video id="${props.id}" width="${props.width}" height="${props.height}"${(props.poster ? ` poster=${props.poster}` : '')}
-					${(props.controls ? ' controls' : '')}${(props.preload ? ` preload="${props.preload}"` : '')}>
-					${mediaBody}
-				</video>`;
 
+    const mediaBody = `${sourceTags?.join("\n")}${!!tracksTags.length ? tracksTags.join("\n") : ''}`;
 
     useEffect(()=> {
         const { MediaElementPlayer } = global;
@@ -34,8 +31,20 @@ const MediaElement = (props) => {
             error: (media, node) => error(media, node)
         });
         setPlayer(new MediaElementPlayer(props.id, options));
-    }, [props.id]);
-    return (<div dangerouslySetInnerHTML={{__html: mediaHtml}}></div>);
+    }, []);
+    console.log(player);
+    return (
+        <div>
+            <video
+                id={props.id}
+                width={props.width}
+                height={props.height}
+                preload={props.preload}
+                controls={props.controls}
+            >
+                {mediaBody}
+            </video>
+    </div>);
 };
 
 export default MediaElement;

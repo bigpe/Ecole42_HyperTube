@@ -24,7 +24,8 @@ services:
     build: ./backend
     volumes:
       - ./backend:/app
-    volumes_from:
+      - ./frontend/static:/app/static
+    links:
       - frontend-builder
     ports:
       - 5006:5006

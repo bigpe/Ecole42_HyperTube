@@ -55,8 +55,8 @@ module.exports = {
     devServer: {
         contentBase: path.join(__dirname, 'static'),
         compress: true,
-        host: "localhost",
-        port: 8888,
+        host: "0.0.0.0",
+        port: 8889,
         writeToDisk: true,
     },
 };

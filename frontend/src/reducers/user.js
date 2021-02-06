@@ -2,7 +2,7 @@ import { REQUEST_START } from "../constants/actions/common";
 import { USER_AUTH_STATUS, USER_LOG_IN, USER_LOG_OUT, USER_SET_DATA} from "../constants/actions/user";
 
 const initialState = {
-    auth: false,
+    auth: true,
     login: '',
     firstName : '', 
     lastName: '', 
