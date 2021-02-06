@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { NavLink, Card, CardBody, Row, Col, FormGroup, Label, Input, FormFeedback, Button, Container, Alert } from 'reactstrap';
 import { isValidInput, isValidPassword } from '../utils/checkValid';
-import {getRequest, putRequest} from "../utils/api";
+import { getRequest, putRequest} from "../utils/api";
 import { useHistory } from "react-router-dom";
 
 function InputForm(props) {

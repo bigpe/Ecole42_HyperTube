@@ -81,6 +81,7 @@ const EditProfile = () => {
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [isActiveBtn, toggleBtn] = useState(true);
+    const [userPhoto, setUserPhoto] = useState('');
 
     const checkBtn = () => {
         const countInvalidInputs = document.querySelectorAll(".is-invalid").length;
@@ -89,6 +90,16 @@ const EditProfile = () => {
             toggleBtn(false);
         else
             toggleBtn(true);
+    }
+
+    const handleSubmitPhoto = () => {
+        /*
+        getRequest('/user/', userPhoto)
+        .then((res) => {
+            console.log(res);
+        });
+        */
+       console.log(userPhoto);
     }
 
     const handleSubmitInfo = () => {
@@ -111,27 +122,6 @@ const EditProfile = () => {
         getRequest('/user/', data);
     }
 
-    function putPhoto(e) {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            const type = e.target.files[0].type;
-            if (!type.match("image/png") && !type.match("image/jpeg") && !type.match("image/jpg")) {
-                alert('Wrong format!');
-                return;
-            }
-            let formData = new FormData();
-            formData.append('photo', file);
-            getRequest('/user/', formData)
-                .then(data => {
-                    if (data) {
-                        console.log(data);
-                    }
-                })
-                .catch(e => {
-                    alert(e.message);
-                })
-        }
-    }
         return (
             <section className="conteiner login">
                 <Container>
@@ -157,7 +147,8 @@ const EditProfile = () => {
                                         <Col>
                                             <CardTitle tag="h5">Change photo</CardTitle>
                                             <CardImg width="30%" src={no_photo} className="profile-img"/>
-                                            <Input className="profile-input" type="file" onChange={e => putPhoto(e)} />
+                                            <Input className="profile-input" type="file" onChange={e => setUserPhoto(e)} />
+                                            <Button className="btn-success" type="submit" value="Save" onClick={handleSubmitPhoto} disabled={isActiveBtn} block>Save</Button>
                                         </Col>
                                     </Row>
                                     <div className="dropdown-divider"></div>

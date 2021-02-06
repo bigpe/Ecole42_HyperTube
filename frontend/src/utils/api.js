@@ -17,21 +17,6 @@ export const getRequest = (url, options) => {
     return axios(config);
 };
 
-export const getIntraRequest = (url, options) => {
-    const config = {
-        method: 'GET',
-        headers: {
-            'content-type': 'text/plain',
-            'Access-Control-Allow-Origin': '*',
-            'credentials': 'include',
-            'withCredentials' : 'true'
-        },
-        data: options,
-        url: url,
-    };
-    return axios(config);
-};
-
 export const getGetRequest = (url, options) => {
     const config = {
         method: 'GET',

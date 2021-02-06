@@ -6,10 +6,17 @@ import { userLogIn } from "../actions/user";
 import logo_42 from "./42_logo.svg";
 import { GoogleLogin } from 'react-google-login';
 import { refreshTokenSetup } from '../utils/refreshToken';
-import { getIntraRequest } from "../utils/api";
-import { getRequest } from "../utils/api";
+import { getRequest, getGetRequest } from "../utils/api";
 
 const clientId = '241696023762-9cvk3687223kn9kqklfb5bjv20jsc920.apps.googleusercontent.com';
+
+const responseGoogle = (response) => {
+    getGetRequest(`user/auth/google?id_token=${response.tokenId}`)
+        .then(() => {
+            console.log("I've done it!");
+        })
+    console.log(response);
+  }
 
 function LoginGoogle() {
     const dispatch = useDispatch();
@@ -27,7 +34,7 @@ function LoginGoogle() {
             <GoogleLogin
               clientId={clientId}
               buttonText=""
-              onSuccess={onSuccess}
+              onSuccess={responseGoogle}
               onFailure={onFailure}
               cookiePolicy={'single_host_origin'}
               //style={{ marginTop: '100px', marginRight: '-10px'}}
@@ -74,10 +81,6 @@ const AuthPage = () => {
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
 
-    const IntraOauth = () => {
-        getIntraRequest(`https://api.intra.42.fr/oauth/authorize?client_id=db5cd84b784b4c4998f4131c353ef1828345aa1ce5ed3b6ebac9f7e4080be068&redirect_uri=http%3A%2F%2Flocalhost%3A5006&response_type=code`)
-    }
-
     const handleSubmit = () => {
         getRequest('/user/auth', {
             login : login, 
@@ -86,7 +89,7 @@ const AuthPage = () => {
         .then(result => {
             if (result.data.message == 'Authed' && !result.data.error){
                 console.log(result);
-                dispatch(userLogIn()); 
+                dispatch(userLogIn());
             }
         })
     }
@@ -100,9 +103,10 @@ const AuthPage = () => {
                                 <div className="sign">
                                     <Row>
                                         <Col>
+                                            <LoginGoogle/>
                                             <form target="_blank" action="https://api.intra.42.fr/oauth/authorize" method="GET">
                                                 <input type="hidden" name="client_id" value="db5cd84b784b4c4998f4131c353ef1828345aa1ce5ed3b6ebac9f7e4080be068"></input>
-                                                <input type="hidden" name="redirect_uri" value="http://localhost:5006/user/auth/42"></input>
+                                                <input type="hidden" name="redirect_uri" value="http://0.0.0.0:5006/user/auth/42"></input>
                                                 <input type="hidden" name="response_type" value="code"></input>
                                                 <Button className="login-btn" color="secondary"><img width={25} src={logo_42}></img></Button>
                                             </form>
@@ -131,5 +135,3 @@ const AuthPage = () => {
 }
 
 export default AuthPage;
-
-// <LoginGoogle/>
