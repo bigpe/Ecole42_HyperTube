@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect } from 'react';
+import React, { useEffect } from "react";
 import {
     BrowserRouter as Router,
     Switch,
@@ -20,33 +19,20 @@ import Restore from "./pages/Restore";
 import { getGetRequest } from "./utils/api";
 import { useDispatch } from "react-redux";
 import { userLogIn } from "./actions/user";
-import { setUserData } from "./actions/user";
 
 const App = ({user})  => {
-
     const dispatch = useDispatch();
-/*
-    const data = {
-        auth: true,
-        login: 'ffood',
-        firstName : 'hello', 
-        lastName: 'world', 
-        email: 'helloworld@mail.ru',
-        langv: 'ru',
-    }
-    dispatch(setUserData(data));
-*/
 
     useEffect(() => {
         getGetRequest('/user/auth')
             .then((res) => {
-                if( res.data.message == "Authed" )
+                if( res.data.message === "Authed" )
                 {
                     dispatch(userLogIn());
                     console.log(res);
                 }
             });
-      },[]);
+    },[]);
 
     if (user.auth) return (
     <div className="App m-0 p-0" >
@@ -74,7 +60,9 @@ const App = ({user})  => {
             </Router>
         )
 }
+
 const mapStateToProps = (state) => ({
     user: UserSelector(state)
-})
+});
+
 export default connect(mapStateToProps)(App);
