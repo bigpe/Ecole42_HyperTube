@@ -58,6 +58,7 @@ def getData(url: str, pointer: list = None, method='get', body=None) -> dict:
         # если функция была вызвана в тестовом режиме
         context = False
     data = body if body else {'params': findParamsFromRequest(request)} if context else PARAMS
+    print(request.data, file=sys.stderr)
     domain = findAPI(url)
     if domain in API_MAP:
         # Исполняем дополнительные инструкции для API, содержащегося в карте
@@ -195,7 +196,10 @@ def findMetaFiles(resDict, filePath):
     if findVideo(filePath):
         resDict.update({'videoPath': filePath})
     # if findSubtitles(filePath):
-    resDict.update({'subtitlesPath': [{'en': 'test_EN_path.srt', 'fr': 'test_FR_path.srt'}]})
+    resDict.update({'subtitlesPath': [
+        {'en': 'test_EN_path.srt'},
+        {'fr': 'test_FR_path.srt'},
+    ]})
         # resDict.update({'subtitlesPath': filePath})
     return resDict
 
