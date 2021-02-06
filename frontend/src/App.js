@@ -1,5 +1,4 @@
 import React from "react";
-import { useEffect } from 'react';
 import {
     BrowserRouter as Router,
     Switch,
@@ -19,24 +18,20 @@ import Remind from "./pages/Remind";
 import Restore from "./pages/Restore";
 
 const App = ({user})  => {
-
-
-    if (user.auth) return (
-    <div className="App m-0 p-0" >
-        <Router>
-            <Header/>
-            <Switch>
-                <Route exact path="/" component={Home}/>
-                <Route path="/search" component={SearchPage}/>
-                <Route path="/profile" component={Profile}/>
-                <Route path="/movie/" component={MoviePage}/>
-                <Route path="/edit_profile" component={EditProfile}/>
-            </Switch>
-        </Router>
-    </div>
-  )
-    else
-        return (
+    return user.auth ? (
+        <div className="App m-0 p-0" >
+            <Router>
+                <Header/>
+                <Switch>
+                    <Route exact path="/" component={Home}/>
+                    <Route path="/search" component={SearchPage}/>
+                    <Route path="/profile" component={Profile}/>
+                    <Route path="/movie/" component={MoviePage}/>
+                    <Route path="/edit_profile" component={EditProfile}/>
+                </Switch>
+            </Router>
+        </div>
+    ) : (
             <Router>
                 <Switch>
                     <Route exact path="/" component={Auth}/>
@@ -47,7 +42,9 @@ const App = ({user})  => {
             </Router>
         )
 }
+
 const mapStateToProps = (state) => ({
     user: UserSelector(state)
-})
+});
+
 export default connect(mapStateToProps)(App);

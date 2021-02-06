@@ -1,45 +1,38 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { connect, useDispatch } from "react-redux";
-import {getMovieById, getUrlMovieReady} from "../actions/movie";
+import { getMovieById } from "../actions/movie";
 import {
     CurrentMovieSelector,
     LoadingMovieSelector,
     MovieReadyProgressSelector,
     MovieReadySelector
 } from "../selectors/movie";
-import {CardGroup, Col, Container, Image, Row, Spinner} from "react-bootstrap";
+import { CardGroup, Col, Container, Image, Row } from "react-bootstrap";
 import MediaElement from "../components/MediaElement/MediaElement";
 import Actor from "../components/Actor";
 
-const SearchPage = ({curMovie, loading, location, movieReady, progress}) => {
+const SearchPage = ({ curMovie, loading, location, movieReady }) => {
     const dispatch = useDispatch();
-    const [error, setError] = useState('');
+    const [error, setError] = useState("success");
+    const onError = (er) => setError(er);
     const movieId= location.search.slice(1);
-    const mediaPlayer = useRef();
-    const errorMedia = (e) => {
-        console.log("error", e)
-        setError(e);
-    };
+
     const
         sources = [
             { src: movieReady && `http://localhost:5006/${curMovie.urlTorr.videoPath}`, type: 'video/mp4' },
         ],
-        config = {features: ['playpause', 'current', 'progress', 'duration', 'volume', 'tracks','settings', 'fullscreen']},
-        tracks = [{ src: movieReady && `http://localhost:5006/${curMovie.urlTorr.subtitlesPath}`,
+        config = { features: ['playpause', 'current', 'progress', 'duration', 'volume', 'tracks','settings', 'fullscreen']},
+        tracks = [{
+            src: movieReady && `${window.location.host}${curMovie.urlTorr.subtitlesPath}`,
             label:'English',
             lang:"English",
-            kind:"subtitles"
+            kind:"subtitles",
     }];
+
     useEffect(()=> {
         dispatch(getMovieById(movieId))
     }, [movieId]);
-    //
-    // useEffect(() => {
-    //     // if (progress?.progress < 20) {
-    //     //     getRequest('/movie/status/', { "torrentHash" : curMovie.movie?.torrents[0]?.hash })
-    //     //         .then(response => dispatch(getUrlMovieReady(response.data)));
-    //     // }
-    // }, [progress]);
+
     return loading && movieReady && (
         <Container className="justify-content-center align-items-center">
             <Row>
@@ -56,11 +49,10 @@ const SearchPage = ({curMovie, loading, location, movieReady, progress}) => {
             </Row>
             <Row>
                 <Col className="col-sm col-lg m-5">
+                    { error !== "error" ? (
                     <MediaElement
-                        testProps={error}
-                        onErr={errorMedia}
+                        onErr={onError}
                         id="player1"
-                        ref={mediaPlayer}
                         mediaType="video"
                         preload="none"
                         controls
@@ -71,20 +63,24 @@ const SearchPage = ({curMovie, loading, location, movieReady, progress}) => {
                         options={JSON.stringify(config)}
                         tracks={JSON.stringify(tracks)}
                     />
+                    ) : (
+                        <h2>Sorry! Something went wrong</h2>
+                    )}
                 </Col>
             </Row>
             <Row>
                 <Col className="col-sm col-lg m-5">
-                    <h1>
-                        Cast
-                    </h1>
+                    <h1>Cast</h1>
                     <CardGroup className="w-50">
-                    {curMovie.movie.cast?.map((actor, i) => <Actor key={i}
-                                                                  character_name={actor.character_name}
-                                                                  imdb_code={actor.imdb_code}
-                                                                  name={actor.name}
-                                                                  url_small_image={actor.url_small_image}
-                    />)}
+                    {curMovie.movie.cast?.map((actor, i) =>
+                        (
+                            <Actor key={i}
+                                character_name={actor.character_name}
+                                imdb_code={actor.imdb_code}
+                                name={actor.name}
+                                url_small_image={actor.url_small_image}
+                            />
+                    ))}
                     </CardGroup>
                 </Col>
             </Row>

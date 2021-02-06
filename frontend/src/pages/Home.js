@@ -16,23 +16,9 @@ const Home = ({genre}) => {
     return (
         <Container fluid className="justify-content-center">
             {
-                !!genre.length && genre.map((item, i) => (
-                    <Genre key={i} title={item.name} genreKey={i+1}/>
-                ))
+                !!genre.length &&
+                    <Genre title={genre[0].name} genreKey={1}/>
             }
-            <Modal
-                size="lg"
-                show={lgShow}
-                onHide={() => setLgShow(false)}
-                aria-labelledby="example-modal-sizes-title-lg"
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title id="example-modal-sizes-title-lg">
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>...</Modal.Body>
-            </Modal>
-
         </Container>
     )
 }

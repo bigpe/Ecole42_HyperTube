@@ -16,7 +16,7 @@ const Header = () => {
                     <Nav className="mr-5">
                         <Col><Link to="/">Hypertube </Link></Col>
                         <Col><Link to="/search">{lang.ru.search}</Link></Col>
-                        <Col><Link to="/user">{lang.ru.user}</Link></Col>
+                        <Col><Link to="/profile">{lang.ru.user}</Link></Col>
                     </Nav>
                 </Navbar.Collapse>
                 <Button onClick={() => dispatch(userLogOut())}>Log out</Button>
