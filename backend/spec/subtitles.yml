@@ -10,6 +10,10 @@ parameters:
     type: string
     in: query
     description: Language code(s), coma separated (en,fr)
+  - name: order_by
+    type: string
+    in: query
+    description: Order of the returned results, accept any of above fields
   - name: query
     type: string
     in: query
