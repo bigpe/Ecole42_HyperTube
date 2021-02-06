@@ -149,7 +149,18 @@ def authUser42():
 
 @app.route('/user/auth/google', methods=['GET'])
 def authUserGoogle():
-    ...
+    return jsonify(api.authUserGoogle())
+
+
+@app.route('/test/', methods=['GET'])
+def test():
+    return render_template('test.html')
+
+
+@app.route('/subtitles/', methods=['GET'])
+@swag_from('spec/subtitles.yml')
+def getSubtitles():
+    return jsonify(api.getSubtitles())
 
 
 if __name__ == '__main__':

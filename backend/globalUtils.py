@@ -92,6 +92,48 @@ def createHash(hashString: str) -> str:
     return sha256(hashString.encode('UTF-8')).hexdigest()
 
 
-# Рекурсивный поиск по словарю, для проверки вложенных ключей
-def getDataRecursive(dataDict: dict, mapList: list):
-    return reduce(dict.get, mapList, dataDict)
+# Рекурсивный поиск по словарю/массиву, для возврата вложенных значений,
+# рекурсивный путь описывается массивом
+def getDataRecursive(data: Union[dict, list], mapList: list):
+    newData = data
+    newMapList = mapList
+    if not newMapList:
+        return newData
+    if type(data) == dict:
+        newData, newMapList = getRecursiveDict(data, mapList)
+    if type(data) == list:
+        newData, newMapList = getRecursiveList(data, mapList)
+    if newData == data and newMapList == mapList:
+        return []
+    return getDataRecursive(newData, newMapList)
+
+
+def getRecursiveDict(data: dict, mapList: list):
+    newMapList = []
+    tempMapList = mapList
+    for i, m in enumerate(mapList):
+        if type(m) == int:
+            break
+        newMapList.append(m)
+        tempMapList.pop(i)
+    newData = reduce(dict.get, newMapList, data)
+    if not newData:
+        newData = []
+    return newData, tempMapList
+
+
+def getRecursiveList(data, mapList):
+    newMapList = []
+    tempMapList = mapList
+    for i, m in enumerate(mapList):
+        if type(m) != int:
+            break
+        newMapList.append(m)
+        tempMapList.pop(i)
+    for m in newMapList:
+        try:
+            data = data[m]
+        except IndexError:
+            return [], None
+    return data, tempMapList
+

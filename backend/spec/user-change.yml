@@ -4,13 +4,13 @@ summary: "Change User Info"
 parameters:
   - name: firstName
     type: string
-    in: query
+    in: formData
   - name: lastName
     type: string
-    in: query
+    in: formData
   - name: password
     type: string
-    in: query
+    in: formData
   - name: userPhoto
     type: file
     in: formData

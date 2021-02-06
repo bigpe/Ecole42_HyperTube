@@ -43,6 +43,7 @@ SWAGGER = {
             {"name": "Persons", "description": "Actions with persons"},
             {"name": "Genres", "description": "Actions with genres"},
             {"name": "Users", "description": "Actions with users"},
+            {"name": "Subtitles", "description": "Actions with subtitles"},
         ],
         'definitions': {
             'UserInfo': {
