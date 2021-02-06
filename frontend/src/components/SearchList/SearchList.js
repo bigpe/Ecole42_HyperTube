@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 const SearchList = ({movieList}) => {
     return (
         <div>
-            {movieList?.search?.length && movieList.search.map(movie => <Link to={`/movie/?${movie.id}`}><Image class="ml-5" src={movie.medium_cover_image} /></Link>)}
+            {movieList?.search?.length && movieList.search.map(movie => <Link to={`/movie/?${movie.id}`}><Image className="ml-5" src={movie.medium_cover_image} /></Link>)}
             {movieList?.message === "Success" && !movieList.search?.length &&
             (<p>No results</p>)
             }

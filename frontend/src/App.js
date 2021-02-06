@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect } from 'react';
+import React, { useEffect } from "react";
 import {
     BrowserRouter as Router,
     Switch,
@@ -20,10 +19,8 @@ import Restore from "./pages/Restore";
 import { getGetRequest } from "./utils/api";
 import { useDispatch } from "react-redux";
 import { userLogIn } from "./actions/user";
-import { setUserData } from "./actions/user";
 
 const App = ({user})  => {
-
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -44,7 +41,7 @@ const App = ({user})  => {
                     console.log(res);
                 }
             });
-      },[user.auth]);
+    },[]);
 
     if (user.auth) return (
     <div className="App m-0 p-0" >
@@ -72,7 +69,9 @@ const App = ({user})  => {
             </Router>
         )
 }
+
 const mapStateToProps = (state) => ({
     user: UserSelector(state)
-})
+});
+
 export default connect(mapStateToProps)(App);

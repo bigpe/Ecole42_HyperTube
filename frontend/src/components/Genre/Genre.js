@@ -1,17 +1,18 @@
-import React, {useEffect, useState} from "react";
-import {getMovieByGenre} from "../../actions/movie";
-import {connect, useDispatch} from "react-redux";
-import {GenreLoadSelector, StateSelector} from "../../selectors/movie";
-import {Spinner, Col, Row, Accordion, Card} from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { getMovieByGenre } from "../../actions/movie";
+import { connect, useDispatch } from "react-redux";
+import { GenreLoadSelector, StateSelector } from "../../selectors/movie";
+import { Spinner, Col, Row, Accordion, Card } from "react-bootstrap";
+import { lang } from '../../utils/location';
 import AccordionMovie from "../AccordionMovie";
+import { UserLangSelector }  from "../../selectors/user";
 
-const Genre = ({ title, genreKey, state }) => {
+const Genre = ({ title, genreKey, state, langv }) => {
     const dispatch = useDispatch();
-    const movieList = state.movie[title];
+    const movieList = state.movie[langv ==="ru" ? lang[langv].genreRuEng[title] : title];
     const [cardBody, setCardBody] = useState('');
-
     useEffect(() => {
-        if (!movieList) dispatch(getMovieByGenre(title))
+        if (!movieList) dispatch(getMovieByGenre(langv === "ru" ? lang[langv].genreRuEng[title] : title))
     }, []);
 
     if (movieList) return (
@@ -44,7 +45,8 @@ const Genre = ({ title, genreKey, state }) => {
 
 const mapStateToProps = state => ({
     state: StateSelector(state),
-    genreLoad: GenreLoadSelector(state)
+    genreLoad: GenreLoadSelector(state),
+    langv: UserLangSelector(state),
 })
 
 export default connect(mapStateToProps)(Genre);
