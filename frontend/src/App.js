@@ -18,7 +18,7 @@ import Remind from "./pages/Remind";
 import Restore from "./pages/Restore";
 import { getGetRequest } from "./utils/api";
 import { useDispatch } from "react-redux";
-import { userLogIn } from "./actions/user";
+import { userLogIn, setUserData } from "./actions/user";
 
 const App = ({user})  => {
     const dispatch = useDispatch();

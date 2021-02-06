@@ -4,6 +4,14 @@ import { getRequest, getImgRequest} from "../utils/api";
 import { isValidInput } from '../utils/checkValid';
 import "../App.css"
 import no_photo from "./no_photo.jpg"
+import { UserSelector } from "../selectors/user";
+import { connect } from "react-redux";
+
+
+const mapStateToProps = (state) => ({
+    user: UserSelector(state)
+})
+
 
 function InputForm(props) {
     const [isValid, toggleValid] = useState('');
@@ -60,10 +68,11 @@ function InputForm(props) {
                     type={props.type || 'text'}
                     placeholder={props.placeholder || ''}
                     name={props.name}
-                    defaultValue={props.me || ''}
+                    defaultValue={props.defaultValue}
                     onChange={inputChange}
                     onBlur={props.checkBtn}
                     className={isValid}
+                    required
                 />
                 <FormFeedback>{feedback}</FormFeedback>
             </FormGroup>
@@ -71,11 +80,11 @@ function InputForm(props) {
     )
 }
 
-const EditProfile = () => {
-    const [login, setLogin] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [firstName, setFirstName] = useState('');
-    const [email, setEmail] = useState('');
+const EditProfile = (props) => {
+    const [login, setLogin] = useState(props.user.login);
+    const [lastName, setLastName] = useState(props.user.lastName);
+    const [firstName, setFirstName] = useState(props.user.firstName);
+    const [email, setEmail] = useState(props.user.email);
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [isActiveBtn, toggleBtn] = useState(true);
@@ -114,15 +123,15 @@ const EditProfile = () => {
             firstName: firstName,
             lastName: lastName,
         }
+        //data.filter(el => el);
         getRequest('/user/', data)
-        .then((res) => {
-            console.log(res);
-        });
+            .then((res) => {
+                console.log(res);
+            });
     }
 
     const handleSubmitPassword = () => {
-        if (currentPassword)
-        {
+        if (currentPassword) {
             getRequest('/user/', { password : newPassword })
                 .then((res) => {
                     console.log(res);
@@ -140,10 +149,10 @@ const EditProfile = () => {
                                     <Row>
                                         <Col> 
                                             <CardTitle tag="h5">Change information</CardTitle>
-                                            <InputForm name='login' placeholder='Login' feedback='Invalid login' set={setLogin} checkBtn={checkBtn} />
-                                            <InputForm name='firstName' placeholder='First name' feedback='Only symbols are required' set={setFirstName} checkBtn={checkBtn}/>
-                                            <InputForm name='lastName' placeholder='Last name' feedback='Only symbols are required' set={setLastName} checkBtn={checkBtn}/>
-                                            <InputForm name='email' placeholder='Email' set={setEmail} feedback='Invalid email' checkBtn={checkBtn}/>
+                                            <InputForm name='login' placeholder='Login' feedback='Invalid login' defaultValue={props.user.login} set={setLogin} checkBtn={checkBtn} />
+                                            <InputForm name='firstName' placeholder='First name' feedback='Only symbols are required' defaultValue={props.user.firstName} set={setFirstName} checkBtn={checkBtn}/>
+                                            <InputForm name='lastName' placeholder='Last name' feedback='Only symbols are required' defaultValue={props.user.lastName} set={setLastName} checkBtn={checkBtn}/>
+                                            <InputForm name='email' placeholder='Email' set={setEmail} feedback='Invalid email' defaultValue={props.user.email} checkBtn={checkBtn}/>
                                             <Button className="btn-success" type="submit" value="Save" onClick={handleSubmitInfo} disabled={isActiveBtn} block>Save</Button>
                                             
                                             <CardTitle className="mt-3" tag="h5">Change password</CardTitle>
@@ -170,4 +179,4 @@ const EditProfile = () => {
         );
 }
 
-export default EditProfile;
+export default connect(mapStateToProps)(EditProfile);

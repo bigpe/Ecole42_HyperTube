@@ -107,7 +107,7 @@ const AuthPage = () => {
                                             <LoginGoogle/>
                                             <form target="_blank" action="https://api.intra.42.fr/oauth/authorize" method="GET">
                                                 <input type="hidden" name="client_id" value="db5cd84b784b4c4998f4131c353ef1828345aa1ce5ed3b6ebac9f7e4080be068"></input>
-                                                <input type="hidden" name="redirect_uri" value="http://0.0.0.0:5006/user/auth/42"></input>
+                                                <input type="hidden" name="redirect_uri" value="http://localhost:5006/user/auth/42/"></input>
                                                 <input type="hidden" name="response_type" value="code"></input>
                                                 <Button className="login-btn" color="secondary"><img width={25} src={logo_42}></img></Button>
                                             </form>
