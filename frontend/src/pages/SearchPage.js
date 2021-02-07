@@ -37,7 +37,7 @@ const SearchPage = ({genre, langv}) => {
     }, [])
 
     return (
-        <Container>
+        <Container fluid>
             <Row className="mt-5 w-100 justify-content-center align-items-center">
                 <Col>
                     <DropdownInput value={genres} placeholder={lang[langv].selectGenre} selectFunc={genreToggle} items={genreArr} />

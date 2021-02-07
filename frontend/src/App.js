@@ -29,7 +29,6 @@ const App = ({user})  => {
                 if( res.data.message === "Authed" )
                 {
                     dispatch(userLogIn());
-                    console.log(res);
                 }
             });
     },[]);

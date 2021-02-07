@@ -56,7 +56,7 @@ module.exports = {
         contentBase: path.join(__dirname, 'static'),
         compress: true,
         host: "0.0.0.0",
-        port: 8889,
+        port: 8888,
         writeToDisk: true,
     },
 };

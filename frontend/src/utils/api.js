@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const localhost = "http://localhost:5006"
+const localhost = window.location.origin
 
 export const getRequest = (url, options) => {
     const config = {
