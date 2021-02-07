@@ -12,9 +12,9 @@ const Header = () => {
     const route = window.location.pathname;
     const dispatch = useDispatch();
 
-    const check = () => {
+    const logOut = () => {
 
-        getGetRequest('/user/logout')
+        getGetRequest('/user/logout/')
         .then((res) => {
             console.log(res);
         });
@@ -33,7 +33,6 @@ const Header = () => {
                         <Col><Link to="/profile">{lang.ru.user}</Link></Col>
                     </Nav>
                 </Navbar.Collapse>
-                <Button onClick={check}>Log out</Button>
                 { route !== '/search' &&
                 <InputGroup className="w-25 ml-0">
                     <FormControl
@@ -46,6 +45,7 @@ const Header = () => {
                     </InputGroup.Append>
                 </InputGroup>
                 }
+                <Button onClick={logOut}>Log out</Button>
             </Navbar>
         </>
     );

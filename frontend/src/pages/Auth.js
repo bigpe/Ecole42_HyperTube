@@ -8,41 +8,37 @@ import { GoogleLogin } from 'react-google-login';
 import { refreshTokenSetup } from '../utils/refreshToken';
 import { getRequest, getGetRequest } from "../utils/api";
 
-const clientId = '241696023762-9cvk3687223kn9kqklfb5bjv20jsc920.apps.googleusercontent.com';
 
 
 function LoginGoogle() {
-    /*const responseGoogle = (response) => {
-        getGetRequest(`user/auth/google?id_token=${response.tokenId}`)
-            .then(() => {
-                console.log("I've done it!");
-            })
-        console.log(response);
-      }
-
+    const clientId = '241696023762-9cvk3687223kn9kqklfb5bjv20jsc920.apps.googleusercontent.com';
     const dispatch = useDispatch();
-    const onSuccess = (res) => {
-        console.log('Login Success: currentUser:', res.profileObj);
+    
+    const responseGoogle = (response) => {
+        getGetRequest(`/user/auth/google/?id_token=${response.tokenId}`)
+        .then((result) => {
+            if (!result.data.error)
             dispatch(userLogIn());
-        //alert(`Logged in successfully welcome ${res.profileObj.name} 😍.`);
-        refreshTokenSetup(res);
-    };*/
+            refreshTokenSetup(response);
+        })
+        
+    }
     const onFailure = (res) => {
         console.log('Login failed: res:', res);
     };
-
+    
     return (
-            <GoogleLogin
-              clientId={clientId}
-              buttonText=""
-              //onSuccess={responseGoogle}
-              onFailure={onFailure}
-              cookiePolicy={'single_host_origin'}
-              //style={{ marginTop: '100px', marginRight: '-10px'}}
-              isSignedIn={true}
-            />
-    );
-}
+        <GoogleLogin
+        clientId={clientId}
+        buttonText=""
+        onSuccess={responseGoogle}
+        onFailure={onFailure}
+        cookiePolicy={'single_host_origin'}
+        //style={{ marginTop: '100px', marginRight: '-10px'}}
+        isSignedIn={true}
+        />
+        );
+    }
 
 function LoginInput(props) {
 
@@ -83,12 +79,12 @@ const AuthPage = () => {
     const dispatch = useDispatch();
 
     const handleSubmit = () => {
-        getRequest('/user/auth', {
+        getRequest('/user/auth/', {
             login : login, 
             password: password
         })
         .then(result => {
-            if (result.data.message == 'Authed' && !result.data.error){
+            if (!result.data.error){
                 console.log(result);
                 dispatch(userLogIn());
             }
