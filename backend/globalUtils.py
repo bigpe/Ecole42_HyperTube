@@ -66,11 +66,15 @@ def readFile(path: Union[str, Path]) -> base64:
 
 
 def saveFile(fileData, fileName, directory: [str, Path] = '.'):
-    if directory.replace('.', ''):
-        Path(f'{directory}').mkdir(exist_ok=True)
+    createDir(directory)
     with open(f'{directory}/{fileName}', 'wb') as f:
         f.write(fileData)
         return f.name
+
+
+def createDir(directory: [str, Path] = '.'):
+    if directory.replace('.', ''):
+        Path(f'{directory}').mkdir(exist_ok=True)
 
 
 def deleteFile(fileName, directory: [str, Path] = '.'):
