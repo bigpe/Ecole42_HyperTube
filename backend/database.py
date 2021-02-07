@@ -1,4 +1,5 @@
 from app import app
+from sqlalchemy import func
 
 db = app.db
 
@@ -16,6 +17,8 @@ class User(db.Model):
 class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     imdb_id = db.Column(db.String(50))
+    watch_count = db.Column(db.Integer)
+    last_watch_date = db.Column(db.TIMESTAMP, server_default=func.now(), onupdate=func.current_timestamp())
 
 
 class Subtitle(db.Model):

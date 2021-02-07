@@ -140,6 +140,8 @@ def getMovie():
 
 def createMovie(IMDBid):
     movieId = updateDbByDict({'imdb_id': IMDBid}, Movie, insert=True)
+    movie = getOneByFields(Movie, id=movieId)
+    updateDbByDict({'watch_count': movie.watch_count + 1}, Movie)
     return movieId
 
 
@@ -433,10 +435,6 @@ def getMovieCommentaries(IMDBid) -> dict:
             'user_id':      user.id
         })
     return createAnswer(f'Commentaries for movie {IMDBid}', False, {'data': commentariesList})
-
-
-def updateWatchStatisticByMovieIMDBid(IMDBid):
-    pass
 
 
 @getParams('code')
