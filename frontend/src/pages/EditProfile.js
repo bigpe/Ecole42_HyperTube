@@ -24,7 +24,7 @@ function InputForm(props) {
         if (isValidInput(name, value)) {
             toggleValid('is-valid');
             if (name === 'login') {
-                getRequest(`/user/login`, { login : value })
+                getRequest(`/user/login/`, { login : value })
                     .then(result => {
                         if (result.data.message == 'Login exist') {
                             toggleValid('is-invalid');
@@ -34,7 +34,7 @@ function InputForm(props) {
                     })
             }
             else if (name === 'email') {
-                getRequest('/user/email', { email : value })
+                getRequest('/user/email/', { email : value })
                     .then(result => {
                         if (result.data.message == 'Email exist') {
                             toggleValid('is-invalid');
@@ -44,7 +44,7 @@ function InputForm(props) {
                     })
             }
             else if (name === 'currentPass') {
-                getRequest('/user/password/check', { password: value })
+                getRequest('/user/password/check/', { password: value })
                     .then(result => {
                         if (result.data.message !== "Password correct") {
                             toggleValid('is-invalid');

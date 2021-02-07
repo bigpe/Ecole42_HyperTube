@@ -14,7 +14,7 @@ const Header = () => {
 
     const logOut = () => {
 
-        getGetRequest('/user/logout')
+        getGetRequest('/user/logout/')
         .then((res) => {
             console.log(res);
         });

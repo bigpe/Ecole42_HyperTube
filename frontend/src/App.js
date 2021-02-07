@@ -24,7 +24,7 @@ const App = ({user})  => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        getGetRequest('/user/auth')
+        getGetRequest('/user/auth/')
             .then((res) => {
                 const data = {
                     auth: true,
@@ -34,11 +34,10 @@ const App = ({user})  => {
                     email: res.data.email,
                     userPhoto: res.data.userPhoto,
                 }
-                if( res.data.message == "Authed" )
-                {
+                console.log(res);
+                if (!res.data.error) {
                     dispatch(userLogIn());
                     dispatch(setUserData(data));
-                    console.log(res);
                 }
             });
     },[]);
