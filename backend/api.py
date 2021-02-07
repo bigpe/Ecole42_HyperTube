@@ -2,7 +2,7 @@ from flask import request, session
 import requests
 from torrentUtils import TorrentUtils
 from database import updateDbByDict, deleteById, getOneByFields, getAllByFields, User, Movie, Subtitle, Commentary
-from globalUtils import createHash, getDataRecursive, saveFile
+from globalUtils import createHash, getDataRecursive, saveFile, createDir
 import sys
 from typing import Union
 from app import app
@@ -316,6 +316,7 @@ def changeUser(params: dict, files: dict) -> dict:
         return answer
     for f in files:
         fileName = secure_filename(files[f].filename)
+        createDir('media')
         savePath = f'media/{fileName}'
         files[f].save(savePath)
         params.update({f: f'/{savePath}'})
