@@ -136,6 +136,7 @@ def getMovie():
     url = f'https://yts.mx/api/v2/movie_details.json'
     movieInfo = getData(url, ['data', 'movie'])
     IMDBid = getDataRecursive(movieInfo['data'], ['imdb_code'])
+    createMovie(IMDBid)
     return movieInfo
 
 
@@ -158,7 +159,9 @@ def getSubtitles(body=None):
     return data
 
 
-def getMovieSubtitles(IMDBid):
+@getParams('IMDBid')
+def getMovieSubtitles(params):
+    IMDBid = params['IMDBid']
     createMovie(IMDBid)
     subtitles = []
     languages = {'en', 'ru', 'fr'}
