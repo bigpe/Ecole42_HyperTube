@@ -88,7 +88,6 @@ function InputFormWithFetch(props) {
                     type="text"
                     name={props.name}
                     onChange={inputChange}
-                    onBlur={() => props.onBlur()}
                     placeholder={props.placeholder}
                     required
                     feedback={feedback}
@@ -136,7 +135,6 @@ function Password(props) {
                         type="password"
                         name='password'
                         onChange={passChange}
-                        onBlur={() => props.onBlur()}
                         className={isValidPass}
                         required
                 />
@@ -150,7 +148,6 @@ function Password(props) {
                         type="password"
                         name='repassword'
                         onChange={passChange}
-                        onBlur={() => props.onBlur()}
                         className={isValidRepass}
                         required
                 />
@@ -218,7 +215,7 @@ const Sign = (props) => {
                                     <InputFormWithFetch set={setLogin} onBlur={checkBtn} labelName='Login' name='login'/>
                                     <InputFormWithFetch set={setEmail} onBlur={checkBtn} labelName='Email' name='email'/>
                                     <Password setPass={setPassword} onChange={checkBtn} />
-                                    <Button color="secondary" type="submit" disabled={isActiveBtn} onClick={handleSubmit} onChange={checkBtn} block>Sign Up</Button>
+                                    <Button color="secondary" type="submit"  onClick={handleSubmit} onChange={checkBtn} block>Sign Up</Button>
                                     <Col>
                                         <div className="dropdown-divider"></div>
                                         <NavLink href='/'>Back</NavLink>
