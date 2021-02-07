@@ -6,7 +6,8 @@ import "../App.css"
 import no_photo from "./no_photo.jpg"
 import { UserSelector } from "../selectors/user";
 import { connect } from "react-redux";
-
+import { useDispatch } from "react-redux";
+import { setUserData } from "../actions/user";
 
 const mapStateToProps = (state) => ({
     user: UserSelector(state)
@@ -88,6 +89,8 @@ const EditProfile = (props) => {
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [isActiveBtn, toggleBtn] = useState(true);
+    const dispatch = useDispatch();
+
 
     const checkBtn = () => {
         const countInvalidInputs = document.querySelectorAll(".is-invalid").length;
@@ -123,10 +126,11 @@ const EditProfile = (props) => {
             firstName: firstName,
             lastName: lastName,
         }
-        //data.filter(el => el);
+        //data.filter(el => el !== '');
         getRequest('/user/', data)
             .then((res) => {
-                console.log(res);
+                if(!res.data.error)
+                    dispatch(setUserData(data));
             });
     }
 
@@ -162,7 +166,7 @@ const EditProfile = (props) => {
                                         </Col>
                                         <Col>
                                             <CardTitle tag="h5">Change photo</CardTitle>
-                                            <CardImg width="30%" src={no_photo} className="profile-img"/>
+                                            <CardImg width="30%" src={props.user.userPhoto} className="profile-img"/>
                                             <Label className=" btn btn-block btn-success mt-3">Upload new image
                                                 <Input style={{display : 'none'}} className="profile-input" type="file" onChange={e => putPhoto(e)} />
                                             </Label>

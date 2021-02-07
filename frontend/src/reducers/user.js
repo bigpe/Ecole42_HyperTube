@@ -7,7 +7,7 @@ const initialState = {
     firstName : '', 
     lastName: '', 
     email: '',
-    photo: '',
+    userPhoto: '',
     langv: 'ru',
 }
 

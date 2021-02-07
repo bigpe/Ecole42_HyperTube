@@ -32,7 +32,7 @@ const App = ({user})  => {
                     firstName : res.data.firstName, 
                     lastName: res.data.lastName, 
                     email: res.data.email,
-                    photo: res.data.photo,
+                    userPhoto: res.data.userPhoto,
                 }
                 if( res.data.message == "Authed" )
                 {
