@@ -44,6 +44,7 @@ SWAGGER = {
             {"name": "Genres", "description": "Actions with genres"},
             {"name": "Users", "description": "Actions with users"},
             {"name": "Subtitles", "description": "Actions with subtitles"},
+            {"name": "Commentaries", "description": "Actions with commentaries"},
         ],
         'definitions': {
             'UserInfo': {
@@ -76,14 +77,34 @@ SWAGGER = {
                         'type': 'string'
                     }
                 }
+            },
+            'Commentaries': {
+                'type': 'object',
+                'properties': {
+                    'commentary': {
+                        'type': 'string'
+                    },
+                    'id': {
+                        'type': 'integer'
+                    },
+                    'login': {
+                        'type': 'string'
+                    },
+                    'user_id': {
+                        'type': 'integer'
+                    },
+                }
             }
         }
     }
 }
 SECRET_KEY = '87,mad#124##$2139nmawjdnhH$#21'
 
-# ^H в ключе - отправка заголовком
+# ^H обновить заголвок (headers)
+# ^P обновить параметры запроса (params)
+# ^D обновить тело запроса (data)
+# ^J передать в теле запроса как json (json)
 API_MAP = {
-    'themoviedb': {'api_key': '6c60e65c45de8fc3495acac976c567ce'},
-    'opensubtitles': {'Api-Key^H': '1xPMLpBzqrPAU893YsgmO65rDblq05Yd'},
+    'themoviedb': {'api_key^P': '6c60e65c45de8fc3495acac976c567ce'},
+    'opensubtitles': {'Api-Key^H': 'CvArhBBm1TopZZHZMvlxsAMDtJD3GBBW'},
 }

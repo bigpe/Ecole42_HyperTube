@@ -1,14 +1,12 @@
 tags:
-  ['Genres']
-summary: "Get genres list"
+  ['Movies']
+summary: "Get Movie Commentaries"
 parameters:
-  - name: language
+  - name: IMDBid
     type: string
-    in: query
-    default: en-US
+    in: path
 responses:
   200:
-    description: Genres list
     schema:
       allOf:
         - $ref: '#/definitions/AnswerAPI'
@@ -17,4 +15,5 @@ responses:
             data:
               type: array
               items:
-                type: object
+                $ref: '#/definitions/Commentaries'
+

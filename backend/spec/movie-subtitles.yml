@@ -1,0 +1,16 @@
+tags:
+  ['Movies']
+summary: "Get Movie Subtitles"
+parameters:
+  - name: IMDBid
+    type: string
+    in: path
+responses:
+  200:
+    schema:
+      allOf:
+        - $ref: '#/definitions/AnswerAPI'
+        - type: object
+          properties:
+            data:
+              type: object

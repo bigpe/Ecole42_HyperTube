@@ -1,0 +1,19 @@
+tags:
+  ['Commentaries']
+summary: "Create Commentary"
+parameters:
+  - name: commentary
+    type: string
+    in: query
+  - name: IMDBid
+    type: string
+    in: query
+responses:
+  200:
+    schema:
+      allOf:
+        - $ref: '#/definitions/AnswerAPI'
+        - type: object
+          properties:
+            id:
+              type: integer

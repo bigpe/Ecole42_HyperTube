@@ -96,15 +96,18 @@ def createHash(hashString: str) -> str:
 # рекурсивный путь описывается массивом
 def getDataRecursive(data: Union[dict, list], mapList: list):
     newData = data
-    newMapList = mapList
+    newMapList = mapList[:]
     if not newMapList:
         return newData
-    if type(data) == dict:
-        newData, newMapList = getRecursiveDict(data, mapList)
-    if type(data) == list:
-        newData, newMapList = getRecursiveList(data, mapList)
-    if newData == data and newMapList == mapList:
-        return []
+    try:
+        if type(data) == dict:
+            newData, newMapList = getRecursiveDict(data, mapList)
+        if type(data) == list:
+            newData, newMapList = getRecursiveList(data, mapList)
+        if newMapList == mapList:
+            return newData
+    except:
+        return data
     return getDataRecursive(newData, newMapList)
 
 
@@ -113,9 +116,9 @@ def getRecursiveDict(data: dict, mapList: list):
     tempMapList = mapList
     for i, m in enumerate(mapList):
         if type(m) == int:
+            tempMapList = tempMapList[i:]
             break
         newMapList.append(m)
-        tempMapList.pop(i)
     newData = reduce(dict.get, newMapList, data)
     if not newData:
         newData = []
@@ -127,13 +130,13 @@ def getRecursiveList(data, mapList):
     tempMapList = mapList
     for i, m in enumerate(mapList):
         if type(m) != int:
+            tempMapList = tempMapList[i:]
             break
         newMapList.append(m)
-        tempMapList.pop(i)
     for m in newMapList:
         try:
             data = data[m]
         except IndexError:
-            return [], None
+            return [], []
     return data, tempMapList
 

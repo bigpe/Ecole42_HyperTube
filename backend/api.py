@@ -1,16 +1,14 @@
 from flask import request, session
 import requests
 from torrentUtils import TorrentUtils
-from database import updateDbByDict, deleteById, getOneByFields, User, db
-from globalUtils import createHash, getDataRecursive
+from database import updateDbByDict, deleteById, getOneByFields, getAllByFields, User, Movie, Subtitle, Commentary
+from globalUtils import createHash, getDataRecursive, saveFile
 import sys
 from typing import Union
 from app import app
 from werkzeug.utils import secure_filename
 
 API_MAP = app.config['API_MAP']
-# Параметры переданные вне контекста реквест, в основном используется для тестирования
-PARAMS = {}
 
 
 # Декоратор для передачи данных и файлов полученных из тела/аргуменов запроса
@@ -25,7 +23,7 @@ def getParams(*fieldsToCheck, files=()):
                 params = {}
             if fieldsToCheck:  # Прерываем выполнение запроса если любое
                 # из обязательных полей переданных в декоратор
-                # не было найдено в теле/аргументах запроса
+                # не было найдено в теле/аргументах/файлах запроса
                 if checkAnswer := checkRequiredFields(fieldsToCheck, params=params, files=request.files):
                     return checkAnswer
             if files:
@@ -37,46 +35,76 @@ def getParams(*fieldsToCheck, files=()):
 
 def findParamsFromRequest(r: request):
     params = {}
-    if r.args:
-        params.update(r.args)
-    if r.form:
-        params.update(r.form)
-    if j := r.get_json():
-        params.update(j)
+    try:
+        if r.args:
+            params.update(r.args)
+        if r.form:
+            params.update(r.form)
+        try:
+            if j := r.get_json():
+                params.update(j)
+        except:
+            pass
+    except:
+        pass
     return params
 
 
-# Унифицированный обработчик запросов, работает в контексте реквеста и без него
+# Исполняем дополнительные инструкции для API, содержащегося в карте
+# Например добавляем уникальный ключ в тело запроса/заголовки для этого ресурса
+    # ^H обновить заголвок (headers)
+    # ^P обновить параметры запроса (params)
+    # ^D обновить тело запроса (data)
+    # ^J передать в теле запроса как json (json)
+def updateParams(params, domain):
+    for k in API_MAP[domain]:
+        if '^H' in k:
+            updateParamType(params, 'headers', k, domain)
+        if '^P' in k:
+            updateParamType(params, 'params', k, domain)
+        if '^D' in k:
+            updateParamType(params, 'data', k, domain)
+        if '^J' in k:
+            updateParamType(params, 'json', k, domain)
+    return params
+
+
+def updateParamType(params, paramType, key, domain):
+    if paramType not in params:
+        params[paramType] = {}
+    paramsChar = f'^{paramType[0].upper()}'
+    params[paramType].update({key.split(paramsChar)[0]: API_MAP[domain][key]})
+    return params
+
+
+# Унифицированный обработчик запросов, работает в контексте реквеста и без него, при передаче body
 # Траслирует все именованные аргументы в будущий запрос, так же можно передать указатель
 # для рекурсивного поиска по вложенному словарю, чтобы фильтровать начальную точку входа
 def getData(url: str, pointer: list = None, method='get', body=None) -> dict:
-    global PARAMS
-    context = True
-    try:
-        request.get_data()
-    except RuntimeError:  # Выставляем отрицательный флаг отсутсвия контекста,
-        # если функция была вызвана в тестовом режиме
-        context = False
-    data = body if body else {'params': findParamsFromRequest(request)} if context else PARAMS
-    print(request.data, file=sys.stderr)
-    domain = findAPI(url)
-    if domain in API_MAP:
-        # Исполняем дополнительные инструкции для API, содержащегося в карте
-        # Например добавляем уникальный ключ в тело запроса/заголовки для этого ресурса
-        for k in API_MAP[domain]:
-            if '^H' in k:
-                if 'headers' not in data:
-                    data['headers'] = {}
-                data['headers'].update({k.split('^H')[0]: API_MAP[domain][k]})
-            else:
-                data['params'].update({k: API_MAP[domain][k]})
-    # Распаковываем и передаем в запрос все именнованные аргументы
-    r = getattr(requests, method.lower())(url, **data)
-    PARAMS = {}
-    # Если прошел неуспешный запрос
-    if r.status_code != requests.codes['ok']:
-        return createAnswer(f'Request failed', True, {'status_code': r.status_code, 'server_answer': r.text[:150]})
-    return createAnswer('Success', False, {'data': getDataRecursive(r.json(), pointer) if pointer else r.json()})
+    @getParams()
+    def getDataWithParams(params):
+        data = body if body else {'params': params}
+        domain = findAPI(url)
+        if domain in API_MAP:
+            data = updateParams(data, domain)
+        # Распаковываем и передаем в запрос все именнованные аргументы
+        r = getattr(requests, method.lower())(url, **data)
+        # Пытаемся получить JSON ответ, для последующего рекурсивного поиска по нему
+        try:
+            responseData = r.json()
+        # Либо получаем обычный текст ответа
+        except:
+            responseData = r.text
+        # Если прошел неуспешный запрос
+        if r.status_code != requests.codes['ok']:
+            return createAnswer(f'Request failed', True, {
+                'status_code': r.status_code,
+                'server_answer': responseData
+            })
+        return createAnswer('Success', False, {
+            'data': getDataRecursive(responseData, pointer) if pointer else responseData
+        })
+    return getDataWithParams()
 
 
 # Обработчик backend ответов
@@ -102,17 +130,56 @@ def getMovies():
     return data
 
 
-def getSubtitles():
+def getMovie():
+    url = f'https://yts.mx/api/v2/movie_details.json'
+    movieInfo = getData(url, ['data', 'movie'])
+    IMDBid = getDataRecursive(movieInfo['data'], ['imdb_code'])
+    createMovie(IMDBid)
+    return movieInfo
+
+
+def createMovie(IMDBid):
+    movieId = updateDbByDict({'imdb_id': IMDBid}, Movie, insert=True)
+    return movieId
+
+
+def getSubtitles(body=None):
     url = 'https://www.opensubtitles.com/api/v1/subtitles'
-    fileId = getData(url, ['data', 0])['data']['attributes']['files'][0]['file_id']
-    url = 'https://www.opensubtitles.com/api/v1/download'
-    data = getData(url, method='POST', body={'data': {'file_id': fileId}})
+    if body:
+        data = getData(url, ['data', 0, 'attributes', 'files', 0], body=body)
+    else:
+        data = getData(url, ['data', 0, 'attributes', 'files', 0])
     return data
 
 
-def getMovie():
-    url = f'https://yts.mx/api/v2/movie_details.json'
-    return getData(url, ['data', 'movie'])
+def getMovieSubtitles(IMDBid):
+    createMovie(IMDBid)
+    subtitles = []
+    languages = {'en', 'ru', 'fr'}
+    for language in languages:
+        subtitleObj = getSubtitles({'params': {'imdb_id': IMDBid, 'languages': language}})['data']
+        if not subtitleObj:
+            continue
+        subtitlePath = saveSubtitles(subtitleObj, language, IMDBid)
+        if subtitlePath:
+            subtitles.append(subtitlePath)
+    return createAnswer('data', False, {'subtitlesPath': subtitles})
+
+
+def saveSubtitles(subtitleObj, language, IMDBid):
+    url = 'https://www.opensubtitles.com/api/v1/download'
+    fileId = subtitleObj['file_id']
+    fileName = subtitleObj['file_name']
+    subtitle = getData(url, body={'params': {'file_id': fileId, 'file_name': fileName}}, method='POST')
+    if subtitle['error']:
+        return {}
+    subtitle = subtitle['data']
+    if 'link' not in subtitle:
+        return {}
+    subtitleFile = requests.get(subtitle['link']).content
+    subtitleFilePath = saveFile(subtitleFile, secure_filename(fileName), f'subtitles/{IMDBid}')
+    updateDbByDict({'movie_imdb_id': IMDBid, 'language': language, 'path': subtitleFilePath}, Subtitle, insert=True)
+    return {language: f'/{subtitleFilePath}'}
 
 
 def getPerson(person_id):
@@ -160,11 +227,11 @@ def startLoadMovie(params) -> dict:
     torrentObj = t.getTorrents(['save_path', 'files'], {'hash': torrentHash})[bytes(torrentHash.encode('utf-8'))]
     saveFolderPath = 'downloads'
     files = torrentObj[b'files']
-    metaPath = {'videoPath': None, 'subtitlesPath': None}
+    metaPath = {'videoPath': None}
     for f in files:
         filePath = f"{saveFolderPath}/{f[b'path'].decode('utf-8')}"
         metaPath = findMetaFiles(metaPath, filePath)
-    return createAnswer('Movie Start Loading', False, metaPath)
+    return createAnswer('Movie Start Loading', additions=metaPath)
 
 
 @getParams('torrentHash')
@@ -195,12 +262,6 @@ def statusLoadMovie(params):
 def findMetaFiles(resDict, filePath):
     if findVideo(filePath):
         resDict.update({'videoPath': filePath})
-    # if findSubtitles(filePath):
-    resDict.update({'subtitlesPath': [
-        {'en': 'test_EN_path.srt'},
-        {'fr': 'test_FR_path.srt'},
-    ]})
-        # resDict.update({'subtitlesPath': filePath})
     return resDict
 
 
@@ -313,8 +374,25 @@ def checkPassword(params) -> dict:
     return createAnswer('Password correct') if user else createAnswer('Password Incorrect')
 
 
-def createCommentary():
-    ...
+@getParams('commentary', 'IMDBid')
+def createCommentary(params) -> dict:
+    commentary = params['commentary']
+    IMDBid = params['IMDBid']
+    movie = getOneByFields(Movie, imdb_id=IMDBid)
+    if not movie:
+        return createAnswer('Movie not found', True)
+    if answer := checkAuthed():
+        return answer
+    if answer := checkLoginNotNull():
+        return answer
+    user = getUserByFields(login=session['login'])
+    commentary_id = updateDbByDict(
+        {'commentary': commentary,
+         'user_id': user.id,
+         'movie_imdb_id': movie.imdb_id},
+        Commentary, insert=True)
+    return createAnswer('Commentary created',
+                        additions={'id': commentary_id}) if commentary_id else createAnswer('Commentary not created')
 
 
 def getUserInfo(user: User) -> dict:
@@ -343,22 +421,33 @@ def getUserByFields(**fields) -> User:
     return user
 
 
-def getCommentariesByMovieIMDBid(IMDBid):
-    ...
+def getMovieCommentaries(IMDBid) -> dict:
+    commentariesList = []
+    commentaries = getAllByFields(Commentary, movie_imdb_id=IMDBid)
+    for commentary in commentaries:
+        user = commentary.user
+        commentariesList.append({
+            'id':           commentary.id,
+            'commentary':   commentary.commentary,
+            'login':        user.login,
+            'user_id':      user.id
+        })
+    return createAnswer(f'Commentaries for movie {IMDBid}', False, {'data': commentariesList})
 
 
 def updateWatchStatisticByMovieIMDBid(IMDBid):
-    ...
+    pass
 
 
 @getParams('code')
 def authUser42(params):
     code = params['code']
     params = {
-        'grant_type':     'client_credentials',
-        'client_id':      '173a93db1a07fb5601d44574be15fe05e148dad1eb8f9ab4e6b0041d4f6b4e87',
-        'client_secret':  '2940c3b599a7016d2695ea7e7563d72d1f755eb3e178ee5328b001ea2b8060c4',
-        'code':           code
+        'grant_type':       'client_credentials',
+        'client_id':        'db5cd84b784b4c4998f4131c353ef1828345aa1ce5ed3b6ebac9f7e4080be068',
+        'client_secret':    '8f57b290400dea66eb8f52ca7f189fef0b58f296bfbf4b889c059090e0bee7bc',
+        'code':             code,
+
     }
     token = getData('https://api.intra.42.fr/oauth/token', method='POST', body={'data': params})['data']['access_token']
     return getData('https://api.intra.42.fr/v2/me', body={'headers': {'Authorization': f'Bearer {token}'}})
@@ -372,8 +461,14 @@ def authUserGoogle(params):
     return data
 
 
-def checkAuthed():
+def checkAuthed() -> Union[bool, dict]:
     if 'login' not in session:
         return createAnswer('Not Authed', True)
+    return False
+
+
+def checkLoginNotNull() -> Union[bool, dict]:
+    if not session['login']:
+        return createAnswer('Login must be not empty', True)
     return False
 

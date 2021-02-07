@@ -16,5 +16,3 @@ responses:
           properties:
             videoPath:
               type: string
-            subtitlesPath:
-              type: string
