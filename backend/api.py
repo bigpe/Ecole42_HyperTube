@@ -166,6 +166,10 @@ def getMovieSubtitles(params):
     subtitles = []
     languages = {'en', 'ru', 'fr'}
     for language in languages:
+        subtitleDB = getOneByFields(Subtitle, language=language, movie_imdb_id=IMDBid)
+        if subtitleDB:
+            subtitles.append({language: f'/{subtitleDB.path}'})
+            continue
         subtitleObj = getSubtitles({'params': {'imdb_id': IMDBid, 'languages': language}})['data']
         if not subtitleObj:
             continue
