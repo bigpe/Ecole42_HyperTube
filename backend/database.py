@@ -13,6 +13,30 @@ class User(db.Model):
     userPhoto = db.Column(db.String(200), nullable=True)
 
 
+class Movie(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    imdb_id = db.Column(db.String(50))
+
+
+class Subtitle(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    movie_imdb_id = db.Column(db.String(50), db.ForeignKey('movie.imdb_id'))
+    language = db.Column(db.String(5), nullable=False)
+    path = db.Column(db.String(200), nullable=False)
+
+    __table_args__ = (
+        db.UniqueConstraint('movie_imdb_id', 'language'),
+    )
+
+
+class Commentary(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    movie_imdb_id = db.Column(db.String(50), db.ForeignKey('movie.imdb_id'))
+    user_id = db.Column(db.String(50), db.ForeignKey('user.id'))
+    user = db.relationship('User', backref='author', lazy='joined', uselist=False)
+    commentary = db.Column(db.String(255), nullable=False)
+
+
 def updateDbByDict(dataDict, table, insert=False):
     if type(dataDict) != dict:
         dataDict = dict(dataDict)
@@ -53,6 +77,10 @@ def updateDb(query, delete=False):
 
 def getOneByFields(table, **fields):
     return table.query.filter_by(**fields).first()
+
+
+def getAllByFields(table, **fields):
+    return table.query.filter_by(**fields).all()
 
 
 db.create_all()

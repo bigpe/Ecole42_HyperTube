@@ -5,13 +5,13 @@ import api
 from globalUtils import addressInit
 from delugeSetup import setupApp
 from flask_sqlalchemy import SQLAlchemy
-import sys
 
 
 class HyperTubeApp(Flask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.config.from_object('config')
+        self.url_map.strict_slashes = False
         self.json_encoder = LazyJSONEncoder
         Swagger(self, **self.config['SWAGGER'])
         CORS(self, supports_credentials=True)
@@ -28,48 +28,59 @@ def index(path):
     return render_template('base.html')
 
 
-@app.route('/downloads/<path:path>')
+@app.route('/downloads/<path:path>/')
 def sendDownload(path):
     return send_from_directory('downloads', path)
 
 
-@app.route('/media/<path:path>')
+@app.route('/subtitles/<path:path>/')
+def sendSubtitles(path):
+    return send_from_directory('subtitles', path)
+
+
+@app.route('/media/<path:path>/')
 def sendMedia(path):
     return send_from_directory('media', path)
 
 
-@app.route('/movies/', methods=['POST', 'OPTIONS'])
+@app.route('/movies/', methods=['POST'])
 @swag_from('spec/movies.yml')
 def getMovies():
     return jsonify(api.getMovies())
 
 
-@app.route('/movie/', methods=['POST', 'OPTIONS'])
+@app.route('/movie/subtitles/<string:IMDBid>/', methods=['GET'])
+@swag_from('spec/movie-subtitles.yml')
+def getMovieSubtitles(IMDBid):
+    return jsonify(api.getMovieSubtitles(IMDBid))
+
+
+@app.route('/movie/', methods=['POST'])
 @swag_from('spec/movie.yml')
 def getMovie():
     return jsonify(api.getMovie())
 
 
-@app.route('/person/<int:person_id>/', methods=['POST', 'OPTIONS'])
+@app.route('/person/<int:person_id>/', methods=['POST'])
 @swag_from('spec/person.yml')
 def getPerson(person_id):
     return jsonify(api.getPerson(person_id))
 
 
-@app.route('/genres/', methods=['POST', 'OPTIONS'])
+@app.route('/genres/', methods=['POST'])
 @swag_from('spec/genres.yml')
 def getGenres():
     return jsonify(api.getGenres())
 
 
-@app.route('/movie/start/', methods=['POST', 'OPTIONS'])
-@swag_from('spec/movie-start.yml')
+@app.route('/movie/start/', methods=['POST'])
+@swag_from('spec/movie-load-start.yml')
 def startLoadMovie():
     return jsonify(api.startLoadMovie())
 
 
-@app.route('/movie/stop/', methods=['POST', 'OPTIONS'])
-@swag_from('spec/movie-stop.yml')
+@app.route('/movie/stop/', methods=['POST'])
+@swag_from('spec/movie-load-stop.yml')
 def stopLoadMovie():
     return jsonify(api.stopLoadMovie())
 
@@ -78,9 +89,9 @@ def removeMovie():
     ...
 
 
-@app.route('/movie/status/', methods=['POST', 'OPTIONS'])
-@swag_from('spec/movie-status.yml')
-def statusMovie():
+@app.route('/movie/status/', methods=['POST'])
+@swag_from('spec/movie-load-status.yml')
+def statusLoadMovie():
     return jsonify(api.statusLoadMovie())
 
 
@@ -102,59 +113,62 @@ def createUser():
     return jsonify(api.createUser())
 
 
-@app.route('/user/login', methods=['POST'])
+@app.route('/user/login/', methods=['POST'])
 @swag_from('spec/user-check-login-exist.yml')
 def checkLoginExist():
     return jsonify(api.checkLoginExist())
 
 
-@app.route('/user/email', methods=['POST'])
+@app.route('/user/email/', methods=['POST'])
 @swag_from('spec/user-check-email-exist.yml')
 def checkEmailExist():
     return jsonify(api.checkEmailExist())
 
 
-@app.route('/user/auth', methods=['POST'])
+@app.route('/user/auth/', methods=['POST'])
 @swag_from('spec/user-auth.yml')
 def authUser():
     return jsonify(api.authUser())
 
 
-@app.route('/user/auth', methods=['GET'])
+@app.route('/user/auth/', methods=['GET'])
 @swag_from('spec/user-check-auth.yml')
 def checkAuthUser():
     return jsonify(api.checkAuth())
 
 
-@app.route('/user/logout', methods=['GET'])
+@app.route('/user/logout/', methods=['GET'])
 @swag_from('spec/user-logout.yml')
 def logoutUser():
     return jsonify(api.logoutUser())
 
 
-@app.route('/user/password/check', methods=['POST'])
+@app.route('/user/password/check/', methods=['POST'])
 @swag_from('spec/user-check-password.yml')
 def checkPassword():
     return jsonify(api.checkPassword())
 
 
+@app.route('/commentary/', methods=['PUT'])
+@swag_from('spec/commentary-create.yml')
 def createCommentary():
-    ...
+    return jsonify(api.createCommentary())
 
 
-@app.route('/user/auth/42', methods=['GET'])
+@app.route('/movie/commentaries/<string:IMDBid>/', methods=['GET'])
+@swag_from('spec/movie-commentaries.yml')
+def getMovieCommentaries(IMDBid):
+    return jsonify(api.getMovieCommentaries(IMDBid))
+
+
+@app.route('/user/auth/42/', methods=['GET'])
 def authUser42():
     return jsonify(api.authUser42())
 
 
-@app.route('/user/auth/google', methods=['GET'])
+@app.route('/user/auth/google/', methods=['GET'])
 def authUserGoogle():
     return jsonify(api.authUserGoogle())
-
-
-@app.route('/test/', methods=['GET'])
-def test():
-    return render_template('test.html')
 
 
 @app.route('/subtitles/', methods=['GET'])
