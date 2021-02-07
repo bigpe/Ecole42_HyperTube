@@ -445,7 +445,6 @@ def authUser42(params):
         'client_id':        'db5cd84b784b4c4998f4131c353ef1828345aa1ce5ed3b6ebac9f7e4080be068',
         'client_secret':    '8f57b290400dea66eb8f52ca7f189fef0b58f296bfbf4b889c059090e0bee7bc',
         'code':             code,
-
     }
     token = getData('https://api.intra.42.fr/oauth/token', method='POST', body={'data': params})['data']['access_token']
     return getData('https://api.intra.42.fr/v2/me', body={'headers': {'Authorization': f'Bearer {token}'}})
