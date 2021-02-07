@@ -433,7 +433,9 @@ def getUserByFields(**fields) -> User:
     return user
 
 
-def getMovieCommentaries(IMDBid) -> dict:
+@getParams('IMDBid')
+def getMovieCommentaries(params) -> dict:
+    IMDBid = params['IMDBid']
     commentariesList = []
     commentaries = getAllByFields(Commentary, movie_imdb_id=IMDBid)
     for commentary in commentaries:

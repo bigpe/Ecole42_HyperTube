@@ -4,7 +4,7 @@ summary: "Get Movie Commentaries"
 parameters:
   - name: IMDBid
     type: string
-    in: path
+    in: query
 responses:
   200:
     schema:

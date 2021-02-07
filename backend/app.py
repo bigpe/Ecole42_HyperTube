@@ -155,10 +155,10 @@ def createCommentary():
     return jsonify(api.createCommentary())
 
 
-@app.route('/movie/commentaries/<string:IMDBid>/', methods=['GET'])
+@app.route('/movie/commentaries/', methods=['POST'])
 @swag_from('spec/movie-commentaries.yml')
-def getMovieCommentaries(IMDBid):
-    return jsonify(api.getMovieCommentaries(IMDBid))
+def getMovieCommentaries():
+    return jsonify(api.getMovieCommentaries())
 
 
 @app.route('/user/auth/42/', methods=['GET'])
