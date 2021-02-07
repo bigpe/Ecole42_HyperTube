@@ -16,3 +16,5 @@ responses:
           properties:
             data:
               type: array
+              items:
+                type: object

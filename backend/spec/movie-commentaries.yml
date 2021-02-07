@@ -1,6 +1,6 @@
 tags:
   ['Movies']
-summary: "Get Movie Subtitles"
+summary: "Get Movie Commentaries"
 parameters:
   - name: IMDBid
     type: string
@@ -10,3 +10,10 @@ responses:
     schema:
       allOf:
         - $ref: '#/definitions/AnswerAPI'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/definitions/Commentaries'
+

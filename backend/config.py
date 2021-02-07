@@ -44,6 +44,7 @@ SWAGGER = {
             {"name": "Genres", "description": "Actions with genres"},
             {"name": "Users", "description": "Actions with users"},
             {"name": "Subtitles", "description": "Actions with subtitles"},
+            {"name": "Commentaries", "description": "Actions with commentaries"},
         ],
         'definitions': {
             'UserInfo': {
@@ -75,6 +76,23 @@ SWAGGER = {
                     'message': {
                         'type': 'string'
                     }
+                }
+            },
+            'Commentaries': {
+                'type': 'object',
+                'properties': {
+                    'commentary': {
+                        'type': 'string'
+                    },
+                    'id': {
+                        'type': 'integer'
+                    },
+                    'login': {
+                        'type': 'string'
+                    },
+                    'user_id': {
+                        'type': 'integer'
+                    },
                 }
             }
         }
