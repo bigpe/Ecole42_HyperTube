@@ -49,7 +49,7 @@ def getMovies():
     return jsonify(api.getMovies())
 
 
-@app.route('/movie/subtitles/', methods=['GET'])
+@app.route('/movie/subtitles/', methods=['POST'])
 @swag_from('spec/movie-subtitles.yml')
 def getMovieSubtitles():
     return jsonify(api.getMovieSubtitles())

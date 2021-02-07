@@ -186,6 +186,8 @@ def saveSubtitles(subtitleObj, language, IMDBid):
     if 'link' not in subtitle:
         return {}
     subtitleFile = requests.get(subtitle['link']).content
+    createDir('subtitles')
+    createDir(f'subtitles/{IMDBid}')
     subtitleFilePath = saveFile(subtitleFile, secure_filename(fileName), f'subtitles/{IMDBid}')
     updateDbByDict({'movie_imdb_id': IMDBid, 'language': language, 'path': subtitleFilePath}, Subtitle, insert=True)
     return {language: f'/{subtitleFilePath}'}

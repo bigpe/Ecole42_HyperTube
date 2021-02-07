@@ -4,7 +4,7 @@ summary: "Get Movie Subtitles"
 parameters:
   - name: IMDBid
     type: string
-    in: path
+    in: query
 responses:
   200:
     schema:
