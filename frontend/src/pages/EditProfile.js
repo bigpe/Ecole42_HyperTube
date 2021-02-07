@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardBody, Row, Col, Container, Input, Button, FormFeedback, Label, FormGroup, NavLink, CardTitle, CardImg } from 'reactstrap';
-import { getRequest, getImgRequest} from "../utils/api";
+import { getRequest, getImageRequest} from "../utils/api";
 import { isValidInput } from '../utils/checkValid';
 import "../App.css"
 import no_photo from "./no_photo.jpg"
@@ -15,12 +15,14 @@ const mapStateToProps = (state) => ({
 
 
 function InputForm(props) {
-    const [isValid, toggleValid] = useState('');
+    const [isValidInf, toggleValidInf] = useState('');
+    const [isValidPas, toggleValidPas] = useState('');
     const [feedback, setFeedback] = useState(props.feedback);
 
     const inputChange = (e) => {
         const { name, value } = e.target;
 
+        props.checkBtn();
         if (isValidInput(name, value)) {
             toggleValid('is-valid');
             if (name === 'login') {
@@ -66,10 +68,10 @@ function InputForm(props) {
                     {props.label}
                 </Label>
                 <Input
+                    value={props.value}
                     type={props.type || 'text'}
                     placeholder={props.placeholder || ''}
                     name={props.name}
-                    defaultValue={props.defaultValue}
                     onChange={inputChange}
                     onBlur={props.checkBtn}
                     className={isValid}
@@ -91,6 +93,12 @@ const EditProfile = (props) => {
     const [isActiveBtn, toggleBtn] = useState(true);
     const dispatch = useDispatch();
 
+    useEffect(() => {
+        setLogin(props.user.login);
+        setLastName(props.user.lastName);
+        setFirstName(props.user.firstName);
+        setEmail(props.user.email);
+    },[props.user]);
 
     const checkBtn = () => {
         const countInvalidInputs = document.querySelectorAll(".is-invalid").length;
@@ -100,18 +108,21 @@ const EditProfile = (props) => {
         else
             toggleBtn(true);
     }
+
     const putPhoto = (e) => {
+        console.log(e);
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
             const type = e.target.files[0].type;
+            console.log(file);
+            console.log(type);
             if (!type.match("image/png") && !type.match("image/jpeg") && !type.match("image/jpg")) {
                 alert('Wrong format!');
                 return;
             }
             let formData = new FormData();
-            formData.append('photo', file);
-
-            getImgRequest('/user/', { userPhoto : formData })
+            formData.append('userPhoto', file);
+            getImageRequest('/user/', formData)
             .then((res) => {
                 console.log(res);
                 console.log(formData);
@@ -124,13 +135,17 @@ const EditProfile = (props) => {
             login: login,
             email: email,
             firstName: firstName,
-            lastName: lastName,
+            lastName: lastName
         }
-        //data.filter(el => el !== '');
+        console.log(data);
+        
         getRequest('/user/', data)
             .then((res) => {
                 if(!res.data.error)
+                {
+                    console.log(res);
                     dispatch(setUserData(data));
+                }
             });
     }
 
@@ -153,10 +168,10 @@ const EditProfile = (props) => {
                                     <Row>
                                         <Col> 
                                             <CardTitle tag="h5">Change information</CardTitle>
-                                            <InputForm name='login' placeholder='Login' feedback='Invalid login' defaultValue={props.user.login} set={setLogin} checkBtn={checkBtn} />
-                                            <InputForm name='firstName' placeholder='First name' feedback='Only symbols are required' defaultValue={props.user.firstName} set={setFirstName} checkBtn={checkBtn}/>
-                                            <InputForm name='lastName' placeholder='Last name' feedback='Only symbols are required' defaultValue={props.user.lastName} set={setLastName} checkBtn={checkBtn}/>
-                                            <InputForm name='email' placeholder='Email' set={setEmail} feedback='Invalid email' defaultValue={props.user.email} checkBtn={checkBtn}/>
+                                            <InputForm name='login' placeholder='Login' feedback='Invalid login' value={login} defaultValue={props.user.login} set={setLogin} checkBtn={checkBtn} />
+                                            <InputForm name='firstName' placeholder='First name' feedback='Only symbols are required' value={firstName} defaultValue={props.user.firstName} set={setFirstName} checkBtn={checkBtn}/>
+                                            <InputForm name='lastName' placeholder='Last name' feedback='Only symbols are required' value={lastName} defaultValue={props.user.lastName} set={setLastName} checkBtn={checkBtn}/>
+                                            <InputForm name='email' placeholder='Email' set={setEmail} feedback='Invalid email' value={email} defaultValue={props.user.email} checkBtn={checkBtn}/>
                                             <Button className="btn-success" type="submit" value="Save" onClick={handleSubmitInfo} disabled={isActiveBtn} block>Save</Button>
                                             
                                             <CardTitle className="mt-3" tag="h5">Change password</CardTitle>

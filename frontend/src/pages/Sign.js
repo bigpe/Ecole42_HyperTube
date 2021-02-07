@@ -45,7 +45,7 @@ function InputFormWithFetch(props) {
     const checkExist = (name, value) => {
 
         if (name == 'login') {
-            getRequest(`/user/login`, { login : value })
+            getRequest(`/user/login/`, { login : value })
                 .then(result => {
                     if (result.data.message == 'Login exist') {
                         toggleValid('is-invalid');
@@ -55,7 +55,7 @@ function InputFormWithFetch(props) {
                 })
         }
         else if (name == 'email') {
-            getRequest(`/user/email`, { email : value })
+            getRequest(`/user/email/`, { email : value })
             .then(result => {
                 if (result.data.message == 'Email exist') {
                     toggleValid('is-invalid');
@@ -217,7 +217,7 @@ const Sign = (props) => {
                                     />
                                     <InputFormWithFetch set={setLogin} onBlur={checkBtn} labelName='Login' name='login'/>
                                     <InputFormWithFetch set={setEmail} onBlur={checkBtn} labelName='Email' name='email'/>
-                                    <Password setPass={setPassword} onChange={checkBtn} />
+                                    <Password setPass={setPassword} onBlur={checkBtn} onChange={checkBtn} />
                                     <Button color="secondary" type="submit" disabled={isActiveBtn} onClick={handleSubmit} onChange={checkBtn} block>Sign Up</Button>
                                     <Col>
                                         <div className="dropdown-divider"></div>

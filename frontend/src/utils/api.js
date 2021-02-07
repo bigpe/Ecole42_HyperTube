@@ -32,11 +32,12 @@ export const getGetRequest = (url, options) => {
     return axios(config);
 };
 
-export const getImgRequest = (url, options) => {
+
+export const getImageRequest = (url, options) => {
     const config = {
         method: 'POST',
         headers: {
-            'content-type' : 'multipart/form-data',
+            'Content-Type': 'multipart/form-data',
             'Access-Control-Allow-Origin': '*',
             'credentials': 'include'
         },
@@ -44,6 +45,7 @@ export const getImgRequest = (url, options) => {
         url: `${localhost}${url}`,
         withCredentials: true
     };
+    console.log(config);
     return axios(config);
 };
 
