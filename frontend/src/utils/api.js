@@ -1,14 +1,6 @@
 import axios from "axios";
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 const localhost = location.origin;
-=======
-const localhost = window.location.origin
->>>>>>> 6ce3cf968bce0a2caadbee12ebce44c80c0a63d0
-=======
-const localhost = window.location.origin
->>>>>>> 6ce3cf968bce0a2caadbee12ebce44c80c0a63d0
 
 export const getRequest = (url, options) => {
     const config = {

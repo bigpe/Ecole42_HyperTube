@@ -8,7 +8,7 @@ import {
     MOVIE_BY_ID_SUCCESS,
     MOVIE_BY_ID_REQUEST,
     MOVIE_BY_ID_TORRENT_REQUEST,
-    MOVIE_BY_ID_TORRENT_SUCCESS, MOVIE_BY_ID_TORRENT_READY
+    MOVIE_BY_ID_TORRENT_SUCCESS, MOVIE_BY_ID_TORRENT_READY, MOVIE_ADD_SUB
 } from '../constants/actions/movie';
 
 const initialState = {
@@ -90,6 +90,14 @@ const movie = (state= initialState, action) => {
                 curMovie: {
                     ...state.curMovie,
                     readyMovie: action.payload,
+                }
+            };
+            case MOVIE_ADD_SUB:
+            return {
+                ...state,
+                curMovie: {
+                    ...state.curMovie,
+                    movie: {...state.curMovie.movie, subs: action.payload},
                 }
             };
         default: return state;
