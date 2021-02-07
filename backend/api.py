@@ -146,7 +146,7 @@ def createMovie(IMDBid):
         return movieId
     movie = getOneByFields(Movie, id=movieId)
     if movie:
-        updateDbByDict({'watch_count': movie.watch_count}, Movie)
+        updateDbByDict({'watch_count': movie.watch_count + 1}, movie)
     return movieId
 
 
