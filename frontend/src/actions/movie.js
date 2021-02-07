@@ -76,7 +76,6 @@ export const getMovieById = id => dispatch => {
             dispatch(getUrlMovieRequest());
             getRequest('/movie/start/', { "torrentHash" : res.data.data.torrents[0].hash })
                 .then(r => {
-
                     getRequest('/movie/status/', { "torrentHash" : res.data.data.torrents[0].hash })
                         .then(response => dispatch(getUrlMovieReady(response.data)))
                     return dispatch(getUrlMovieSuccess(r.data))

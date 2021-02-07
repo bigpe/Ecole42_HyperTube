@@ -7,6 +7,7 @@ import sys
 from typing import Union
 from app import app
 from werkzeug.utils import secure_filename
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 API_MAP = app.config['API_MAP']
 
@@ -89,6 +90,7 @@ def getData(url: str, pointer: list = None, method='get', body=None) -> dict:
             data = updateParams(data, domain)
         # Распаковываем и передаем в запрос все именнованные аргументы
         r = getattr(requests, method.lower())(url, **data)
+        print(r.request.body, file=sys.stderr)
         # Пытаемся получить JSON ответ, для последующего рекурсивного поиска по нему
         try:
             responseData = r.json()
@@ -140,8 +142,11 @@ def getMovie():
 
 def createMovie(IMDBid):
     movieId = updateDbByDict({'imdb_id': IMDBid}, Movie, insert=True)
+    if not movieId:
+        return movieId
     movie = getOneByFields(Movie, id=movieId)
-    updateDbByDict({'watch_count': movie.watch_count + 1}, Movie)
+    if movie:
+        updateDbByDict({'watch_count': movie.watch_count}, Movie)
     return movieId
 
 
@@ -441,12 +446,21 @@ def getMovieCommentaries(IMDBid) -> dict:
 def authUser42(params):
     code = params['code']
     params = {
-        'grant_type':       'client_credentials',
-        'client_id':        'db5cd84b784b4c4998f4131c353ef1828345aa1ce5ed3b6ebac9f7e4080be068',
-        'client_secret':    '8f57b290400dea66eb8f52ca7f189fef0b58f296bfbf4b889c059090e0bee7bc',
-        'code':             code,
+        'client_id': 'db5cd84b784b4c4998f4131c353ef1828345aa1ce5ed3b6ebac9f7e4080be068',
+        'client_secret': '8f57b290400dea66eb8f52ca7f189fef0b58f296bfbf4b889c059090e0bee7bc',
+        'code': code,
+        'grant_type': 'authorization_code',
     }
-    token = getData('https://api.intra.42.fr/oauth/token', method='POST', body={'data': params})['data']['access_token']
+
+    multipart_data = MultipartEncoder(
+        fields={
+            params
+        }
+    )
+
+    token = getData('https://api.intra.42.fr/oauth/token', method='POST',
+                    body={'data': multipart_data, 'headers': {'Content-Type': multipart_data.content_type}})
+    return token
     return getData('https://api.intra.42.fr/v2/me', body={'headers': {'Authorization': f'Bearer {token}'}})
 
 

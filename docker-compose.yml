@@ -15,7 +15,7 @@ services:
       - /app/static
       - ./frontend/src:/app/src
     ports:
-      - 8888:8888
+      - 8889:8889
     restart: always
   backend:
     depends_on:
@@ -24,7 +24,8 @@ services:
     build: ./backend
     volumes:
       - ./backend:/app
-    volumes_from:
+      - ./frontend/static:/app/static
+    links:
       - frontend-builder
     ports:
       - 5006:5006

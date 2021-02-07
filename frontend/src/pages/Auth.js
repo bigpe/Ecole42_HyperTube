@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { Card, CardBody, Container, Row, Col, Button, FormGroup, Label, Input, NavLink, CardTitle} from 'reactstrap';
 import { useDispatch } from "react-redux";
-import { userLogIn } from "../actions/user";
+import { userLogIn, setUserData } from "../actions/user";
 import logo_42 from "./42_logo.svg";
 import { GoogleLogin } from 'react-google-login';
 import { refreshTokenSetup } from '../utils/refreshToken';
@@ -18,7 +18,7 @@ function LoginGoogle() {
         getGetRequest(`/user/auth/google/?id_token=${response.tokenId}`)
         .then((result) => {
             if (!result.data.error)
-            dispatch(userLogIn());
+            dispatch(setUserData());
             refreshTokenSetup(response);
         })
         

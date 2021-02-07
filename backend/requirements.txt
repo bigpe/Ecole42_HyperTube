@@ -8,3 +8,4 @@ flasgger
 pyperclip
 colorama
 Flask-Mail
+requests_toolbelt

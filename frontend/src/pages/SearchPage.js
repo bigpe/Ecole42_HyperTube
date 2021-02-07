@@ -25,7 +25,6 @@ const SearchPage = ({genre, langv}) => {
     const genreArr = genre.length && genre.map(gen => gen.name);
 
     const fetchSearch = () => {
-        console.log(lang[langv].genreRuEng[genres]);
         const options = langv === 'eng' ? { sort_by: sortBy, order_by: orderBy, query: query, genre: genres, rating: rating } :
             {
                 sort_by: sortBy && lang[langv].sortByRuEng[sortBy], order_by: orderBy && lang[langv].orderByRuEng[orderBy],
@@ -38,7 +37,7 @@ const SearchPage = ({genre, langv}) => {
     }, [])
 
     return (
-        <Container>
+        <Container fluid>
             <Row className="mt-5 w-100 justify-content-center align-items-center">
                 <Col>
                     <DropdownInput value={genres} placeholder={lang[langv].selectGenre} selectFunc={genreToggle} items={genreArr} />

@@ -7,7 +7,7 @@ import {
     MovieReadyProgressSelector,
     MovieReadySelector
 } from "../selectors/movie";
-import { CardGroup, Col, Container, Image, Row } from "react-bootstrap";
+import {Button, CardGroup, Col, Container, Image, Row} from "react-bootstrap";
 import MediaElement from "../components/MediaElement/MediaElement";
 import Actor from "../components/Actor";
 
@@ -15,20 +15,21 @@ const SearchPage = ({ curMovie, loading, location, movieReady }) => {
     const dispatch = useDispatch();
     const [error, setError] = useState("success");
     const onError = (er) => setError(er);
+    const tryAgain = () => setError("success");
     const movieId= location.search.slice(1);
-
     const
         sources = [
-            { src: movieReady && `http://localhost:5006/${curMovie.urlTorr.videoPath}`, type: 'video/mp4' },
+            { src: movieReady && `${window.location.origin}/${curMovie.urlTorr.videoPath}`, type: 'video/mp4' },
         ],
         config = { features: ['playpause', 'current', 'progress', 'duration', 'volume', 'tracks','settings', 'fullscreen']},
-        tracks = [{
-            src: movieReady && `${window.location.host}${curMovie.urlTorr.subtitlesPath}`,
-            label:'English',
-            lang:"English",
-            kind:"subtitles",
-    }];
-
+        tracks = {
+            // curMovie.urlTorr?.subtitlesPath.map(track => ({
+            //     src: `${window.location}${track}`,
+            //     label: 'English',
+            //     lang: "English",
+            //     kind: "subtitles",
+            // }))
+        };
     useEffect(()=> {
         dispatch(getMovieById(movieId))
     }, [movieId]);
@@ -36,7 +37,7 @@ const SearchPage = ({ curMovie, loading, location, movieReady }) => {
     return loading && movieReady && (
         <Container className="justify-content-center align-items-center">
             <Row>
-                <Col className="col-sm">
+                <Col className="col-sm ">
                     <h1>{curMovie.movie.title_long}</h1>
                     <Image className="mr-0" src={curMovie.movie.medium_cover_image}/>
                 </Col>
@@ -53,18 +54,20 @@ const SearchPage = ({ curMovie, loading, location, movieReady }) => {
                     <MediaElement
                         onErr={onError}
                         id="player1"
-                        mediaType="video"
                         preload="none"
                         controls
                         width="100%"
                         height="360"
                         poster={curMovie.movie.background_image_original}
-                        sources={JSON.stringify(sources)}
-                        options={JSON.stringify(config)}
-                        tracks={JSON.stringify(tracks)}
+                        sources={sources}
+                        options={config}
+                        tracks={tracks}
                     />
                     ) : (
-                        <h2>Sorry! Something went wrong</h2>
+                        <>
+                            <h2>Sorry! Something went wrong</h2>
+                            <Button onClick={tryAgain}>Try again</Button>
+                        </>
                     )}
                 </Col>
             </Row>

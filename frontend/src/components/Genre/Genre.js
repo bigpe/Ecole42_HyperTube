@@ -26,7 +26,7 @@ const Genre = ({ title, genreKey, state, langv }) => {
                         {
                             !!movieList.movieLoad && movieList.movie?.map((movie, i) => (
                             <Col key={i} className="py-2 px-0 mx-1">
-                                    <AccordionMovie key={i} eventKey={genreKey} setCardBody={setCardBody}>
+                                    <AccordionMovie key={i} eventKey={genreKey} id={movie.id} setCardBody={setCardBody}>
                                         { movie }
                                     </AccordionMovie>
                             </Col>
