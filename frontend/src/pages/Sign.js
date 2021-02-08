@@ -89,11 +89,10 @@ function InputFormWithFetch(props) {
                     type="text"
                     name={props.name}
                     onChange={inputChange}
-                    onBlur={() => props.onBlur()}
                     placeholder={props.placeholder}
-                    required
                     feedback={feedback}
                     className={isValid}
+                    onBlur={props.onBlur}
                 />
                 <FormFeedback>{feedback}</FormFeedback>
         </FormGroup>
@@ -137,8 +136,8 @@ function Password(props) {
                         type="password"
                         name='password'
                         onChange={passChange}
-                        onBlur={() => props.onBlur()}
                         className={isValidPass}
+                        onBlur={props.onBlur}
                         required
                 />
                 <FormFeedback>Too weak password. 8 symbols is required</FormFeedback>
@@ -151,8 +150,8 @@ function Password(props) {
                         type="password"
                         name='repassword'
                         onChange={passChange}
-                        onBlur={() => props.onBlur()}
                         className={isValidRepass}
+                        onBlur={props.onBlur}
                         required
                 />
                 <FormFeedback>Password doesn't match</FormFeedback>
@@ -181,7 +180,7 @@ const Sign = (props) => {
         .then(res => {
             console.log(res);
             history.push('/');
-            //setMsg("Account has created successfully");
+            addMsg("Account has created successfully");
         })
 
     }
@@ -193,6 +192,9 @@ const Sign = (props) => {
             toggleBtn(false);
         else
             toggleBtn(true);
+            console.log(countValidInputs);
+            console.log(countInvalidInputs);
+            console.log(isActiveBtn);
     }
 
         return (
@@ -204,7 +206,7 @@ const Sign = (props) => {
                                 <CardBody>
                                     {
                                         props.msg &&
-                                        <Info message={props.msg} />
+                                        <Alert message={props.msg} />
                                     }
                                     <InputForm
                                         set={setLastName} onBlur={checkBtn} labelName='Last name'
@@ -216,8 +218,8 @@ const Sign = (props) => {
                                     />
                                     <InputFormWithFetch set={setLogin} onBlur={checkBtn} labelName='Login' name='login'/>
                                     <InputFormWithFetch set={setEmail} onBlur={checkBtn} labelName='Email' name='email'/>
-                                    <Password setPass={setPassword} onBlur={checkBtn} onChange={checkBtn} />
-                                    <Button color="secondary" type="submit" disabled={isActiveBtn} onClick={handleSubmit} onChange={checkBtn} block>Sign Up</Button>
+                                    <Password setPass={setPassword} onBlur={checkBtn} />
+                                    <Button color="secondary" type="submit" disabled={isActiveBtn} onClick={handleSubmit} block>Sign Up</Button>
                                     <Col>
                                         <div className="dropdown-divider"></div>
                                         <NavLink href='/'>Back</NavLink>

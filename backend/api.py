@@ -2,11 +2,13 @@ from flask import request, session
 import requests
 from torrentUtils import TorrentUtils
 from database import updateDbByDict, deleteById, getOneByFields, getAllByFields, User, Movie, Subtitle, Commentary
-from globalUtils import createHash, getDataRecursive, saveFile
+from globalUtils import createHash, getDataRecursive, saveFile, createDir
 import sys
 from typing import Union
 from app import app
 from werkzeug.utils import secure_filename
+from requests_toolbelt.multipart.encoder import MultipartEncoder
+import re
 
 API_MAP = app.config['API_MAP']
 
@@ -21,6 +23,9 @@ def getParams(*fieldsToCheck, files=()):
             params = findParamsFromRequest(request)
             if not params:
                 params = {}
+            if checkAnswer := validateFields(params):  # Прерываем выполнение запроса если любое
+                # из полей содержащихся в теле не прошло валидацию
+                return checkAnswer
             if fieldsToCheck:  # Прерываем выполнение запроса если любое
                 # из обязательных полей переданных в декоратор
                 # не было найдено в теле/аргументах/файлах запроса
@@ -31,6 +36,30 @@ def getParams(*fieldsToCheck, files=()):
             return func(params) if func else params
         return findParams
     return checkFields
+
+
+# Валидатор полей для аргументов, переданных в запросе
+def validateFields(params):
+    validator = {
+        'password': {'r': r'[\w|\d]+[!@#$%^&*]+', 'ml': 8, 'mx': 30},
+        'login': {'r': r'[\w|\d]', 'ml': 5, 'mx': 30},
+        'email': {'r': r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', 'ml': 8, 'mx': 30},
+        'firstName': {'r': r'^[A-zА-я]+$', 'ml': 3, 'mx': 30},
+        'lastName': {'r': r'^[A-zА-я]+$', 'ml': 3, 'mx': 30},
+    }
+    fieldsNotValidated = []
+    for p in params:
+        if p not in validator:
+            continue
+        if not re.match(validator[p]['r'], params[p]):
+            fieldsNotValidated.append(p)
+        if len(params[p]) < validator[p]['ml']:
+            fieldsNotValidated.append(p)
+        if len(params[p]) > validator[p]['mx']:
+            fieldsNotValidated.append(p)
+    if fieldsNotValidated:
+        return createAnswer(f"{', '.join(fieldsNotValidated)} not validated", err=True)
+    return False
 
 
 def findParamsFromRequest(r: request):
@@ -89,6 +118,7 @@ def getData(url: str, pointer: list = None, method='get', body=None) -> dict:
             data = updateParams(data, domain)
         # Распаковываем и передаем в запрос все именнованные аргументы
         r = getattr(requests, method.lower())(url, **data)
+        print(r.request.body, file=sys.stderr)
         # Пытаемся получить JSON ответ, для последующего рекурсивного поиска по нему
         try:
             responseData = r.json()
@@ -140,6 +170,11 @@ def getMovie():
 
 def createMovie(IMDBid):
     movieId = updateDbByDict({'imdb_id': IMDBid}, Movie, insert=True)
+    if not movieId:
+        return movieId
+    movie = getOneByFields(Movie, id=movieId)
+    if movie:
+        updateDbByDict({'watch_count': movie.watch_count + 1}, movie)
     return movieId
 
 
@@ -152,11 +187,17 @@ def getSubtitles(body=None):
     return data
 
 
-def getMovieSubtitles(IMDBid):
+@getParams('IMDBid')
+def getMovieSubtitles(params):
+    IMDBid = params['IMDBid']
     createMovie(IMDBid)
     subtitles = []
     languages = {'en', 'ru', 'fr'}
     for language in languages:
+        subtitleDB = getOneByFields(Subtitle, language=language, movie_imdb_id=IMDBid)
+        if subtitleDB:
+            subtitles.append({language: f'/{subtitleDB.path}'})
+            continue
         subtitleObj = getSubtitles({'params': {'imdb_id': IMDBid, 'languages': language}})['data']
         if not subtitleObj:
             continue
@@ -177,6 +218,8 @@ def saveSubtitles(subtitleObj, language, IMDBid):
     if 'link' not in subtitle:
         return {}
     subtitleFile = requests.get(subtitle['link']).content
+    createDir('subtitles')
+    createDir(f'subtitles/{IMDBid}')
     subtitleFilePath = saveFile(subtitleFile, secure_filename(fileName), f'subtitles/{IMDBid}')
     updateDbByDict({'movie_imdb_id': IMDBid, 'language': language, 'path': subtitleFilePath}, Subtitle, insert=True)
     return {language: f'/{subtitleFilePath}'}
@@ -309,6 +352,7 @@ def changeUser(params: dict, files: dict) -> dict:
         return answer
     for f in files:
         fileName = secure_filename(files[f].filename)
+        createDir('media')
         savePath = f'media/{fileName}'
         files[f].save(savePath)
         params.update({f: f'/{savePath}'})
@@ -421,7 +465,9 @@ def getUserByFields(**fields) -> User:
     return user
 
 
-def getMovieCommentaries(IMDBid) -> dict:
+@getParams('IMDBid')
+def getMovieCommentaries(params) -> dict:
+    IMDBid = params['IMDBid']
     commentariesList = []
     commentaries = getAllByFields(Commentary, movie_imdb_id=IMDBid)
     for commentary in commentaries:
@@ -435,30 +481,26 @@ def getMovieCommentaries(IMDBid) -> dict:
     return createAnswer(f'Commentaries for movie {IMDBid}', False, {'data': commentariesList})
 
 
-def updateWatchStatisticByMovieIMDBid(IMDBid):
-    pass
-
-
-@getParams('code')
-def authUser42(params):
-    code = params['code']
-    params = {
-        'grant_type':       'client_credentials',
-        'client_id':        'db5cd84b784b4c4998f4131c353ef1828345aa1ce5ed3b6ebac9f7e4080be068',
-        'client_secret':    '8f57b290400dea66eb8f52ca7f189fef0b58f296bfbf4b889c059090e0bee7bc',
-        'code':             code,
-
-    }
-    token = getData('https://api.intra.42.fr/oauth/token', method='POST', body={'data': params})['data']['access_token']
-    return getData('https://api.intra.42.fr/v2/me', body={'headers': {'Authorization': f'Bearer {token}'}})
-
-
 @getParams('id_token')
 def authUserGoogle(params):
     token = params['id_token']
     url = f'https://www.googleapis.com/oauth2/v3/tokeninfo'
-    data = getData(url)
-    return data
+    googleUserInfo = getData(url)
+    if not googleUserInfo['error']:
+        googleUserInfo = googleUserInfo['data']
+    else:
+        return createAnswer('Auth failed', err=True)
+    updateDbByDict({
+        'firstName': googleUserInfo['given_name'],
+        'lastName': googleUserInfo['family_name'],
+        'email': googleUserInfo['email'],
+        'userPhoto': googleUserInfo['picture'],
+        'login': googleUserInfo['sub']
+    }, User, insert=True)
+    user = getOneByFields(User, login=googleUserInfo['sub'])
+    if user:
+        session['login'] = googleUserInfo['sub']
+    return getUserInfo(user)
 
 
 def checkAuthed() -> Union[bool, dict]:

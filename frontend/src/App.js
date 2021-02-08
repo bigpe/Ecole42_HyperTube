@@ -18,26 +18,17 @@ import Remind from "./pages/Remind";
 import Restore from "./pages/Restore";
 import { getGetRequest } from "./utils/api";
 import { useDispatch } from "react-redux";
-import { userLogIn, setUserData } from "./actions/user";
+import { userLogIn } from "./actions/user";
 
 const App = ({user})  => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        getGetRequest('/user/auth/')
+        getGetRequest('/user/auth')
             .then((res) => {
-                const data = {
-                    auth: true,
-                    login: res.data.login,
-                    firstName : res.data.firstName, 
-                    lastName: res.data.lastName, 
-                    email: res.data.email,
-                    userPhoto: res.data.userPhoto,
-                }
-                console.log(res);
-                if (!res.data.error) {
+                if( res.data.message === "Authed" )
+                {
                     dispatch(userLogIn());
-                    dispatch(setUserData(data));
                 }
             });
     },[]);

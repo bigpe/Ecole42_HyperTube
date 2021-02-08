@@ -49,10 +49,10 @@ def getMovies():
     return jsonify(api.getMovies())
 
 
-@app.route('/movie/subtitles/<string:IMDBid>/', methods=['GET'])
+@app.route('/movie/subtitles/', methods=['POST'])
 @swag_from('spec/movie-subtitles.yml')
-def getMovieSubtitles(IMDBid):
-    return jsonify(api.getMovieSubtitles(IMDBid))
+def getMovieSubtitles():
+    return jsonify(api.getMovieSubtitles())
 
 
 @app.route('/movie/', methods=['POST'])
@@ -155,15 +155,10 @@ def createCommentary():
     return jsonify(api.createCommentary())
 
 
-@app.route('/movie/commentaries/<string:IMDBid>/', methods=['GET'])
+@app.route('/movie/commentaries/', methods=['POST'])
 @swag_from('spec/movie-commentaries.yml')
-def getMovieCommentaries(IMDBid):
-    return jsonify(api.getMovieCommentaries(IMDBid))
-
-
-@app.route('/user/auth/42/', methods=['GET'])
-def authUser42():
-    return jsonify(api.authUser42())
+def getMovieCommentaries():
+    return jsonify(api.getMovieCommentaries())
 
 
 @app.route('/user/auth/google/', methods=['GET'])
