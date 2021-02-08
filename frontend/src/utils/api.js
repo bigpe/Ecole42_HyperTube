@@ -16,8 +16,22 @@ export const getRequest = (url, options) => {
     };
     return axios(config);
 };
+export const getPutRequest = (url, options) => {
+    const config = {
+        method: 'PUT',
+        headers: {
+            'content-type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'credentials': 'include'
+        },
+        data: options,
+        url: `${localhost}${url}`,
+        withCredentials: true
+    };
+    return axios(config);
+};
 
-export const getGetRequest = (url, options) => {
+export const getGetRequest = (url) => {
     const config = {
         method: 'GET',
         headers: {
@@ -26,7 +40,6 @@ export const getGetRequest = (url, options) => {
             'credentials': 'include',
             'withCredentials' : 'true'
         },
-        data: options,
         url: `${localhost}${url}`,
     };
     return axios(config);
