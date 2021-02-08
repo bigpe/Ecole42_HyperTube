@@ -185,7 +185,7 @@ def verifyReset():
     return api.verifyReset()
 
 
-@app.route('/user/reset/', methods=['GET'])
+@app.route('/user/restore/', methods=['GET'])
 def checkResetUser():
     return jsonify(api.checkResetUser())
 

@@ -57,10 +57,10 @@ def validateFields(params):
         if not re.match(validator[p]['r'], params[p]):
             fieldsNotValidated.append(p)
             continue
-        if len(params[p]) < validator[p]['ml']:
+        if len(params[p]) <= validator[p]['ml']:
             fieldsNotValidated.append(p)
             continue
-        if len(params[p]) > validator[p]['mx']:
+        if len(params[p]) >= validator[p]['mx']:
             fieldsNotValidated.append(p)
             continue
     if fieldsNotValidated:
@@ -558,8 +558,8 @@ def verifyReset(params):
 
 def checkResetUser():
     if 'reset' in session:
-        return createAnswer('User in reset stage')
-    return createAnswer('User not in reset stage', err=True)
+        return createAnswer('User in restore stage')
+    return createAnswer('User not in restore stage', err=True)
 
 
 def sendMail(recipient, subject, msgBody):
