@@ -1,39 +1,61 @@
-import React, { useEffect, useState } from "react";
-import { connect, useDispatch } from "react-redux";
-import { getMovieById } from "../actions/movie";
+import React, {useEffect, useState} from "react";
+import {connect, useDispatch} from "react-redux";
+import {
+    getMovieById,
+    getUrlMovieSuccess, setHashMovie,
+} from "../actions/movie";
 import {
     CurrentMovieSelector,
-    LoadingMovieSelector,
+    LoadingMovieSelector, movieHashSelector,
     MovieReadyProgressSelector,
-    MovieReadySelector
+    MovieReadySelector, videoPathSelector
 } from "../selectors/movie";
-import {Button, CardGroup, Col, Container, Image, Row} from "react-bootstrap";
+import { Button, CardGroup, Col, Container, Image, Row, Form } from "react-bootstrap";
 import MediaElement from "../components/MediaElement/MediaElement";
 import Actor from "../components/Actor";
+import Comments from "../components/Comments";
+import { getRequest } from "../utils/api";
 
-const SearchPage = ({ curMovie, loading, location, movieReady }) => {
+const MoviePage = ({curMovie, loading, location, movieReady, videoPath}) => {
     const dispatch = useDispatch();
     const [error, setError] = useState("success");
+    const [quality, setQuality] = useState('');
+    const [sources, setSources] = useState('');
+
+    const movieId = location.search.slice(1);
+    let trackF = {
+        en: {label: 'English', lang: 'English', kind: "subtitles",},
+        fr: {label: 'French', lang: 'French', kind: "subtitles",},
+        ru: {label: 'Russian', lang: 'Russian', kind: "subtitles",},
+    };
+    const config = {features: ['playpause', 'current', 'progress', 'duration', 'volume', 'tracks', 'settings', 'fullscreen']};
+    const trackArr = curMovie?.movie?.subs?.map(track => {
+        const lang = Object.keys(track)[0];
+        return ({
+            label: trackF[lang].label,
+            lang: trackF[lang].lang,
+            kind: "subtitles",
+            src: track[lang],
+        })
+    });
+
     const onError = (er) => setError(er);
     const tryAgain = () => setError("success");
-    const movieId= location.search.slice(1);
-    const
-        sources = [
-            { src: movieReady && `${window.location.origin}/${curMovie.urlTorr.videoPath}`, type: 'video/mp4' },
-        ],
-        config = { features: ['playpause', 'current', 'progress', 'duration', 'volume', 'tracks','settings', 'fullscreen']},
-        tracks = {
-            // curMovie.urlTorr?.subtitlesPath.map(track => ({
-            //     src: `${window.location}${track}`,
-            //     label: 'English',
-            //     lang: "English",
-            //     kind: "subtitles",
-            // }))
-        };
-    useEffect(()=> {
-        dispatch(getMovieById(movieId))
-    }, [movieId]);
+    const qualityHandler = (e) => {
+        setQuality(e.target.value)
+        getRequest('/movie/start/', {"torrentHash": e.target.value})
+            .then(r => {
+                dispatch(getUrlMovieSuccess(r.data))
+                dispatch(setHashMovie(e.target.value));
+            })
+    };
 
+    useEffect(() => {
+        dispatch(getMovieById(movieId))
+    }, []);
+    useEffect(() => {
+        setSources([{src: movieReady && `${window.location.origin}/${videoPath}`, type: 'video/mp4'}])
+    }, [videoPath]);
     return loading && movieReady && (
         <Container className="justify-content-center align-items-center">
             <Row>
@@ -50,19 +72,36 @@ const SearchPage = ({ curMovie, loading, location, movieReady }) => {
             </Row>
             <Row>
                 <Col className="col-sm col-lg m-5">
-                    { error !== "error" ? (
-                    <MediaElement
-                        onErr={onError}
-                        id="player1"
-                        preload="none"
-                        controls
-                        width="100%"
-                        height="360"
-                        poster={curMovie.movie.background_image_original}
-                        sources={sources}
-                        options={config}
-                        tracks={tracks}
-                    />
+
+                    {error !== "error" && trackArr ? (
+                        <>
+                            <Form.Control
+                                as="select"
+                                className="w-25"
+                                id="inlineFormCustomSelectPref"
+                                custom
+                                value={quality}
+                                onChange={qualityHandler}
+                            >
+                                {curMovie?.movie?.torrents.length > 0 && curMovie?.movie?.torrents.map((item) => (
+                                    <option value={item.hash}>{item.quality}</option>
+
+                                ))}
+                            </Form.Control>
+                            <MediaElement
+                                onErr={onError}
+                                id={sources[0].src}
+                                preload="none"
+                                controls
+                                width="100%"
+                                height="360"
+                                poster={curMovie.movie.background_image_original}
+                                sources={sources}
+                                options={config}
+                                tracks={trackArr}
+                            />
+                        </>
+
                     ) : (
                         <>
                             <h2>Sorry! Something went wrong</h2>
@@ -70,21 +109,31 @@ const SearchPage = ({ curMovie, loading, location, movieReady }) => {
                         </>
                     )}
                 </Col>
+
             </Row>
             <Row>
                 <Col className="col-sm col-lg m-5">
                     <h1>Cast</h1>
                     <CardGroup className="w-50">
-                    {curMovie.movie.cast?.map((actor, i) =>
-                        (
-                            <Actor key={i}
-                                character_name={actor.character_name}
-                                imdb_code={actor.imdb_code}
-                                name={actor.name}
-                                url_small_image={actor.url_small_image}
-                            />
-                    ))}
+                        {curMovie.movie.cast?.map((actor, i) =>
+                            (
+                                <Actor key={i}
+                                       character_name={actor.character_name}
+                                       imdb_code={actor.imdb_code}
+                                       name={actor.name}
+                                       url_small_image={actor.url_small_image}
+                                />
+                            ))}
                     </CardGroup>
+                </Col>
+            </Row>
+            <Row>
+                <Col className="col-sm col-lg m-5">
+                    <h1>Comments</h1>
+                    <Comments
+                        data={curMovie.movie.cum}
+                        IMDBid={curMovie.movie.imdb_code}
+                    />
                 </Col>
             </Row>
         </Container>
@@ -93,9 +142,11 @@ const SearchPage = ({ curMovie, loading, location, movieReady }) => {
 
 const mapStateToProps = state => ({
     curMovie: CurrentMovieSelector(state),
+    videoPath: videoPathSelector(state),
     loading: LoadingMovieSelector(state),
+    hash: movieHashSelector(state),
     movieReady: MovieReadySelector(state),
     progress: MovieReadyProgressSelector(state),
 })
 
-export default connect(mapStateToProps)(SearchPage);
+export default connect(mapStateToProps)(MoviePage);

@@ -13,14 +13,13 @@ const AccordionMovie = ({ children, eventKey, id, setCardBody }) => {
         const config = {autoplay: true, mute: true, controls: ""},
             tracks = {};
         const innerBody = () => {
-            console.log(sources);
 
             return (
                 <Row>
                     <Col>
                         <h1>{children.title}</h1>
                         <p>{children.description_full}</p>
-                        <Link to={`/movie/?${children.id}`}><Button>Watch</Button></Link>
+                        <Link to={`/film/?${children.id}`}><Button>Watch</Button></Link>
                     </Col>
                     <Col>
                         {children.yt_trailer_code && error === "success" ?

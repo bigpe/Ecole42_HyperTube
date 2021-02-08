@@ -41,7 +41,7 @@ const App = ({user})  => {
                 <Route exact path="/" component={Home}/>
                 <Route path="/search" component={SearchPage}/>
                 <Route path="/profile" component={Profile}/>
-                <Route path="/movie/" component={MoviePage}/>
+                <Route path="/film/" component={MoviePage}/>
                 <Route path="/edit_profile" component={EditProfile}/>
             </Switch>
         </Router>

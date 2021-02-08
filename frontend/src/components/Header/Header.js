@@ -16,7 +16,6 @@ const Header = () => {
 
         getGetRequest('/user/logout/')
         .then((res) => {
-            console.log(res);
         });
         dispatch(userLogOut());
         history.push('/');
