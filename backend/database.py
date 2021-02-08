@@ -40,6 +40,13 @@ class Commentary(db.Model):
     commentary = db.Column(db.String(255), nullable=False)
 
 
+class Token(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.String(50), db.ForeignKey('user.id'))
+    user = db.relationship('User', backref='owner', lazy='joined', uselist=False)
+    token = db.Column(db.String(50), nullable=False)
+
+
 def updateDbByDict(dataDict, table, insert=False):
     if type(dataDict) != dict:
         dataDict = dict(dataDict)

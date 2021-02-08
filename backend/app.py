@@ -5,6 +5,7 @@ import api
 from globalUtils import addressInit
 from delugeSetup import setupApp
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail
 
 
 class HyperTubeApp(Flask):
@@ -17,6 +18,7 @@ class HyperTubeApp(Flask):
         CORS(self, supports_credentials=True)
         setupApp()
         self.db = SQLAlchemy(self)
+        self.mail = Mail(self)
 
 
 app = HyperTubeApp(__name__)
@@ -170,6 +172,22 @@ def authUserGoogle():
 @swag_from('spec/subtitles.yml')
 def getSubtitles():
     return jsonify(api.getSubtitles())
+
+
+@app.route('/user/password/reset/', methods=['GET'])
+@swag_from('spec/user-reset-password.yml')
+def resetPassword():
+    return jsonify(api.resetPassword())
+
+
+@app.route('/user/reset/verify/', methods=['GET'])
+def verifyReset():
+    return api.verifyReset()
+
+
+@app.route('/user/reset/', methods=['GET'])
+def checkResetUser():
+    return jsonify(api.checkResetUser())
 
 
 if __name__ == '__main__':

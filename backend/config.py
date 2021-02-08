@@ -108,3 +108,10 @@ API_MAP = {
     'themoviedb': {'api_key^P': '6c60e65c45de8fc3495acac976c567ce'},
     'opensubtitles': {'Api-Key^H': '1xPMLpBzqrPAU893YsgmO65rDblq05Yd'},
 }
+
+MAIL_SERVER = 'smtp.yandex.ru'
+MAIL_PORT = 587
+MAIL_USE_TLS = True
+MAIL_DEFAULT_SENDER = ''
+MAIL_USERNAME = ''
+MAIL_PASSWORD = ''
