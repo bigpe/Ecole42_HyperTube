@@ -6,11 +6,11 @@ db = app.db
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    login = db.Column(db.String(30), unique=True, nullable=False)
-    email = db.Column(db.String(30), unique=True, nullable=False)
-    password = db.Column(db.String(64), index=True)
-    firstName = db.Column(db.String(100))
-    lastName = db.Column(db.String(100))
+    login = db.Column(db.String(30), unique=True, nullable=True)
+    email = db.Column(db.String(30), unique=True, nullable=True)
+    password = db.Column(db.String(64), index=True, nullable=True)
+    firstName = db.Column(db.String(100), nullable=True)
+    lastName = db.Column(db.String(100), nullable=True)
     userPhoto = db.Column(db.String(200), nullable=True)
 
 

@@ -161,11 +161,6 @@ def getMovieCommentaries():
     return jsonify(api.getMovieCommentaries())
 
 
-@app.route('/user/auth/42/', methods=['GET'])
-def authUser42():
-    return jsonify(api.authUser42())
-
-
 @app.route('/user/auth/google/', methods=['GET'])
 def authUserGoogle():
     return jsonify(api.authUserGoogle())

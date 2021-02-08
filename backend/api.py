@@ -8,6 +8,7 @@ from typing import Union
 from app import app
 from werkzeug.utils import secure_filename
 from requests_toolbelt.multipart.encoder import MultipartEncoder
+import re
 
 API_MAP = app.config['API_MAP']
 
@@ -22,6 +23,9 @@ def getParams(*fieldsToCheck, files=()):
             params = findParamsFromRequest(request)
             if not params:
                 params = {}
+            if checkAnswer := validateFields(params):  # Прерываем выполнение запроса если любое
+                # из полей содержащихся в теле не прошло валидацию
+                return checkAnswer
             if fieldsToCheck:  # Прерываем выполнение запроса если любое
                 # из обязательных полей переданных в декоратор
                 # не было найдено в теле/аргументах/файлах запроса
@@ -32,6 +36,26 @@ def getParams(*fieldsToCheck, files=()):
             return func(params) if func else params
         return findParams
     return checkFields
+
+
+# Валидатор полей для аргументов, переданных в запросе
+def validateFields(params):
+    validator = {
+        'password': {'r': r'[\w|\d]+[!@#$%^&*]+'},
+        'login': {'r': r'[\w|\d]'},
+        'email': {'r': r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'},
+        'firstName': {'r': r'^[A-zА-я]+$'},
+        'lastName': {'r': r'^[A-zА-я]+$'},
+    }
+    fieldsNotValidated = []
+    for p in params:
+        if p not in validator:
+            continue
+        if not re.match(validator[p]['r'], params[p]):
+            fieldsNotValidated.append(p)
+    if fieldsNotValidated:
+        return createAnswer(f"{', '.join(fieldsNotValidated)} not validated", err=True)
+    return False
 
 
 def findParamsFromRequest(r: request):
@@ -453,34 +477,26 @@ def getMovieCommentaries(params) -> dict:
     return createAnswer(f'Commentaries for movie {IMDBid}', False, {'data': commentariesList})
 
 
-@getParams('code')
-def authUser42(params):
-    code = params['code']
-    params = {
-        'client_id': 'db5cd84b784b4c4998f4131c353ef1828345aa1ce5ed3b6ebac9f7e4080be068',
-        'client_secret': '8f57b290400dea66eb8f52ca7f189fef0b58f296bfbf4b889c059090e0bee7bc',
-        'code': code,
-        'grant_type': 'authorization_code',
-    }
-
-    multipart_data = MultipartEncoder(
-        fields={
-            params
-        }
-    )
-
-    token = getData('https://api.intra.42.fr/oauth/token', method='POST',
-                    body={'data': multipart_data, 'headers': {'Content-Type': multipart_data.content_type}})
-    return token
-    return getData('https://api.intra.42.fr/v2/me', body={'headers': {'Authorization': f'Bearer {token}'}})
-
-
 @getParams('id_token')
 def authUserGoogle(params):
     token = params['id_token']
     url = f'https://www.googleapis.com/oauth2/v3/tokeninfo'
-    data = getData(url)
-    return data
+    googleUserInfo = getData(url)
+    if not googleUserInfo['error']:
+        googleUserInfo = googleUserInfo['data']
+    else:
+        return createAnswer('Auth failed', err=True)
+    updateDbByDict({
+        'firstName': googleUserInfo['given_name'],
+        'lastName': googleUserInfo['family_name'],
+        'email': googleUserInfo['email'],
+        'userPhoto': googleUserInfo['picture'],
+        'login': googleUserInfo['sub']
+    }, User, insert=True)
+    user = getOneByFields(User, login=googleUserInfo['sub'])
+    if user:
+        session['login'] = googleUserInfo['sub']
+    return getUserInfo(user)
 
 
 def checkAuthed() -> Union[bool, dict]:
