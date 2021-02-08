@@ -8,6 +8,7 @@ import {getGenre, getSearch} from "../actions/movie";
 import { lang } from '../utils/location';
 import {UserLangSelector} from "../selectors/user";
 import DropdownInput from "../components/DropdownInput";
+import PaginationComp from "../components/Pagination/Pagination";
 
 const SearchPage = ({genre, langv}) => {
     const dispatch = useDispatch();
@@ -16,22 +17,26 @@ const SearchPage = ({genre, langv}) => {
     const [sortBy, setSortBy] = useState('');
     const [orderBy, setOrderBy] = useState('');
     const [rating, setRating] = useState('');
+    const [page, setPage] = useState(1);
+
+    const options = langv === 'eng' ? { sort_by: sortBy, order_by: orderBy, query, genre: genres, rating, page } :
+        {
+            sort_by: sortBy && lang[langv].sortByRuEng[sortBy],
+            order_by: orderBy && lang[langv].orderByRuEng[orderBy],
+            query,
+            genre: genres && lang[langv].genreRuEng[genres],
+            rating,
+            page
+        };
 
     const genreToggle = (val) => setGenres(val);
     const sortByToggle = (val) => setSortBy(val);
     const orderByToggle = (val) => setOrderBy(val);
     const ratingToggle = (val) => setRating(val.target.value);
+    const fetchSearch = () => dispatch(getSearch(options));
 
     const genreArr = genre.length && genre.map(gen => gen.name);
 
-    const fetchSearch = () => {
-        const options = langv === 'eng' ? { sort_by: sortBy, order_by: orderBy, query: query, genre: genres, rating: rating } :
-            {
-                sort_by: sortBy && lang[langv].sortByRuEng[sortBy], order_by: orderBy && lang[langv].orderByRuEng[orderBy],
-                query: query, genre: genres && lang[langv].genreRuEng[genres], rating: rating
-            }
-        dispatch(getSearch(options));
-    };
     useEffect(() => {
         if(!genre.length) dispatch(getGenre('ru-RU'));
     }, [])
@@ -60,7 +65,10 @@ const SearchPage = ({genre, langv}) => {
                 <Button variant="outline-secondary" onClick={fetchSearch}>{lang[langv].search}</Button>
             </Row>
             <Row className="mt-5 justify-content-center">
-                <SearchList />
+                <SearchList page={page} />
+            </Row>
+            <Row className="mt-5 justify-content-center">
+                <PaginationComp active={page} setPage={setPage} options={options} count={3}/>
             </Row>
         </Container>
     )

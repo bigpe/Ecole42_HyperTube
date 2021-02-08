@@ -2,7 +2,11 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { Card, CardBody, Container, Row, Col, Button, FormGroup, Input, NavLink, Alert } from 'reactstrap';
 import { useDispatch } from "react-redux";
+<<<<<<< HEAD
 import { userLogIn } from "../actions/user";
+=======
+import { userLogIn, setUserData } from "../actions/user";
+>>>>>>> 614afd58db3d71e9d7ff59d58451ee2b3d45ae73
 import { addMsg } from "../actions/common";
 import logo_42 from "./42_logo.svg";
 import logo_google from "./Google_logo.svg";
