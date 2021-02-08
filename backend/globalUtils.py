@@ -8,6 +8,7 @@ import base64
 import sys
 from hashlib import sha256
 from functools import reduce
+from datetime import datetime
 
 MessageLimitLen = 100
 
@@ -92,7 +93,9 @@ def addressInit():
 
 
 # Создание sha256 хэша строки
-def createHash(hashString: str) -> str:
+def createHash(hashString: str, timeSalt=False) -> str:
+    if timeSalt:
+        hashString = f'!#$1{hashString}{datetime.now().microsecond}'
     return sha256(hashString.encode('UTF-8')).hexdigest()
 
 

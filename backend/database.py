@@ -6,11 +6,11 @@ db = app.db
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    login = db.Column(db.String(30), unique=True, nullable=False)
-    email = db.Column(db.String(30), unique=True, nullable=False)
-    password = db.Column(db.String(64), index=True)
-    firstName = db.Column(db.String(100))
-    lastName = db.Column(db.String(100))
+    login = db.Column(db.String(30), unique=True, nullable=True)
+    email = db.Column(db.String(30), unique=True, nullable=True)
+    password = db.Column(db.String(64), index=True, nullable=True)
+    firstName = db.Column(db.String(100), nullable=True)
+    lastName = db.Column(db.String(100), nullable=True)
     userPhoto = db.Column(db.String(200), nullable=True)
 
 
@@ -38,6 +38,13 @@ class Commentary(db.Model):
     user_id = db.Column(db.String(50), db.ForeignKey('user.id'))
     user = db.relationship('User', backref='author', lazy='joined', uselist=False)
     commentary = db.Column(db.String(255), nullable=False)
+
+
+class Token(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.String(50), db.ForeignKey('user.id'))
+    user = db.relationship('User', backref='owner', lazy='joined', uselist=False)
+    token = db.Column(db.String(50), nullable=False)
 
 
 def updateDbByDict(dataDict, table, insert=False):

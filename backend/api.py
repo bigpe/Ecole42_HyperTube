@@ -1,13 +1,15 @@
-from flask import request, session
+from flask import request, session, redirect
 import requests
 from torrentUtils import TorrentUtils
-from database import updateDbByDict, deleteById, getOneByFields, getAllByFields, User, Movie, Subtitle, Commentary
+from database import updateDbByDict, deleteById, getOneByFields, getAllByFields, User, Movie, Subtitle, Commentary, \
+    Token
 from globalUtils import createHash, getDataRecursive, saveFile, createDir
 import sys
 from typing import Union
 from app import app
 from werkzeug.utils import secure_filename
-from requests_toolbelt.multipart.encoder import MultipartEncoder
+import re
+from flask_mail import Message
 
 API_MAP = app.config['API_MAP']
 
@@ -22,6 +24,9 @@ def getParams(*fieldsToCheck, files=()):
             params = findParamsFromRequest(request)
             if not params:
                 params = {}
+            if checkAnswer := validateFields(params):  # Прерываем выполнение запроса если любое
+                # из полей содержащихся в теле не прошло валидацию
+                return checkAnswer
             if fieldsToCheck:  # Прерываем выполнение запроса если любое
                 # из обязательных полей переданных в декоратор
                 # не было найдено в теле/аргументах/файлах запроса
@@ -30,8 +35,37 @@ def getParams(*fieldsToCheck, files=()):
             if files:
                 return func(params, request.files) if func else params
             return func(params) if func else params
+
         return findParams
+
     return checkFields
+
+
+# Валидатор полей для аргументов, переданных в запросе
+def validateFields(params):
+    validator = {
+        'password': {'r': r'[\w|\d]+[!@#$%^&*]+', 'ml': 8, 'mx': 30},
+        'login': {'r': r'[\w|\d]', 'ml': 5, 'mx': 30},
+        'email': {'r': r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', 'ml': 8, 'mx': 30},
+        'firstName': {'r': r'^[A-zА-я]+$', 'ml': 3, 'mx': 30},
+        'lastName': {'r': r'^[A-zА-я]+$', 'ml': 3, 'mx': 30},
+    }
+    fieldsNotValidated = []
+    for p in params:
+        if p not in validator:
+            continue
+        if not re.match(validator[p]['r'], params[p]):
+            fieldsNotValidated.append(p)
+            continue
+        if len(params[p]) < validator[p]['ml']:
+            fieldsNotValidated.append(p)
+            continue
+        if len(params[p]) > validator[p]['mx']:
+            fieldsNotValidated.append(p)
+            continue
+    if fieldsNotValidated:
+        return createAnswer(f"{', '.join(fieldsNotValidated)} not validated", err=True)
+    return False
 
 
 def findParamsFromRequest(r: request):
@@ -53,10 +87,10 @@ def findParamsFromRequest(r: request):
 
 # Исполняем дополнительные инструкции для API, содержащегося в карте
 # Например добавляем уникальный ключ в тело запроса/заголовки для этого ресурса
-    # ^H обновить заголвок (headers)
-    # ^P обновить параметры запроса (params)
-    # ^D обновить тело запроса (data)
-    # ^J передать в теле запроса как json (json)
+# ^H обновить заголвок (headers)
+# ^P обновить параметры запроса (params)
+# ^D обновить тело запроса (data)
+# ^J передать в теле запроса как json (json)
 def updateParams(params, domain):
     for k in API_MAP[domain]:
         if '^H' in k:
@@ -90,7 +124,6 @@ def getData(url: str, pointer: list = None, method='get', body=None) -> dict:
             data = updateParams(data, domain)
         # Распаковываем и передаем в запрос все именнованные аргументы
         r = getattr(requests, method.lower())(url, **data)
-        print(r.request.body, file=sys.stderr)
         # Пытаемся получить JSON ответ, для последующего рекурсивного поиска по нему
         try:
             responseData = r.json()
@@ -106,6 +139,7 @@ def getData(url: str, pointer: list = None, method='get', body=None) -> dict:
         return createAnswer('Success', False, {
             'data': getDataRecursive(responseData, pointer) if pointer else responseData
         })
+
     return getDataWithParams()
 
 
@@ -304,8 +338,18 @@ def getTorrentsByMovieList(movie: dict):
 @getParams('login', 'firstName', 'lastName', 'email', 'password')
 def createUser(params) -> dict:
     params['password'] = createHash(params['password'])
+    email = params['email']
     userId = updateDbByDict(params, User, insert=True)
-    return createAnswer('User created', False, {'id': userId}) if userId else createAnswer('User not created', True)
+    if userId:
+        try:
+            sendMail(email, 'HyperTube Project | Welcome',
+                     '<h2>Welcome to HyperTube</h2><br>'
+                     '<p>Your account successful created</p>'
+                     '<p>Enjoy to watch movies!</p>')
+        except:
+            pass
+        return createAnswer('User created', False, {'id': userId})
+    return createAnswer('User not created', True)
 
 
 @getParams('login')
@@ -360,6 +404,8 @@ def authUser(params) -> dict:
     if not user:
         return createAnswer('Login or password incorrect', True)
     session['login'] = login
+    if 'restore' in session:
+        del session['restore']
     userInfo = getUserInfo(user)
     return createAnswer('Authed', False, userInfo)
 
@@ -445,46 +491,85 @@ def getMovieCommentaries(params) -> dict:
     for commentary in commentaries:
         user = commentary.user
         commentariesList.append({
-            'id':           commentary.id,
-            'commentary':   commentary.commentary,
-            'login':        user.login,
-            'user_id':      user.id
+            'id': commentary.id,
+            'commentary': commentary.commentary,
+            'login': user.login,
+            'user_id': user.id
         })
     return createAnswer(f'Commentaries for movie {IMDBid}', False, {'data': commentariesList})
-
-
-@getParams('code')
-def authUser42(params):
-    code = params['code']
-    params = {
-        'client_id': 'db5cd84b784b4c4998f4131c353ef1828345aa1ce5ed3b6ebac9f7e4080be068',
-        'client_secret': '8f57b290400dea66eb8f52ca7f189fef0b58f296bfbf4b889c059090e0bee7bc',
-        'code': code,
-        'grant_type': 'authorization_code',
-    }
-
-    multipart_data = MultipartEncoder(
-        fields={
-            params
-        }
-    )
-
-    token = getData('https://api.intra.42.fr/oauth/token', method='POST',
-                    body={'data': multipart_data, 'headers': {'Content-Type': multipart_data.content_type}})
-    return token
-    return getData('https://api.intra.42.fr/v2/me', body={'headers': {'Authorization': f'Bearer {token}'}})
 
 
 @getParams('id_token')
 def authUserGoogle(params):
     token = params['id_token']
     url = f'https://www.googleapis.com/oauth2/v3/tokeninfo'
-    data = getData(url)
-    return data
+    googleUserInfo = getData(url)
+    if not googleUserInfo['error']:
+        googleUserInfo = googleUserInfo['data']
+    else:
+        return createAnswer('Auth failed', err=True)
+    updateDbByDict({
+        'firstName': googleUserInfo['given_name'],
+        'lastName': googleUserInfo['family_name'],
+        'email': googleUserInfo['email'],
+        'userPhoto': googleUserInfo['picture'],
+        'login': googleUserInfo['sub']
+    }, User, insert=True)
+    user = getOneByFields(User, login=googleUserInfo['sub'])
+    if user:
+        session['login'] = googleUserInfo['sub']
+    return getUserInfo(user)
+
+
+@getParams('email')
+def resetPassword(params):
+    email = params['email']
+    user = getOneByFields(User, email=email)
+    if not user:
+        return createAnswer('User with this email not exist', err=True)
+    token = createHash(email, timeSalt=True)
+    tokenObj = getOneByFields(Token, user_id=user.id)
+    if tokenObj:
+        tokenId = updateDbByDict({'token': token, 'user_id': user.id}, tokenObj)
+    else:
+        tokenId = updateDbByDict({'token': token, 'user_id': user.id}, Token, insert=True)
+    if not tokenId:
+        return createAnswer('Something went wrong, sorry', err=True)
+    try:
+        sendMail(email, 'HyperTube Project | Password Reset', '<h2>Recovery password</h2><br>'
+                                                              f'<a href="{request.host_url}user/reset/verify/?token={token}">Verify Link</a><br><br>'
+                                                              f'<b>Please verify your email by the link</b>')
+    except:
+        return createAnswer('Messages send blocked (spam policy)', err=True)
+    return createAnswer('Verify link successful sent')
+
+
+@getParams('token')
+def verifyReset(params):
+    verifyToken = params['token']
+    token = getOneByFields(Token, token=verifyToken)
+    if token:
+        session['reset'] = True
+        session['login'] = token.user.login
+        deleteById('Token', token.id)
+        redirect('/restore')
+    return redirect('/')
+
+
+def checkResetUser():
+    if 'reset' in session:
+        return createAnswer('User in reset stage')
+    return createAnswer('User not in reset stage', err=True)
+
+
+def sendMail(recipient, subject, msgBody):
+    msg = Message(subject, recipients=[recipient])
+    msg.html = msgBody
+    app.mail.send(msg)
 
 
 def checkAuthed() -> Union[bool, dict]:
-    if 'login' not in session:
+    if 'login' not in session or 'restore' in session:
         return createAnswer('Not Authed', True)
     return False
 
@@ -493,4 +578,3 @@ def checkLoginNotNull() -> Union[bool, dict]:
     if not session['login']:
         return createAnswer('Login must be not empty', True)
     return False
-
