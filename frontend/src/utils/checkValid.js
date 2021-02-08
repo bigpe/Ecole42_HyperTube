@@ -1,5 +1,7 @@
 const isValidPassword = (value) => {
-    return (value.length > 7);
+    if (value.match(/(?=.*[0-9])(?=.*[!@#$%^&*])/) && value.length > 7 )
+        return true;
+    return false; 
 }
 
 const isValidInput = (type, value) => {
@@ -11,7 +13,7 @@ const isValidInput = (type, value) => {
             break;
 
         case 'login':
-            regex = /^[A-zА-я0-9]+$/;
+            regex = /^[A-z0-9]+$/;
             break;
 
         case 'newPass':

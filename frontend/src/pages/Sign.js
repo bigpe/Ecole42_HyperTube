@@ -1,9 +1,10 @@
 import React from 'react';
 import { useState } from 'react';
-import { NavLink, Card, CardBody, Row, Col, FormGroup, Label, Input, FormFeedback, Button, Container, Alert } from 'reactstrap';
+import { NavLink, Card, CardBody, Row, Col, FormGroup, Label, Input, FormFeedback, Button, Container, Info } from 'reactstrap';
 import { isValidInput, isValidPassword } from '../utils/checkValid';
 import { getRequest, putRequest} from "../utils/api";
 import { useHistory } from "react-router-dom";
+import { addMsg } from "../actions/common";
 
 function InputForm(props) {
     const [isValid, toggleValid] = useState('');
@@ -194,12 +195,6 @@ const Sign = (props) => {
             toggleBtn(true);
     }
 
-    if (props.errMsg) {
-        return (
-            <Alert color='info'>{props.errMsg}</Alert>
-        )
-    }
-    else
         return (
             <section className="conteiner login">
                 <Container>
@@ -207,6 +202,10 @@ const Sign = (props) => {
                         <Col md={6} className="m-auto">
                             <Card className="mb-4 shadow-sm">
                                 <CardBody>
+                                    {
+                                        props.msg &&
+                                        <Info message={props.msg} />
+                                    }
                                     <InputForm
                                         set={setLastName} onBlur={checkBtn} labelName='Last name'
                                         name='lastName' type='text' feedback='Only symbols are required'

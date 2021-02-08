@@ -40,11 +40,7 @@ const Profile = (props) => {
                         <Row>
                             <Col>
                                 <CardBody>
-                                    <CardImg width="60%" src={props.user.photo || no_photo} className="profile-img"/>
-                                </CardBody>
-                            </Col>
-                            <Col >
-                                <CardBody>
+                                    <CardImg width="60%" src={props.user.userPhoto || no_photo} className="profile-img"/>
                                     <CardTitle tag="h3">{props.user.login}</CardTitle>
                                     <CardSubtitle tag="h4" className="mb-2 text-muted">{props.user.firstName} {props.user.lastName}</CardSubtitle>
                                     <Button color="danger" href="/edit_profile" className="card-btn btn btn-secondary">Edit profile</Button>

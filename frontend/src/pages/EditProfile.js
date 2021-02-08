@@ -15,8 +15,7 @@ const mapStateToProps = (state) => ({
 
 
 function InputForm(props) {
-    const [isValidInf, toggleValidInf] = useState('');
-    const [isValidPas, toggleValidPas] = useState('');
+    const [isValid, toggleValid] = useState('');
     const [feedback, setFeedback] = useState(props.feedback);
 
     const inputChange = (e) => {
@@ -181,7 +180,7 @@ const EditProfile = (props) => {
                                         </Col>
                                         <Col>
                                             <CardTitle tag="h5">Change photo</CardTitle>
-                                            <CardImg width="30%" src={props.user.userPhoto} className="profile-img"/>
+                                            <CardImg width="30%" src={props.user.userPhoto || no_photo} className="profile-img"/>
                                             <Label className=" btn btn-block btn-success mt-3">Upload new image
                                                 <Input style={{display : 'none'}} className="profile-input" type="file" onChange={e => putPhoto(e)} />
                                             </Label>
