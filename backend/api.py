@@ -41,17 +41,21 @@ def getParams(*fieldsToCheck, files=()):
 # Валидатор полей для аргументов, переданных в запросе
 def validateFields(params):
     validator = {
-        'password': {'r': r'[\w|\d]+[!@#$%^&*]+'},
-        'login': {'r': r'[\w|\d]'},
-        'email': {'r': r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'},
-        'firstName': {'r': r'^[A-zА-я]+$'},
-        'lastName': {'r': r'^[A-zА-я]+$'},
+        'password': {'r': r'[\w|\d]+[!@#$%^&*]+', 'ml': 8, 'mx': 30},
+        'login': {'r': r'[\w|\d]', 'ml': 5, 'mx': 30},
+        'email': {'r': r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', 'ml': 8, 'mx': 30},
+        'firstName': {'r': r'^[A-zА-я]+$', 'ml': 3, 'mx': 30},
+        'lastName': {'r': r'^[A-zА-я]+$', 'ml': 3, 'mx': 30},
     }
     fieldsNotValidated = []
     for p in params:
         if p not in validator:
             continue
         if not re.match(validator[p]['r'], params[p]):
+            fieldsNotValidated.append(p)
+        if len(params[p]) < validator[p]['ml']:
+            fieldsNotValidated.append(p)
+        if len(params[p]) > validator[p]['mx']:
             fieldsNotValidated.append(p)
     if fieldsNotValidated:
         return createAnswer(f"{', '.join(fieldsNotValidated)} not validated", err=True)
