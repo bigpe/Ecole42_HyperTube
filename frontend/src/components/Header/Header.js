@@ -32,18 +32,6 @@ const Header = () => {
                         <Col><Link to="/profile">{lang.ru.user}</Link></Col>
                     </Nav>
                 </Navbar.Collapse>
-                { route !== '/search' &&
-                <InputGroup className="w-25 ml-0">
-                    <FormControl
-                        placeholder={lang.ru.search}
-                        aria-label={lang.ru.search}
-                        aria-describedby="basic-addon2"
-                    />
-                    <InputGroup.Append>
-                        <Button variant="outline-secondary">Search</Button>
-                    </InputGroup.Append>
-                </InputGroup>
-                }
                 <Button onClick={logOut}>Log out</Button>
             </Navbar>
         </>
