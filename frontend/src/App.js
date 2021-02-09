@@ -24,7 +24,7 @@ const App = ({user})  => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        getGetRequest('/user/auth')
+        getGetRequest('/user/auth/')
             .then((res) => {
                 if( res.data.message === "Authed" )
                 {

@@ -73,7 +73,7 @@ function InputForm(props) {
                     name={props.name}
                     onChange={inputChange}
                     onBlur={props.checkBtn}
-                    className={isValid}
+                    className={`${isValid} ${props.class}`}
                     required
                 />
                 <FormFeedback>{feedback}</FormFeedback>
@@ -89,7 +89,8 @@ const EditProfile = (props) => {
     const [email, setEmail] = useState(props.user.email);
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
-    const [isActiveBtn, toggleBtn] = useState(true);
+    //const [isActiveBtn, toggleBtn] = useState(true);
+    const [isActiveBtnPass, toggleBtnPass] = useState(true);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -97,15 +98,27 @@ const EditProfile = (props) => {
         setLastName(props.user.lastName);
         setFirstName(props.user.firstName);
         setEmail(props.user.email);
-    },[props.user]);
+    },[]);
 
     const checkBtn = () => {
-        const countInvalidInputs = document.querySelectorAll(".is-invalid").length;
+        const countValidInputs = document.querySelectorAll(".is-valid.info").length;
 
-        if (countInvalidInputs === 0)
+        if (countValidInputs === 4)
             toggleBtn(false);
         else
             toggleBtn(true);
+        console.log(countValidInputs);
+    }
+
+    const checkBtnPass = () => {
+        const countValidInputsPass = document.querySelectorAll(".is-valid.pass").length;
+
+        if (countValidInputsPass === 2)
+            toggleBtnPass(false);
+        else
+            toggleBtnPass(true);
+            console.log(countValidInputsPass);
+
     }
 
     const putPhoto = (e) => {
@@ -167,16 +180,16 @@ const EditProfile = (props) => {
                                     <Row>
                                         <Col> 
                                             <CardTitle tag="h5">Change information</CardTitle>
-                                            <InputForm name='login' placeholder='Login' feedback='Invalid login' value={login} defaultValue={props.user.login} set={setLogin} checkBtn={checkBtn} />
-                                            <InputForm name='firstName' placeholder='First name' feedback='Only symbols are required' value={firstName} defaultValue={props.user.firstName} set={setFirstName} checkBtn={checkBtn}/>
-                                            <InputForm name='lastName' placeholder='Last name' feedback='Only symbols are required' value={lastName} defaultValue={props.user.lastName} set={setLastName} checkBtn={checkBtn}/>
-                                            <InputForm name='email' placeholder='Email' set={setEmail} feedback='Invalid email' value={email} defaultValue={props.user.email} checkBtn={checkBtn}/>
-                                            <Button className="btn-success" type="submit" value="Save" onClick={handleSubmitInfo} disabled={isActiveBtn} block>Save</Button>
+                                            <InputForm name='login' placeholder='Login' feedback='Invalid login' value={login} defaultValue={props.user.login} set={setLogin} checkBtn={checkBtn} class={"info"}/>
+                                            <InputForm name='firstName' placeholder='First name' feedback='Only symbols are required' value={firstName} defaultValue={props.user.firstName} set={setFirstName} checkBtn={checkBtn} class={"info"}/>
+                                            <InputForm name='lastName' placeholder='Last name' feedback='Only symbols are required' value={lastName} defaultValue={props.user.lastName} set={setLastName} checkBtn={checkBtn} class={"info"}/>
+                                            <InputForm name='email' placeholder='Email' set={setEmail} feedback='Invalid email' value={email} defaultValue={props.user.email} checkBtn={checkBtn} class={"info"}/>
+                                            <Button className="btn-success" type="submit" value="Save" onClick={handleSubmitInfo} block>Save</Button>
                                             
                                             <CardTitle className="mt-3" tag="h5">Change password</CardTitle>
-                                            <InputForm name='currentPass' type='password' placeholder='Current password' feedback='Too weak password. 8 symbols is required' set={setCurrentPassword} checkBtn={checkBtn}/>
-                                            <InputForm name='newPass' type='password' placeholder='New password' feedback='Too weak password. 8 symbols is required' set={setNewPassword} checkBtn={checkBtn}/>
-                                            <Button className="btn-success" type="submit" value="Save" onClick={handleSubmitPassword} disabled={isActiveBtn} block>Save</Button>
+                                            <InputForm name='currentPass' type='password' placeholder='Current password' feedback='Too weak password. 8 symbols is required' set={setCurrentPassword} checkBtn={checkBtnPass} class={"pass"}/>
+                                            <InputForm name='newPass' type='password' placeholder='New password' feedback='Too weak password. 8 symbols is required' set={setNewPassword} checkBtn={checkBtnPass} class={"pass"}/>
+                                            <Button className="btn-success" type="submit" value="Save" onClick={handleSubmitPassword} disabled={isActiveBtnPass} block>Save</Button>
                                         </Col>
                                         <Col>
                                             <CardTitle tag="h5">Change photo</CardTitle>

@@ -57,10 +57,10 @@ def validateFields(params):
         if not re.match(validator[p]['r'], params[p]):
             fieldsNotValidated.append(p)
             continue
-        if len(params[p]) <= validator[p]['ml']:
+        if len(params[p]) < validator[p]['ml']:
             fieldsNotValidated.append(p)
             continue
-        if len(params[p]) >= validator[p]['mx']:
+        if len(params[p]) > validator[p]['mx']:
             fieldsNotValidated.append(p)
             continue
     if fieldsNotValidated:
