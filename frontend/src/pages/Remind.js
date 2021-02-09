@@ -1,10 +1,16 @@
 import React from 'react';
 import { useState } from 'react';
-import { Button, Col, Container, Input, Row, Card, CardBody, Label, NavLink } from 'reactstrap';
+import { Button, Col, Container, Input, Row, Card, CardBody, Label } from 'reactstrap';
+import {connect} from "react-redux";
+import {LangSelector} from "../selectors/common";
+import { lang } from '../utils/location';
+import {Link} from "react-router-dom";
 import "../App.css";
 import { getGetRequest } from "../utils/api";
 
-const Remind = () => {
+
+const Remind = ({langv}) => {
+
     const [email, setEmail] = useState('');
     //const [msg, setMsg] = useState(null);
     
@@ -26,14 +32,14 @@ const Remind = () => {
                             <CardBody>
                                 <Col>
                                     <Label className="font-profile-head">
-                                        Enter your email address to receive a secured link
+                                        {lang[langv].remindPas}
                                     </Label>
                                     <Input onChange={e => setEmail(e.target.value)}/>
-                                    <Button className="remind-button" color='secondary' onClick={remind} block>Remind</Button>
+                                    <Button className="remind-button" color='secondary' block>{lang[langv].remindButton}</Button>
                                 </Col>
                                 <Col>
                                     <div className="dropdown-divider"></div>
-                                    <NavLink href='/' >Back</NavLink>
+                                    <Link to='/' >{lang[langv].back}</Link>
                                 </Col>
                             </CardBody>
                         </Card>
@@ -44,4 +50,8 @@ const Remind = () => {
     )
 }
 
-export default Remind;
+const mapStateToProps = (state) => ({
+    langv: LangSelector(state)
+});
+
+export default connect(mapStateToProps)(Remind);

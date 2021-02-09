@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Alert, Input, Col, Label, Card, CardBody, Button, FormGroup} from 'reactstrap';
+import { Container, Alert, Input, Col, Label, Card, CardBody, Button, FormGroup, FormFeedback} from 'reactstrap';
 import { getGetRequest } from "../utils/api";
 import { useHistory } from "react-router-dom";
 import "../App.css";
@@ -48,22 +48,6 @@ function InputForm(props) {
 const Restore = () => {
     const [newPass, setPass] = useState();
     const [isActive, toggleBtn] = useState(true);
-
-    const checkBtn = () => {
-        const countInvalidInputs = document.querySelectorAll(".is-valid").length;
-
-        if (countInvalidInputs === 2)
-            toggleBtn(false);
-        else
-            toggleBtn(true);
-    }
-
-
-
-
-
-
-
     const history = useHistory();
 
     useEffect(() => {
@@ -76,6 +60,14 @@ const Restore = () => {
             });
     },[]);
 
+    const checkBtn = () => {
+        const countInvalidInputs = document.querySelectorAll(".is-valid").length;
+
+        if (countInvalidInputs === 2)
+            toggleBtn(false);
+        else
+            toggleBtn(true);
+    }
 
     const handleBtn = () => {
         getGetRequest('/user/password/reset/')
