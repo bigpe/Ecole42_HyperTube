@@ -5,17 +5,21 @@ import { UserSelector } from "../selectors/user";
 import no_photo from "./no_photo.jpg"
 import "../App.css"
 import { useDispatch } from "react-redux";
+import { lang } from '../utils/location';
 import { setUserData } from "../actions/user";
 import { getGetRequest } from "../utils/api";
+import {LangSelector} from "../selectors/common";
+import {Link} from "react-router-dom";
 
 const mapStateToProps = (state) => ({
-    user: UserSelector(state)
+    user: UserSelector(state),
+    langv: LangSelector(state)
 })
 
 
 const Profile = (props) => {
     const dispatch = useDispatch();
-
+    const { langv } = props;
     useEffect(() => {
         getGetRequest('/user/auth/')
             .then((res) => {
@@ -43,7 +47,7 @@ const Profile = (props) => {
                                     <CardImg width="60%" src={props.user.userPhoto || no_photo} className="profile-img"/>
                                     <CardTitle tag="h3">{props.user.login}</CardTitle>
                                     <CardSubtitle tag="h4" className="mb-2 text-muted">{props.user.firstName} {props.user.lastName}</CardSubtitle>
-                                    <Button color="danger" href="/edit_profile" className="card-btn btn btn-secondary">Edit profile</Button>
+                                    <Link to="/edit_profile"><Button color="danger" href="/edit_profile" className="card-btn btn btn-secondary">{lang[langv].editProfile}</Button></Link>
                                 </CardBody>
                             </Col>
                         </Row>

@@ -19,11 +19,25 @@ import Restore from "./pages/Restore";
 import { getGetRequest } from "./utils/api";
 import { useDispatch } from "react-redux";
 import { userLogIn } from "./actions/user";
+import { setLang } from "./actions/common";
+import { LangSelector }  from "./selectors/common";
 
-const App = ({user})  => {
+
+const App = ({user, langv})  => {
     const dispatch = useDispatch();
 
+
     useEffect(() => {
+        const langv = localStorage.lang;
+        dispatch(setLang(langv));
+        if (!langv) {
+            let language = window.navigator ? (window.navigator.language ||
+                window.navigator.systemLanguage ||
+                window.navigator.userLanguage) : "ru";
+            language = language.substr(0, 2).toLowerCase();
+            localStorage.setItem('lang', language);
+            dispatch(setLang(language));
+        }
         getGetRequest('/user/auth')
             .then((res) => {
                 if( res.data.message === "Authed" )
@@ -36,7 +50,7 @@ const App = ({user})  => {
     if (user.auth) return (
     <div className="App m-0 p-0" >
         <Router>
-            <Header/>
+            <Header langv={langv}/>
             <Switch>
                 <Route exact path="/" component={Home}/>
                 <Route path="/search" component={SearchPage}/>
@@ -61,7 +75,8 @@ const App = ({user})  => {
 }
 
 const mapStateToProps = (state) => ({
-    user: UserSelector(state)
+    user: UserSelector(state),
+    langv: LangSelector(state)
 });
 
 export default connect(mapStateToProps)(App);

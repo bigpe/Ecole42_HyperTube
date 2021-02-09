@@ -1,5 +1,4 @@
-import { REQUEST_START } from "../constants/actions/common";
-import { SET_MSG } from "../constants/actions/common";
+import { REQUEST_START, SET_LANG } from "../constants/actions/common";
 
 const initialState = {
     msg: '',
@@ -8,10 +7,8 @@ const initialState = {
 
 export const user = (state= initialState, action) => {
     switch (action.type) {
-        case REQUEST_START:
-            return {...state, loading: true};
-        case SET_MSG:
-            return {...state, ...payload}
+        case SET_LANG:
+            return {...state, langv: action.payload === "ru" ? "ru" : "eng"};
         default:
             return state;
     }

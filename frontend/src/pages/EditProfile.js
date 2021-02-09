@@ -1,16 +1,22 @@
 import { useState, useEffect } from 'react';
 import { Card, CardBody, Row, Col, Container, Input, Button, FormFeedback, Label, FormGroup, NavLink, CardTitle, CardImg } from 'reactstrap';
+import { Form } from "react-bootstrap";
+
 import { getRequest, getImageRequest} from "../utils/api";
 import { isValidInput } from '../utils/checkValid';
 import "../App.css"
 import no_photo from "./no_photo.jpg"
 import { UserSelector } from "../selectors/user";
+import {LangSelector} from "../selectors/common";
+import { lang } from '../utils/location';
 import { connect } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../actions/user";
+import {setLang} from "../actions/common";
 
 const mapStateToProps = (state) => ({
-    user: UserSelector(state)
+    user: UserSelector(state),
+    langv: LangSelector(state)
 })
 
 
@@ -91,6 +97,7 @@ const EditProfile = (props) => {
     const [newPassword, setNewPassword] = useState('');
     const [isActiveBtn, toggleBtn] = useState(true);
     const dispatch = useDispatch();
+    const { langv } = props;
 
     useEffect(() => {
         setLogin(props.user.login);
@@ -157,6 +164,10 @@ const EditProfile = (props) => {
         }
     }
 
+    const handleChangeLang = (e) => {
+        dispatch(setLang(e.target.value));
+        localStorage.setItem('lang', e.target.value);
+    }
         return (
             <section className="conteiner login">
                 <Container>
@@ -166,28 +177,33 @@ const EditProfile = (props) => {
                                 <CardBody>
                                     <Row>
                                         <Col> 
-                                            <CardTitle tag="h5">Change information</CardTitle>
-                                            <InputForm name='login' placeholder='Login' feedback='Invalid login' value={login} defaultValue={props.user.login} set={setLogin} checkBtn={checkBtn} />
-                                            <InputForm name='firstName' placeholder='First name' feedback='Only symbols are required' value={firstName} defaultValue={props.user.firstName} set={setFirstName} checkBtn={checkBtn}/>
-                                            <InputForm name='lastName' placeholder='Last name' feedback='Only symbols are required' value={lastName} defaultValue={props.user.lastName} set={setLastName} checkBtn={checkBtn}/>
-                                            <InputForm name='email' placeholder='Email' set={setEmail} feedback='Invalid email' value={email} defaultValue={props.user.email} checkBtn={checkBtn}/>
-                                            <Button className="btn-success" type="submit" value="Save" onClick={handleSubmitInfo} disabled={isActiveBtn} block>Save</Button>
+                                            <CardTitle tag="h5">{lang[langv].changeInfo}</CardTitle>
+                                            <InputForm name='login' placeholder={lang[langv].login} feedback='Invalid login' value={login} defaultValue={props.user.login} set={setLogin} checkBtn={checkBtn} />
+                                            <InputForm name='firstName' placeholder={lang[langv].firstName} feedback='Only symbols are required' value={firstName} defaultValue={props.user.firstName} set={setFirstName} checkBtn={checkBtn}/>
+                                            <InputForm name='lastName' placeholder={lang[langv].lastName} feedback='Only symbols are required' value={lastName} defaultValue={props.user.lastName} set={setLastName} checkBtn={checkBtn}/>
+                                            <InputForm name='email' placeholder={lang[langv].email} set={setEmail} feedback='Invalid email' value={email} defaultValue={props.user.email} checkBtn={checkBtn}/>
+                                            <Button className="btn-success" type="submit" value="Save" onClick={handleSubmitInfo} disabled={isActiveBtn} block>{lang[langv].save}</Button>
                                             
-                                            <CardTitle className="mt-3" tag="h5">Change password</CardTitle>
-                                            <InputForm name='currentPass' type='password' placeholder='Current password' feedback='Too weak password. 8 symbols is required' set={setCurrentPassword} checkBtn={checkBtn}/>
-                                            <InputForm name='newPass' type='password' placeholder='New password' feedback='Too weak password. 8 symbols is required' set={setNewPassword} checkBtn={checkBtn}/>
-                                            <Button className="btn-success" type="submit" value="Save" onClick={handleSubmitPassword} disabled={isActiveBtn} block>Save</Button>
+                                            <CardTitle className="mt-3" tag="h5">{lang[langv].changePas}</CardTitle>
+                                            <InputForm name='currentPass' type='password' placeholder={lang[langv].password} feedback='Too weak password. 8 symbols is required' set={setCurrentPassword} checkBtn={checkBtn}/>
+                                            <InputForm name='newPass' type='password' placeholder={lang[langv].rePassword} feedback='Too weak password. 8 symbols is required' set={setNewPassword} checkBtn={checkBtn}/>
+                                            <Button className="btn-success" type="submit" value="Save" onClick={handleSubmitPassword} disabled={isActiveBtn} block>{lang[langv].save}</Button>
                                         </Col>
                                         <Col>
-                                            <CardTitle tag="h5">Change photo</CardTitle>
+                                            <CardTitle tag="h5">{lang[langv].changePic}</CardTitle>
                                             <CardImg width="30%" src={props.user.userPhoto || no_photo} className="profile-img"/>
-                                            <Label className=" btn btn-block btn-success mt-3">Upload new image
+                                            <Label className=" btn btn-block btn-success mt-3">{lang[langv].changePicBut}
                                                 <Input style={{display : 'none'}} className="profile-input" type="file" onChange={e => putPhoto(e)} />
                                             </Label>
+                                            <CardTitle tag="h5">{lang[langv].changeLang}</CardTitle>
+                                            <Form.Control as="select" defaultValue={langv} custom onChange={handleChangeLang}>
+                                                <option value="ru">Russian</option>
+                                                <option value="eng">English</option>
+                                            </Form.Control>
                                         </Col>
                                     </Row>
                                     <div className="dropdown-divider"></div>
-                                    <NavLink href='/profile'>Back</NavLink>
+                                    <NavLink href='/profile'>{lang[langv].back}</NavLink>
                                 </CardBody>
                             </Card>
                         </Col>

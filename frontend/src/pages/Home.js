@@ -1,16 +1,16 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {connect, useDispatch} from "react-redux";
-import {GenreSelector, MovieSelector} from "../selectors/movie";
+import {GenreSelector} from "../selectors/movie";
 import {getGenre} from "../actions/movie";
-import {Container, Modal} from "react-bootstrap";
+import {Container} from "react-bootstrap";
 import Genre from "../components/Genre/Genre";
+import {LangSelector} from "../selectors/common";
+import {lang} from "../utils/location";
 
-const Home = ({genre}) => {
+const Home = ({genre, langv}) => {
     const dispatch = useDispatch();
-    const [lgShow, setLgShow] = useState(false);
-
     useEffect(() => {
-        if(!genre.length) dispatch(getGenre('ru-RU'));
+        if(!genre.length) dispatch(getGenre(langv === 'ru' ? 'ru-RU' : 'eng'));
     }, [])
 
     return (
@@ -24,8 +24,8 @@ const Home = ({genre}) => {
 }
 
 const mapStateToProps = (state) => ({
-    movie: MovieSelector(state),
     genre: GenreSelector(state),
+    langv: LangSelector(state),
 });
 
 export default connect(mapStateToProps)(Home);

@@ -40,7 +40,7 @@ export const getMovieByGenre = (genre) => (dispatch) => {
     dispatch(MovieByGenreRequest(genre));
     getRequest('/movies/',
     {
-        limit: 7,
+        limit: 20,
         page:1,
         quality: 'all',
         genre: genre,
@@ -118,7 +118,6 @@ export const setComments = (opt) => dispatch => {
 }
 export const getSearch = ({sort_by = "date_added", query = '', genre = '', rating = 0, page = 1}) => dispatch => {
     dispatch(getSearchRequest(query));
-    debugger;
     getRequest('/movies/', {
         limit: 20,
         page,
