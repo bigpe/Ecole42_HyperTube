@@ -3,23 +3,20 @@ import { Card, CardBody, Row, Col, Container, Input, Button, FormFeedback, Label
 import { Form } from "react-bootstrap";
 import { getRequest, getImageRequest} from "../utils/api";
 import { isValidInput } from '../utils/checkValid';
-import "../App.css"
 import no_photo from "./no_photo.jpg"
 import { UserSelector } from "../selectors/user";
-import {LangSelector} from "../selectors/common";
+import { LangSelector } from "../selectors/common";
 import { lang } from '../utils/location';
 import { connect } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../actions/user";
-import {setLang} from "../actions/common";
-import { getGetRequest } from "../utils/api";
+import { setLang } from "../actions/common";
+import "../App.css"
 
 const mapStateToProps = (state) => ({
     user: UserSelector(state),
     langv: LangSelector(state)
 })
-
-
 
 const Info = (props) => {
     const [isVisible, setClose] = useState(true);
@@ -56,7 +53,6 @@ function InputForm(props) {
                         if (result.data.message == 'Login exist') {
                             toggleValid('is-invalid');
                             setFeedback(`login is taken`);
-                            console.log(result);
                         }
                     })
             }
@@ -66,23 +62,23 @@ function InputForm(props) {
                         if (result.data.message == 'Email exist') {
                             toggleValid('is-invalid');
                             setFeedback(`email is taken`);
-                            console.log(result);
                         }
                     })
             }
             else if (name === 'currentPass') {
                 getRequest('/user/password/check/', { password: value })
                     .then(result => {
-                        if (result.data.message !== "Password correct") {
+                        if (result.data.error) {
                             toggleValid('is-invalid');
                             setFeedback(`Wrong password`);
                         }
                     })
             }
-            props.set(value)
+            props.set(value);
         }
         else {
             toggleValid('is-invalid');
+            props.set(value);
         }
     };
 
@@ -136,7 +132,6 @@ const EditProfile = (props) => {
             toggleBtn(false);
         else
             toggleBtn(true);
-        console.log(countInvalidInputs);
     }
 
     const checkBtnPass = () => {
@@ -146,17 +141,12 @@ const EditProfile = (props) => {
             toggleBtnPass(false);
         else
             toggleBtnPass(true);
-            console.log(countValidInputsPass);
-
     }
 
     const putPhoto = (e) => {
-        console.log(e);
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
             const type = e.target.files[0].type;
-            console.log(file);
-            console.log(type);
             if (!type.match("image/png") && !type.match("image/jpeg") && !type.match("image/jpg")) {
                 alert('Wrong format!');
                 return;
@@ -165,8 +155,6 @@ const EditProfile = (props) => {
             formData.append('userPhoto', file);
             getImageRequest('/user/', formData)
             .then((res) => {
-                console.log(res);
-                console.log(formData);
                 setMsg("Photo changed successfully!");
             });
         }
@@ -179,8 +167,7 @@ const EditProfile = (props) => {
             firstName: firstName,
             lastName: lastName
         }
-        console.log(data);
-        
+
         getRequest('/user/', data)
             .then((res) => {
                 if(!res.data.error)
@@ -196,9 +183,7 @@ const EditProfile = (props) => {
         if (currentPassword) {
             getRequest('/user/', { password : newPassword })
                 .then((res) => {
-                    if(!res.data.error)
-                    {
-                        console.log(res);
+                    if(!res.data.error) {
                         setMsg("Password changed successfully!");
                     }
                 });
@@ -216,9 +201,9 @@ const EditProfile = (props) => {
                         <Col md={8} className="m-auto">
                             <Card className="mb-4 shadow-sm">
                                 <CardBody>
-                                    <Row>
                                             { msg && <Info isSuccess={'success'} message={msg} />}
                                             { err && <Info isSuccess={'danger'} message={err} />}
+                                    <Row>
                                         <Col> 
                                             <CardTitle tag="h5">{lang[langv].changeInfo}</CardTitle>
                                             <InputForm name='login' placeholder={lang[langv].login} feedback='Invalid login' value={login} defaultValue={props.user.login} set={setLogin} checkBtn={checkBtn} class={"info"}/>
