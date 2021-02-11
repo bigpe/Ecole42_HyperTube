@@ -191,7 +191,10 @@ def createMovie(IMDBid):
         return movieId
     movie = getOneByFields(Movie, id=movieId)
     user = getUserByFields(login=session['login'])
-    updateDbByDict({'user_id': user.id, 'movie_imdb_id': IMDBid}, UserWatchHistory, insert=True)
+    try:
+        updateDbByDict({'user_id': user.id, 'movie_imdb_id': IMDBid}, UserWatchHistory, insert=True)
+    except:
+        pass
     if movie:
         updateDbByDict({'watch_count': movie.watch_count + 1}, movie)
     return movieId
@@ -528,7 +531,7 @@ def authUserGoogle(params):
         'userPhoto': googleUserInfo['picture'],
         'login': googleUserInfo['sub']
     }, User, insert=True)
-    user = getOneByFields(User, login=googleUserInfo['sub'])
+    user = getOneByFields(User, email=googleUserInfo['email'])
     if user:
         session['login'] = googleUserInfo['sub']
     return getUserInfo(user)
