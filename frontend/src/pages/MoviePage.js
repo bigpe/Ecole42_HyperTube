@@ -89,7 +89,7 @@ const MoviePage = ({curMovie, loading, location, movieReady, videoPath, progress
                             </Form.Control>
                             <MediaElement
                                 onErr={onError}
-                                id={sources[0].src}
+                                id={sources[0].src || new Date().valueOf()}
                                 preload="none"
                                 controls
                                 width="100%"
