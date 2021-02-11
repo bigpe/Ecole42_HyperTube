@@ -2,7 +2,7 @@ from flask import request, session, redirect
 import requests
 from torrentUtils import TorrentUtils
 from database import updateDbByDict, deleteById, getOneByFields, getAllByFields, User, Movie, Subtitle, Commentary, \
-    Token
+    Token, UserWatchHistory
 from globalUtils import createHash, getDataRecursive, saveFile, createDir
 import sys
 from typing import Union
@@ -163,6 +163,16 @@ def findAPI(url: str):
 def getMovies():
     url = f'https://yts.mx/api/v2/list_movies.json'
     data = getData(url, ['data', 'movies'])
+    user = getUserByFields(login=session['login'])
+    watchedMovies = getAllByFields(UserWatchHistory, user_id=user.id)
+    moviesMap = {}
+    for i, movie in enumerate(data['data']):
+        moviesMap.update({movie['imdb_code']: i})
+    for watchedMovie in watchedMovies:
+        movie_imdb_id = watchedMovie['movie_imdb_id']
+        if movie_imdb_id in moviesMap:
+            movieIndex = moviesMap[movie_imdb_id]
+            data['data'][movieIndex]['watched'] = True
     return data
 
 
@@ -179,6 +189,8 @@ def createMovie(IMDBid):
     if not movieId:
         return movieId
     movie = getOneByFields(Movie, id=movieId)
+    user = getUserByFields(login=session['login'])
+    updateDbByDict({'user_id': user.id, 'movie_imdb_id': IMDBid}, UserWatchHistory, insert=True)
     if movie:
         updateDbByDict({'watch_count': movie.watch_count + 1}, movie)
     return movieId

@@ -35,16 +35,26 @@ class Subtitle(db.Model):
 class Commentary(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     movie_imdb_id = db.Column(db.String(50), db.ForeignKey('movie.imdb_id'))
-    user_id = db.Column(db.String(50), db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref='author', lazy='joined', uselist=False)
     commentary = db.Column(db.String(255), nullable=False)
 
 
 class Token(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.String(50), db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref='owner', lazy='joined', uselist=False)
     token = db.Column(db.String(50), nullable=False)
+
+
+class UserWatchHistory(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    movie_imdb_id = db.Column(db.String(50), db.ForeignKey('movie.imdb_id'))
+
+    __table_args__ = (
+        db.UniqueConstraint('movie_imdb_id', 'user_id'),
+    )
 
 
 def updateDbByDict(dataDict, table, insert=False):
