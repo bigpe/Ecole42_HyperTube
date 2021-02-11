@@ -16,7 +16,7 @@ import Actor from "../components/Actor";
 import Comments from "../components/Comments";
 import { getRequest } from "../utils/api";
 
-const MoviePage = ({curMovie, loading, location, movieReady, videoPath}) => {
+const MoviePage = ({curMovie, loading, location, movieReady, videoPath, progress}) => {
     const dispatch = useDispatch();
     const [error, setError] = useState("success");
     const [quality, setQuality] = useState('');
@@ -38,7 +38,7 @@ const MoviePage = ({curMovie, loading, location, movieReady, videoPath}) => {
             src: track[lang],
         })
     });
-
+    console.log(progress);
     const onError = (er) => setError(er);
     const tryAgain = () => setError("success");
     const qualityHandler = (e) => {
@@ -105,6 +105,7 @@ const MoviePage = ({curMovie, loading, location, movieReady, videoPath}) => {
                     ) : (
                         <>
                             <h2>Sorry! Something went wrong</h2>
+                            <h3>Progress downloads {!!progress && progress}</h3>
                             <Button onClick={tryAgain}>Try again</Button>
                         </>
                     )}

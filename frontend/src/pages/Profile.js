@@ -50,7 +50,7 @@ const Profile = (props) => {
                                     </Col>
                                     <CardTitle tag="h3">{props.user.login}</CardTitle>
                                     <CardSubtitle tag="h4" className="mb-2 text-muted">{props.user.firstName} {props.user.lastName}</CardSubtitle>
-                                    <Link to="/edit_profile"><Button color="danger" href="/edit_profile" className="card-btn btn btn-secondary">{lang[langv].editProfile}</Button></Link>
+                                    <Link to="/edit_profile"><Button color="danger" className="card-btn btn btn-secondary">{lang[langv].editProfile}</Button></Link>
                                 </CardBody>
                             </Col>
                         </Row>
