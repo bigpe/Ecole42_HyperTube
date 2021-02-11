@@ -164,15 +164,16 @@ def getMovies():
     url = f'https://yts.mx/api/v2/list_movies.json'
     data = getData(url, ['data', 'movies'])
     user = getUserByFields(login=session['login'])
-    watchedMovies = getAllByFields(UserWatchHistory, user_id=user.id)
     moviesMap = {}
     for i, movie in enumerate(data['data']):
         moviesMap.update({movie['imdb_code']: i})
-    for watchedMovie in watchedMovies:
-        movie_imdb_id = watchedMovie['movie_imdb_id']
-        if movie_imdb_id in moviesMap:
-            movieIndex = moviesMap[movie_imdb_id]
-            data['data'][movieIndex]['watched'] = True
+    watchedMovies = getAllByFields(UserWatchHistory, user_id=user.id)
+    if watchedMovies:
+        for watchedMovie in watchedMovies:
+            movie_imdb_id = watchedMovie['movie_imdb_id']
+            if movie_imdb_id in moviesMap:
+                movieIndex = moviesMap[movie_imdb_id]
+                data['data'][movieIndex]['watched'] = True
     return data
 
 
