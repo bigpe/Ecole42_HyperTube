@@ -170,7 +170,7 @@ def getMovies():
     watchedMovies = getAllByFields(UserWatchHistory, user_id=user.id)
     if watchedMovies:
         for watchedMovie in watchedMovies:
-            movie_imdb_id = watchedMovie['movie_imdb_id']
+            movie_imdb_id = watchedMovie.movie_imdb_id
             if movie_imdb_id in moviesMap:
                 movieIndex = moviesMap[movie_imdb_id]
                 data['data'][movieIndex]['watched'] = True
@@ -531,9 +531,12 @@ def authUserGoogle(params):
         'userPhoto': googleUserInfo['picture'],
         'login': googleUserInfo['sub']
     }, User, insert=True)
-    user = getOneByFields(User, email=googleUserInfo['email'])
+    user = getOneByFields(User, login=googleUserInfo['sub'])
     if user:
         session['login'] = googleUserInfo['sub']
+    else:
+        user = getOneByFields(User, email=googleUserInfo['email'])
+        session['login'] = user.login
     return getUserInfo(user)
 
 
