@@ -1,9 +1,9 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { Card, CardBody, Container, Row, Col, Button, FormGroup, Input, NavLink, Alert } from 'reactstrap';
 import { useDispatch } from "react-redux";
-import { userLogIn, setUserData } from "../actions/user";
-import {LangSelector} from "../selectors/common";
+import { Card, CardBody, Container, Row, Col, Button, FormGroup, Input, NavLink, Alert } from 'reactstrap';
+import { userLogIn } from "../actions/user";
+import { LangSelector } from "../selectors/common";
 import { lang } from '../utils/location';
 import logo_42 from "./42_logo.svg";
 import logo_google from "./Google_logo.svg";
@@ -11,7 +11,7 @@ import { GoogleLogin } from 'react-google-login';
 import { getRequest, getGetRequest } from "../utils/api";
 import { MsgSelector } from "../selectors/common";
 import { connect } from "react-redux";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 const Info = (props) => {
@@ -67,8 +67,6 @@ function LoginGoogle() {
             onSuccess={responseGoogle}
             onFailure={onFailure}
             cookiePolicy={'single_host_origin'}
-            
-            //style={{ marginTop: '100px', marginRight: '-10px'}}
         />
         );
     }

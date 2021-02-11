@@ -17,7 +17,6 @@ const Remind = ({langv}) => {
     const remind = () => {
         getGetRequest(`/user/password/reset/?email=${email}`)
             .then((result) => {
-                console.log(result);
                 if (!result.data.error)
                     console.log(result);
             })
@@ -35,7 +34,7 @@ const Remind = ({langv}) => {
                                         {lang[langv].remindPas}
                                     </Label>
                                     <Input onChange={e => setEmail(e.target.value)}/>
-                                    <Button className="remind-button" color='secondary' block>{lang[langv].remindButton}</Button>
+                                    <Button className="remind-button" color='secondary' onClick={remind} block>{lang[langv].remindButton}</Button>
                                 </Col>
                                 <Col>
                                     <div className="dropdown-divider"></div>

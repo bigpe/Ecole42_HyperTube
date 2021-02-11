@@ -31,7 +31,6 @@ const Profile = (props) => {
                     email: res.data.email,
                     userPhoto: res.data.userPhoto,
                 }
-                console.log(res);
                 if (!res.data.error) {
                     dispatch(setUserData(data));
                 }

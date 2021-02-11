@@ -36,6 +36,7 @@ export const lang = {
         save: 'Сохранить',
         back: 'Назад',
         signUp: 'Зарегистрироваться',
+        viewed :'Просмотренно',
 
     },
     eng: {
@@ -69,6 +70,7 @@ export const lang = {
         changePas: 'Change password',
         save: 'Save',
         back: 'Back',
+        viewed: 'viewed'
     },
 
 }

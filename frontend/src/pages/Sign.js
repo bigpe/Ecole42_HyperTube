@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { NavLink, Card, CardBody, Row, Col, FormGroup, Label, Input, FormFeedback, Button, Container, Info } from 'reactstrap';
+import { Card, CardBody, Row, Col, FormGroup, Label, Input, FormFeedback, Button, Container, Info } from 'reactstrap';
 import { isValidInput, isValidPassword } from '../utils/checkValid';
 import { getRequest, putRequest} from "../utils/api";
 import {Link, useHistory} from "react-router-dom";
@@ -53,7 +53,6 @@ function InputFormWithFetch(props) {
                     if (result.data.message == 'Login exist') {
                         toggleValid('is-invalid');
                         setFeedback(`login is taken`);
-                        console.log(result);
                     }
                 })
         }
@@ -63,7 +62,6 @@ function InputFormWithFetch(props) {
                 if (result.data.message == 'Email exist') {
                     toggleValid('is-invalid');
                     setFeedback(`email is taken`);
-                    console.log(result);
                 }
             })
         }
@@ -180,9 +178,8 @@ const Sign = (props) => {
             email : email
         })
         .then(res => {
-            console.log(res);
             history.push('/');
-            addMsg("Account has created successfully");
+            //addMsg("Account has created successfully");
         })
 
     }
@@ -194,9 +191,6 @@ const Sign = (props) => {
             toggleBtn(false);
         else
             toggleBtn(true);
-            console.log(countValidInputs);
-            console.log(countInvalidInputs);
-            console.log(isActiveBtn);
     }
 
         return (

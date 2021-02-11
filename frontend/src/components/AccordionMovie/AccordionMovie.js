@@ -1,10 +1,11 @@
-import { Button, Col, Image, Row, useAccordionToggle } from "react-bootstrap";
+import {Badge, Button, Col, Image, Row, useAccordionToggle} from "react-bootstrap";
 import { Link } from "react-router-dom";
 import MediaElement from "../MediaElement/MediaElement";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
+import {lang} from "../../utils/location";
 
 
-const AccordionMovie = ({ children, eventKey, id, setCardBody }) => {
+const AccordionMovie = ({ children, eventKey, id, setCardBody, viewed, langv }) => {
     const [error, setError] = useState("success");
     const [sources, setSources] = useState([{src: `https://www.youtube.com/watch?v=${children.yt_trailer_code}`, type: 'video/x-youtube'},
     ]);
@@ -18,6 +19,7 @@ const AccordionMovie = ({ children, eventKey, id, setCardBody }) => {
                 <Row>
                     <Col>
                         <h1>{children.title}</h1>
+                        {!!viewed && (<Badge variant="success">{lang[langv].viewed}</Badge>)}
                         <p>{children.description_full}</p>
                         <Link to={`/film/?${children.id}`}><Button>Watch</Button></Link>
                     </Col>

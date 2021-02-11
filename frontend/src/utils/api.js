@@ -58,7 +58,6 @@ export const getImageRequest = (url, options) => {
         url: `${localhost}${url}`,
         withCredentials: true
     };
-    console.log(config);
     return axios(config);
 };
 
