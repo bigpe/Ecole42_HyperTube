@@ -18,8 +18,8 @@ const AccordionMovie = ({ children, eventKey, id, setCardBody, viewed, langv }) 
             return (
                 <Row>
                     <Col>
-                        <h1>{children.title}</h1>
-                        {!!viewed && (<Badge variant="success">{lang[langv].viewed}</Badge>)}
+                        <h1>{children.title} ({children.year})</h1>
+                        {!!children.watched && (<Badge variant="success">{lang[langv].viewed}</Badge>)}
                         <p>{children.description_full}</p>
                         <Link to={`/film/?${children.id}`}><Button>Watch</Button></Link>
                     </Col>
