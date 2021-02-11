@@ -11,31 +11,13 @@ import { connect } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../actions/user";
 import { setLang } from "../actions/common";
+import Info from "../components/Info/Info";
 import "../App.css"
 
 const mapStateToProps = (state) => ({
     user: UserSelector(state),
     langv: LangSelector(state)
 })
-
-const Info = (props) => {
-    const [isVisible, setClose] = useState(true);
-    const color = props.isSuccess ? 'success' : 'danger';
-
-    useEffect(() => {
-        if (isVisible) {
-            window.setTimeout(() => {
-                setClose(!isVisible);
-            }, 5000);
-        }
-    }, [isVisible]);
-
-    return (
-        <div>
-            <Alert isOpen={isVisible} color={color}>{props.message}</Alert>
-        </div>
-    )
-}
 
 function InputForm(props) {
     const [isValid, toggleValid] = useState('');
@@ -154,7 +136,7 @@ const EditProfile = (props) => {
             formData.append('userPhoto', file);
             getImageRequest('/user/', formData)
             .then((res) => {
-                setMsg("Photo changed successfully!");
+                setMsg("Photo was successfuly changed!");
             });
         }
     }
@@ -171,9 +153,11 @@ const EditProfile = (props) => {
             .then((res) => {
                 if(!res.data.error)
                 {
-                    setMsg("Info changed successfully!");
+                    setMsg("Information was successfuly changed!");
                     dispatch(setUserData(data));
                 }
+                else
+                    setErr("Error :(");
             });
     }
 
@@ -181,9 +165,10 @@ const EditProfile = (props) => {
         if (currentPassword) {
             getRequest('/user/', { password : newPassword })
                 .then((res) => {
-                    if(!res.data.error) {
-                        setMsg("Password changed successfully!");
-                    }
+                    if(!res.data.error) 
+                        setMsg("Password was successfuly changed!!");
+                    else 
+                        setErr("Error :(");
                 });
         }
     }
@@ -199,8 +184,8 @@ const EditProfile = (props) => {
                         <Col md={8} className="m-auto">
                             <Card className="mb-4 shadow-sm">
                                 <CardBody>
-                                            { msg && <Info isSuccess={'success'} message={msg} />}
-                                            { err && <Info isSuccess={'danger'} message={err} />}
+                                            { msg && <Info isSuccess={'success'} message={msg} set={setMsg}/>}
+                                            { err && <Info isSuccess={'danger'} message={err} set={setErr}/>}
                                     <Row>
                                         <Col> 
                                             <CardTitle tag="h5">{lang[langv].changeInfo}</CardTitle>
@@ -211,8 +196,8 @@ const EditProfile = (props) => {
                                             <Button className="btn-success" type="submit" value="Save" onClick={handleSubmitInfo} disabled={isActiveBtn} block>{lang[langv].save}</Button>
                                             
                                             <CardTitle className="mt-3" tag="h5">{lang[langv].changePas}</CardTitle>
-                                            <InputForm name='currentPass' type='password' placeholder={lang[langv].password} feedback='Too weak password. 8 symbols is required' set={setCurrentPassword} checkBtn={checkBtnPass} class={"pass"}/>
-                                            <InputForm name='newPass' type='password' placeholder={lang[langv].rePassword} feedback='Too weak password. 8 symbols is required' set={setNewPassword} checkBtn={checkBtnPass} class={"pass"}/>
+                                            <InputForm name='currentPass' type='password' placeholder={lang[langv].password} feedback='Too weak password. 8 symbols and special symbol are required' set={setCurrentPassword} checkBtn={checkBtnPass} class={"pass"}/>
+                                            <InputForm name='newPass' type='password' placeholder={lang[langv].rePassword} feedback='Too weak password. 8 symbols and special symbol are required' set={setNewPassword} checkBtn={checkBtnPass} class={"pass"}/>
                                             <Button className="btn-success" type="submit" value="Save" onClick={handleSubmitPassword} disabled={isActiveBtnPass} block>{lang[langv].save}</Button>
                                         </Col>
                                         <Col>

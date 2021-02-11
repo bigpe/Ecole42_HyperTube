@@ -140,7 +140,7 @@ function Password(props) {
                         onBlur={props.onBlur}
                         required
                 />
-                <FormFeedback>Too weak password. 8 symbols is required</FormFeedback>
+                <FormFeedback>Too weak password. 8 symbols and special symbol are required</FormFeedback>
             </FormGroup>
             <FormGroup>
                 <Label className="font-profile-head">

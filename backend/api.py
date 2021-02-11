@@ -552,7 +552,7 @@ def resetPassword(params):
     if not tokenId:
         return createAnswer('Something went wrong, sorry', err=True)
     try:
-        sendMail(email, 'HyperTube Project | Password Reset', '<h2>Recovery password</h2><br>'
+        sendMail(email, 'HyperTube Project | Password Reset', '<h2>Recovery your password</h2><br>'
                                                               f'<a href="{request.host_url}user/reset/verify/?token={token}">Verify Link</a><br><br>'
                                                               f'<b>Please verify your email by the link</b>')
     except:
