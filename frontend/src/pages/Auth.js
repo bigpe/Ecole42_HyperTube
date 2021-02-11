@@ -12,32 +12,12 @@ import { getRequest, getGetRequest } from "../utils/api";
 import { MsgSelector } from "../selectors/common";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-
-
-const Info = (props) => {
-    const [isVisible, setClose] = useState(true);
-    const color = props.isSuccess ? 'success' : 'danger';
-
-    useEffect(() => {
-        if (isVisible) {
-            window.setTimeout(() => {
-                setClose(!isVisible);
-            }, 5000);
-        }
-    }, [isVisible]);
-
-    return (
-        <div>
-            <Alert isOpen={isVisible} color={color}>{props.message}</Alert>
-        </div>
-    )
-}
-
+import Info from "../components/Info/Info";
 
 const mapStateToProps = (state) => ({
     msg: MsgSelector(state),
     langv: LangSelector(state)
-
+    
 });
 
 function LoginGoogle() {
@@ -49,7 +29,7 @@ function LoginGoogle() {
         .then((result) => {
             console.log(result);
             if (!result.data.error)
-                dispatch(userLogIn());
+            dispatch(userLogIn());
         })
         
     }
@@ -59,23 +39,23 @@ function LoginGoogle() {
     
     return (
         <GoogleLogin
-            clientId={clientId}
-            buttonText=""
-            render={renderProps => (
-                <Button outline color="secondary" onClick={renderProps.onClick} disabled={renderProps.disabled}><img width={22} src={logo_google}></img></Button>
-              )}
+        clientId={clientId}
+        buttonText=""
+        render={renderProps => (
+            <Button outline color="secondary" onClick={renderProps.onClick} disabled={renderProps.disabled}><img width={22} src={logo_google}></img></Button>
+            )}
             onSuccess={responseGoogle}
             onFailure={onFailure}
             cookiePolicy={'single_host_origin'}
-        />
-        );
-    }
-
-function LoginInput(props) {
-    const { langv } = props;
-
-    return (
-        <Col>
+            />
+            );
+        }
+        
+        function LoginInput(props) {
+            const { langv } = props;
+            
+            return (
+                <Col>
             <FormGroup>
                     <Input
                         type="text"
@@ -83,7 +63,7 @@ function LoginInput(props) {
                         placeholder={lang[langv].login}
                         onChange={e => props.set(e.target.value)}
                         required
-                    />
+                        />
             </FormGroup>
         </Col>
     )
@@ -91,7 +71,7 @@ function LoginInput(props) {
 
 function Password(props) {
     const { langv } = props;
-
+    
     return (
         <Col>
             <FormGroup>
@@ -101,7 +81,7 @@ function Password(props) {
                         onChange={e => props.set(e.target.value)}
                         placeholder={lang[langv].password}
                         required
-                    />
+                        />
             </FormGroup>
         </Col>
     )
@@ -113,7 +93,7 @@ const AuthPage = (props) => {
     const [msg, setMsg] = useState(null);
     const dispatch = useDispatch();
     const { langv } = props;
-
+    
     const handleSubmit = () => {
         getRequest('/user/auth/', {
             login : login, 
@@ -127,6 +107,7 @@ const AuthPage = (props) => {
             setMsg("Incorrect login or password :(");
         })
     }
+    console.log(msg);
     return (
         <section className="conteiner login">
             <Container>
@@ -148,7 +129,7 @@ const AuthPage = (props) => {
                                             <LoginGoogle/>
                                         </Col>
                                     </Row>                            
-                                    { msg && <Info message={msg} />}
+                                    { msg && <Info message={msg} set={setMsg}/>}
                                 </div>
                                 <form >
                                     <LoginInput langv={langv} set={setLogin}/>

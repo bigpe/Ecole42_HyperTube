@@ -7,18 +7,20 @@ import { lang } from '../utils/location';
 import {Link} from "react-router-dom";
 import "../App.css";
 import { getGetRequest } from "../utils/api";
-
+import Info from "../components/Info/Info";
 
 const Remind = ({langv}) => {
-
     const [email, setEmail] = useState('');
-    //const [msg, setMsg] = useState(null);
+    const [msg, setMsg] = useState(null);
     
     const remind = () => {
         getGetRequest(`/user/password/reset/?email=${email}`)
             .then((result) => {
-                if (!result.data.error)
+                if (!result.data.error){
+                    setMsg("Check your email!")
                     console.log(result);
+                }
+                console.log(result);
             })
     }
     
@@ -29,6 +31,7 @@ const Remind = ({langv}) => {
                     <Col md={6} className="m-auto">
                         <Card className="mb-4 shadow-sm">
                             <CardBody>
+                                { msg && <Info message={msg} set={setMsg}/>}
                                 <Col>
                                     <Label className="font-profile-head">
                                         {lang[langv].remindPas}
