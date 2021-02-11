@@ -1,5 +1,5 @@
 const isValidPassword = (value) => {
-    if (value.match(/(?=.*[0-9])(?=.*[a-zA-z])(?=.*[!@#$%^&*])/) && value.length > 7 && value.length < 31)
+    if (value.match(/(?=.*[0-9a-zA-z])(?=.*[!@#$%^&*])/) && value.length > 7 && value.length < 31)
         return true;
     return false; 
 }
@@ -35,7 +35,7 @@ const isValidInput = (type, value) => {
         case 'newPass':
             minLen = 8;
             maxLen = 30;
-            regex = /(?=.*[0-9])(?=.*[a-zA-z])(?=.*[!@#$%^&*])/;
+            regex = /(?=.*[0-9a-zA-z])(?=.*[!@#$%^&*])/;
             break;
         default:
             regex = /^[A-zА-я]+$/;

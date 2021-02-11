@@ -196,8 +196,8 @@ const EditProfile = (props) => {
                                             <Button className="btn-success" type="submit" value="Save" onClick={handleSubmitInfo} disabled={isActiveBtn} block>{lang[langv].save}</Button>
                                             
                                             <CardTitle className="mt-3" tag="h5">{lang[langv].changePas}</CardTitle>
-                                            <InputForm name='currentPass' type='password' placeholder={lang[langv].password} feedback='Too weak password. 8 symbols is required' set={setCurrentPassword} checkBtn={checkBtnPass} class={"pass"}/>
-                                            <InputForm name='newPass' type='password' placeholder={lang[langv].rePassword} feedback='Too weak password. 8 symbols is required' set={setNewPassword} checkBtn={checkBtnPass} class={"pass"}/>
+                                            <InputForm name='currentPass' type='password' placeholder={lang[langv].password} feedback='Too weak password. 8 symbols and special symbol are required' set={setCurrentPassword} checkBtn={checkBtnPass} class={"pass"}/>
+                                            <InputForm name='newPass' type='password' placeholder={lang[langv].rePassword} feedback='Too weak password. 8 symbols and special symbol are required' set={setNewPassword} checkBtn={checkBtnPass} class={"pass"}/>
                                             <Button className="btn-success" type="submit" value="Save" onClick={handleSubmitPassword} disabled={isActiveBtnPass} block>{lang[langv].save}</Button>
                                         </Col>
                                         <Col>

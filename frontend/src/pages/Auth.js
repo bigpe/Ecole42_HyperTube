@@ -27,16 +27,12 @@ function LoginGoogle() {
     const responseGoogle = (response) => {
         getGetRequest(`/user/auth/google/?id_token=${response.tokenId}`)
         .then((result) => {
-            console.log(result);
             if (!result.data.error)
             dispatch(userLogIn());
         })
         
     }
-    const onFailure = (res) => {
-        console.log('Login failed: res:', res);
-    };
-    
+
     return (
         <GoogleLogin
         clientId={clientId}
@@ -45,7 +41,6 @@ function LoginGoogle() {
             <Button outline color="secondary" onClick={renderProps.onClick} disabled={renderProps.disabled}><img width={22} src={logo_google}></img></Button>
             )}
             onSuccess={responseGoogle}
-            onFailure={onFailure}
             cookiePolicy={'single_host_origin'}
             />
             );
@@ -107,7 +102,7 @@ const AuthPage = (props) => {
             setMsg("Incorrect login or password :(");
         })
     }
-    console.log(msg);
+
     return (
         <section className="conteiner login">
             <Container>
