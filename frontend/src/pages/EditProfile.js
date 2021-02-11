@@ -43,7 +43,6 @@ function InputForm(props) {
 
     const inputChange = (e) => {
         const { name, value } = e.target;
-
         props.checkBtn();
         if (isValidInput(name, value)) {
             toggleValid('is-valid');

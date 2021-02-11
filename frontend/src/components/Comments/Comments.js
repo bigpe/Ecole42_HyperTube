@@ -12,7 +12,7 @@ const Comments = ({data, IMDBid}) => {
     const buttonHandler = (text) => dispatch(setComments({commentary: text, IMDBid}));
     return (
         <>
-            {data?.length && data?.map((cum, i) => (
+            {!!data?.length && data?.map((cum, i) => (
                 <CommentItem key={i} data={cum} />
             ))}
             <Row className="mt-2"><Input className="w-75" value={text} onChange={inputHandler}/>

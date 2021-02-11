@@ -21,6 +21,7 @@ const initialState = {
             videoPath: ''
         },
         hash: '',
+        progress: 0,
     }
 }
 
@@ -114,7 +115,7 @@ const movie = (state = initialState, action) => {
                 ...state,
                 curMovie: {
                     ...state.curMovie,
-                    readyMovie: action.payload,
+                    progress: action.payload.progress,
                 }
             };
         case MOVIE_ADD_SUB:

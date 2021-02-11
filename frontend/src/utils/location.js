@@ -49,6 +49,7 @@ export const lang = {
         user: 'User',
         logOut: 'Log out',
         newLogin: 'Your login',
+        login: 'Your login',
         password: 'Your password',
         logIn: 'Sing in',
         signUp: 'Sing up',
