@@ -38,7 +38,6 @@ const MoviePage = ({curMovie, loading, location, movieReady, videoPath, progress
             src: track[lang],
         })
     });
-    console.log(progress);
     const onError = (er) => setError(er);
     const tryAgain = () => setError("success");
     const qualityHandler = (e) => {

@@ -171,7 +171,6 @@ const EditProfile = (props) => {
             .then((res) => {
                 if(!res.data.error)
                 {
-                    console.log(res);
                     setMsg("Info changed successfully!");
                     dispatch(setUserData(data));
                 }

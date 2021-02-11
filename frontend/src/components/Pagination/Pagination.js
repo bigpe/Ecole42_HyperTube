@@ -7,7 +7,6 @@ const PaginationComp = ({active, options, setPage, count}) => {
     let items = [];
     const dispatch = useDispatch();
     const fetchSearch = (num) => {
-        console.log({...options, page: num })
         dispatch(getSearch({...options, page: num }));
         setPage(num);
     };

@@ -26,7 +26,6 @@ const initialState = {
 }
 
 const movie = (state = initialState, action) => {
-    if (action.type === SEARCH_MOVIE_SUCCESS) console.log(action);
     switch (action.type) {
         case GENRE_MOVIE_REQUEST:
             return {

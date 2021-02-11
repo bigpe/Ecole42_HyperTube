@@ -9,8 +9,10 @@ import { LangSelector }  from "../../selectors/common";
 
 const Genre = ({ title, genreKey, state, langv }) => {
     const dispatch = useDispatch();
-    const movieList = state.movie[langv ==="ru" ? lang[langv].genreRuEng[title] : title];
     const [cardBody, setCardBody] = useState('');
+
+    const movieList = state.movie[langv ==="ru" ? lang[langv].genreRuEng[title] : title];
+
     useEffect(() => {
         if (!movieList) dispatch(getMovieByGenre(langv === "ru" ? lang[langv].genreRuEng[title] : title))
     }, []);
@@ -25,7 +27,7 @@ const Genre = ({ title, genreKey, state, langv }) => {
                     <Row className="justify-content-between overflow-auto flex-nowrap">
                         {!!movieList.movieLoad && movieList.movie?.map((movie, i) => (
                             <Col key={i} className="py-2 px-0 mx-1">
-                                    <AccordionMovie key={i} eventKey={genreKey} id={movie.id} setCardBody={setCardBody}>
+                                    <AccordionMovie key={i} eventKey={genreKey} id={movie.id} setCardBody={setCardBody} viewed={i%3} langv={langv}>
                                         { movie }
                                     </AccordionMovie>
                             </Col>

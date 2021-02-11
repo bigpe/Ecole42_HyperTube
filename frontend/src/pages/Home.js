@@ -14,10 +14,7 @@ const Home = ({genre, langv}) => {
 
     return (
         <Container fluid className="justify-content-center">
-            {
-                !!genre.length &&
-                    <Genre title={genre[0].name} genreKey={1}/>
-            }
+            {!!genre.length && genre.map(item => (<Genre title={item.name} genreKey={item.name}/>))}
         </Container>
     )
 }

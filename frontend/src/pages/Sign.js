@@ -53,7 +53,6 @@ function InputFormWithFetch(props) {
                     if (result.data.message == 'Login exist') {
                         toggleValid('is-invalid');
                         setFeedback(`login is taken`);
-                        console.log(result);
                     }
                 })
         }
@@ -63,7 +62,6 @@ function InputFormWithFetch(props) {
                 if (result.data.message == 'Email exist') {
                     toggleValid('is-invalid');
                     setFeedback(`email is taken`);
-                    console.log(result);
                 }
             })
         }
