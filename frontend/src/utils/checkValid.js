@@ -22,11 +22,6 @@ const isValidInput = (type, value) => {
             regex = /^[A-z0-9]+$/;
             break;
 
-        case 'newPass':
-            minLen = 8;
-            maxLen = 30;
-            return (value.length > 0);
-
         case 'rePass':
             minLen = 8;
             maxLen = 30;
@@ -37,6 +32,11 @@ const isValidInput = (type, value) => {
             maxLen = 30;
             return (value.length > 0);
 
+        case 'newPass':
+            minLen = 8;
+            maxLen = 30;
+            regex = /(?=.*[0-9])(?=.*[a-zA-z])(?=.*[!@#$%^&*])/;
+            break;
         default:
             regex = /^[A-zА-я]+$/;
     }
