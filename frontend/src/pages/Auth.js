@@ -3,13 +3,15 @@ import { useState, useEffect } from 'react';
 import { Card, CardBody, Container, Row, Col, Button, FormGroup, Input, NavLink, Alert } from 'reactstrap';
 import { useDispatch } from "react-redux";
 import { userLogIn, setUserData } from "../actions/user";
-import { addMsg } from "../actions/common";
+import {LangSelector} from "../selectors/common";
+import { lang } from '../utils/location';
 import logo_42 from "./42_logo.svg";
 import logo_google from "./Google_logo.svg";
 import { GoogleLogin } from 'react-google-login';
 import { getRequest, getGetRequest } from "../utils/api";
 import { MsgSelector } from "../selectors/common";
 import { connect } from "react-redux";
+import {Link} from "react-router-dom";
 
 
 const Info = (props) => {
@@ -33,7 +35,9 @@ const Info = (props) => {
 
 
 const mapStateToProps = (state) => ({
-    msg: MsgSelector(state)
+    msg: MsgSelector(state),
+    langv: LangSelector(state)
+
 });
 
 function LoginGoogle() {
@@ -45,8 +49,6 @@ function LoginGoogle() {
         .then((result) => {
             console.log(result);
             if (!result.data.error)
-            dispatch(setUserData());
-            refreshTokenSetup(response);
                 dispatch(userLogIn());
         })
         
@@ -65,13 +67,14 @@ function LoginGoogle() {
             onSuccess={responseGoogle}
             onFailure={onFailure}
             cookiePolicy={'single_host_origin'}
-            isSignedIn = { true }
+            
             //style={{ marginTop: '100px', marginRight: '-10px'}}
         />
         );
     }
 
 function LoginInput(props) {
+    const { langv } = props;
 
     return (
         <Col>
@@ -79,7 +82,7 @@ function LoginInput(props) {
                     <Input
                         type="text"
                         name="Login"
-                        placeholder="Your login"
+                        placeholder={lang[langv].login}
                         onChange={e => props.set(e.target.value)}
                         required
                     />
@@ -89,6 +92,8 @@ function LoginInput(props) {
 }
 
 function Password(props) {
+    const { langv } = props;
+
     return (
         <Col>
             <FormGroup>
@@ -96,7 +101,7 @@ function Password(props) {
                         type="password"
                         name='password'
                         onChange={e => props.set(e.target.value)}
-                        placeholder="Your password"
+                        placeholder={lang[langv].password}
                         required
                     />
             </FormGroup>
@@ -109,6 +114,7 @@ const AuthPage = (props) => {
     const [password, setPassword] = useState('');
     const [msg, setMsg] = useState(null);
     const dispatch = useDispatch();
+    const { langv } = props;
 
     const handleSubmit = () => {
         getRequest('/user/auth/', {
@@ -147,16 +153,16 @@ const AuthPage = (props) => {
                                     { msg && <Info message={msg} />}
                                 </div>
                                 <form >
-                                    <LoginInput set={setLogin}/>
-                                    <Password set={setPassword}/>
+                                    <LoginInput langv={langv} set={setLogin}/>
+                                    <Password langv={langv}  set={setPassword}/>
                                     <Col>
-                                        <Button onClick={handleSubmit} className="login-btn" color="secondary" block>Sign in</Button>
+                                        <Button onClick={handleSubmit} className="login-btn" color="secondary" block>{lang[langv].logIn}</Button>
                                     </Col>
                                 </form>
                                 <Col>
                                     <div className="dropdown-divider"></div>
-                                    <NavLink href='/sign'>Newbee? Sign up!</NavLink>
-                                    <NavLink href='/remind'>Forgot password? Remind</NavLink>
+                                    <Row className="justify-content-center"><Link to="/sign">{lang[langv].newbee}</Link></Row>
+                                    <Row className="justify-content-center"><Link to='/remind'>{lang[langv].forget}</Link></Row>
                                 </Col>
                             </CardBody>
                         </Card>

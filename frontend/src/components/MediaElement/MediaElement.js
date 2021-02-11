@@ -28,11 +28,7 @@ const MediaElement = ({id, sources, tracks, options, width, height, preload, con
         };
 
         setPlayer(new MediaElementPlayer(id, options));
-        return () => {
-        if (player){
-            setPlayer(null);
-        }
-        };
+        return () => (player) && setPlayer(null);
     },[id]);
 
     return (

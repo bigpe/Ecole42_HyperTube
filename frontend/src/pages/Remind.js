@@ -1,19 +1,28 @@
 import React from 'react';
-import { Button, Col, Container, Input, Row, Card, CardBody, Label, NavLink } from 'reactstrap';
+import { useState } from 'react';
+import { Button, Col, Container, Input, Row, Card, CardBody, Label } from 'reactstrap';
+import {connect} from "react-redux";
+import {LangSelector} from "../selectors/common";
+import { lang } from '../utils/location';
+import {Link} from "react-router-dom";
 import "../App.css";
+import { getGetRequest } from "../utils/api";
 
-const Remind = () => {
-    /*
+
+const Remind = ({langv}) => {
+
     const [email, setEmail] = useState('');
-    const [msg, setMsg] = useState(null);
-    const [isSuccess, setSuccess] = useState(null);
+    //const [msg, setMsg] = useState(null);
+    
     const remind = () => {
-        const data = {
-            email: email
-        }
-       //запрос
+        getGetRequest(`/user/password/reset/?email=${email}`)
+            .then((result) => {
+                console.log(result);
+                if (!result.data.error)
+                    console.log(result);
+            })
     }
-    */
+    
     return (
         <section className="conteiner login">
             <Container>
@@ -23,14 +32,14 @@ const Remind = () => {
                             <CardBody>
                                 <Col>
                                     <Label className="font-profile-head">
-                                        Enter your email address to receive a secured link
+                                        {lang[langv].remindPas}
                                     </Label>
-                                    <Input/>
-                                    <Button className="remind-button" color='secondary' block>Remind</Button>
+                                    <Input onChange={e => setEmail(e.target.value)}/>
+                                    <Button className="remind-button" color='secondary' block>{lang[langv].remindButton}</Button>
                                 </Col>
                                 <Col>
                                     <div className="dropdown-divider"></div>
-                                    <NavLink href='/' >Back</NavLink>
+                                    <Link to='/' >{lang[langv].back}</Link>
                                 </Col>
                             </CardBody>
                         </Card>
@@ -41,4 +50,8 @@ const Remind = () => {
     )
 }
 
-export default Remind;
+const mapStateToProps = (state) => ({
+    langv: LangSelector(state)
+});
+
+export default connect(mapStateToProps)(Remind);

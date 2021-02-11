@@ -3,8 +3,10 @@ import { useState } from 'react';
 import { NavLink, Card, CardBody, Row, Col, FormGroup, Label, Input, FormFeedback, Button, Container, Info } from 'reactstrap';
 import { isValidInput, isValidPassword } from '../utils/checkValid';
 import { getRequest, putRequest} from "../utils/api";
-import { useHistory } from "react-router-dom";
-import { addMsg } from "../actions/common";
+import {Link, useHistory} from "react-router-dom";
+import {lang} from "../utils/location";
+import {LangSelector} from "../selectors/common";
+import {connect} from "react-redux";
 
 function InputForm(props) {
     const [isValid, toggleValid] = useState('');
@@ -90,9 +92,9 @@ function InputFormWithFetch(props) {
                     name={props.name}
                     onChange={inputChange}
                     placeholder={props.placeholder}
-                    required
                     feedback={feedback}
                     className={isValid}
+                    onBlur={props.onBlur}
                 />
                 <FormFeedback>{feedback}</FormFeedback>
         </FormGroup>
@@ -102,7 +104,7 @@ function InputFormWithFetch(props) {
 function Password(props) {
     const [isValidPass, toggleValidPass] = useState('');
     const [isValidRepass, toggleValidRepass] = useState('');
-
+    const { langv } = props;
     const passChange = (e) => {
         const { name, value } = e.target;
 
@@ -129,7 +131,7 @@ function Password(props) {
         <div>
             <FormGroup>
                 <Label className="font-profile-head">
-                    Password
+                    {lang[langv].password}
                 </Label>
                 <Input
                         id="1"
@@ -137,19 +139,21 @@ function Password(props) {
                         name='password'
                         onChange={passChange}
                         className={isValidPass}
+                        onBlur={props.onBlur}
                         required
                 />
                 <FormFeedback>Too weak password. 8 symbols is required</FormFeedback>
             </FormGroup>
             <FormGroup>
                 <Label className="font-profile-head">
-                    Re-Password
+                    {lang[langv].rePassword}
                 </Label>
                 <Input
                         type="password"
                         name='repassword'
                         onChange={passChange}
                         className={isValidRepass}
+                        onBlur={props.onBlur}
                         required
                 />
                 <FormFeedback>Password doesn't match</FormFeedback>
@@ -166,7 +170,7 @@ const Sign = (props) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isActiveBtn, toggleBtn] = useState(true);
-
+    const { langv } = props;
     const handleSubmit = () => {
         putRequest('/user/', {
             login : login, 
@@ -178,7 +182,7 @@ const Sign = (props) => {
         .then(res => {
             console.log(res);
             history.push('/');
-            //setMsg("Account has created successfully");
+            addMsg("Account has created successfully");
         })
 
     }
@@ -190,6 +194,9 @@ const Sign = (props) => {
             toggleBtn(false);
         else
             toggleBtn(true);
+            console.log(countValidInputs);
+            console.log(countInvalidInputs);
+            console.log(isActiveBtn);
     }
 
         return (
@@ -201,23 +208,23 @@ const Sign = (props) => {
                                 <CardBody>
                                     {
                                         props.msg &&
-                                        <Info message={props.msg} />
+                                        <Alert message={props.msg} />
                                     }
                                     <InputForm
-                                        set={setLastName} onBlur={checkBtn} labelName='Last name'
+                                        set={setLastName} onBlur={checkBtn} labelName={lang[langv].lastName}
                                         name='lastName' type='text' feedback='Only symbols are required'
                                     />
                                     <InputForm
-                                        set={setFirstName} onBlur={checkBtn} labelName='First name'
+                                        set={setFirstName} onBlur={checkBtn} labelName={lang[langv].firstName}
                                         name='firstName' type='text' feedback='Only symbols are required'
                                     />
-                                    <InputFormWithFetch set={setLogin} onBlur={checkBtn} labelName='Login' name='login'/>
-                                    <InputFormWithFetch set={setEmail} onBlur={checkBtn} labelName='Email' name='email'/>
-                                    <Password setPass={setPassword} onBlur={checkBtn} onChange={checkBtn} />
-                                    <Button color="secondary" type="submit" disabled={isActiveBtn} onClick={handleSubmit} onChange={checkBtn} block>Sign Up</Button>
+                                    <InputFormWithFetch set={setLogin} onBlur={checkBtn} labelName={lang[langv].logIn} name='login'/>
+                                    <InputFormWithFetch set={setEmail} onBlur={checkBtn} labelName={lang[langv].email} name='email'/>
+                                    <Password langv={langv} setPass={setPassword} onBlur={checkBtn} />
+                                    <Button color="secondary" type="submit" disabled={isActiveBtn} onClick={handleSubmit} block>{lang[langv].signUp}</Button>
                                     <Col>
                                         <div className="dropdown-divider"></div>
-                                        <NavLink href='/'>Back</NavLink>
+                                        <Link to='/' >{lang[langv].back}</Link>
                                     </Col>
                                 </CardBody>
                             </Card>
@@ -228,4 +235,8 @@ const Sign = (props) => {
         )
 }
 
-export default Sign;
+const mapStateToProps = (state) => ({
+    langv: LangSelector(state)
+});
+
+export default connect(mapStateToProps)(Sign);

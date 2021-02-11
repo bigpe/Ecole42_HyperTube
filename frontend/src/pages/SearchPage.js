@@ -6,7 +6,7 @@ import {GenreSelector} from "../selectors/movie";
 import {connect, useDispatch} from "react-redux";
 import {getGenre, getSearch} from "../actions/movie";
 import { lang } from '../utils/location';
-import {UserLangSelector} from "../selectors/user";
+import {LangSelector} from "../selectors/common";
 import DropdownInput from "../components/DropdownInput";
 import PaginationComp from "../components/Pagination/Pagination";
 
@@ -75,6 +75,6 @@ const SearchPage = ({genre, langv}) => {
 }
 const mapStateToProps = (state) => ({
     genre: GenreSelector(state),
-    langv: UserLangSelector(state),
+    langv: LangSelector(state),
 });
 export default connect(mapStateToProps)(SearchPage);

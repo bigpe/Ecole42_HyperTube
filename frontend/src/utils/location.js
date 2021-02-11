@@ -15,10 +15,10 @@ export const lang = {
             "телевизионный фильм": 'TV Movie', "триллер": 'Thriller', "военный": 'War', "вестерн": 'Western'},
         search: 'Поиск',
         user: 'Профиль',
-        logOut: 'Выйти',
         login: 'Имя пользователя',
         password: 'Пароль',
-        log_out: 'Выйти',
+        logOut: 'Выйти',
+        logIn: 'Войти',
         newbee: "Впервые? Зарегистрироваться",
         forget: "Забыли пароль?",
         firstName: 'Имя',
@@ -31,9 +31,11 @@ export const lang = {
         changeInfo: 'Изменить информацию',
         changePic: 'Изменить фото',
         changePicBut: 'Загрузить фото',
+        changeLang: 'Изменить язык',
         changePas: 'Изменить пароль',
         save: 'Сохранить',
         back: 'Назад',
+        signUp: 'Зарегистрироваться',
 
     },
     eng: {
@@ -47,8 +49,10 @@ export const lang = {
         user: 'User',
         logOut: 'Log out',
         newLogin: 'Your login',
+        login: 'Your login',
         password: 'Your password',
         logIn: 'Sing in',
+        signUp: 'Sing up',
         newbee: "Newbee? Sign up!",
         forget: "Forgot password? Remind",
         firstName: 'First name',
@@ -60,11 +64,11 @@ export const lang = {
         editProfile: 'Edit profile',
         changeInfo: 'Change information',
         changePic: 'Change photo',
+        changeLang: 'Change language',
         changePicBut: 'Upload new image',
         changePas: 'Change password',
         save: 'Save',
         back: 'Back',
-
     },
 
 }
