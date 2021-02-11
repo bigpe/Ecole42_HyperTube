@@ -395,6 +395,8 @@ def changeUser(params: dict, files: dict) -> dict:
     if not user:
         return createAnswer('User not Exist', True)
     updateDbByDict(params, user)
+    if 'login' in params:
+        session['login'] = params['login']
     return createAnswer('Info change successful')
 
 
@@ -590,6 +592,9 @@ def sendMail(recipient, subject, msgBody):
 def checkAuthed() -> Union[bool, dict]:
     if 'login' not in session or 'restore' in session:
         return createAnswer('Not Authed', True)
+    if 'login' in session:
+        if not getUserByFields(login=session['login']):
+            return createAnswer('Not Authed', True)
     return False
 
 
