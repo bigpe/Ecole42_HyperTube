@@ -25,6 +25,8 @@ export const lang = {
         lastName: 'Фамилия',
         email: 'Почта',
         rePassword: 'Пароль еще раз',
+        newPassword : 'Новый пароль',
+        curPassword : 'Текущий пароль',
         remindPas: 'Напишите свою электронную почту и мы пришлем вам ссылку на восстановление',
         remindButton: 'Напомнить',
         editProfile: 'Изменить профиль',
@@ -37,6 +39,7 @@ export const lang = {
         back: 'Назад',
         signUp: 'Зарегистрироваться',
         viewed :'Просмотренно',
+        
 
     },
     eng: {
@@ -60,6 +63,8 @@ export const lang = {
         lastName: 'Last name',
         email: 'Email',
         rePassword: 'Re-Password',
+        newPassword: 'New password',
+        curPassword: 'Current password', 
         remindPas: 'Enter your email address to receive a secured link',
         remindButton: 'Remind',
         editProfile: 'Edit profile',
