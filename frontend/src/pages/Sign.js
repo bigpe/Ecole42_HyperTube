@@ -212,7 +212,7 @@ const Sign = (props) => {
                                         set={setFirstName} onBlur={checkBtn} labelName={lang[langv].firstName}
                                         name='firstName' type='text' feedback='Only symbols are required'
                                     />
-                                    <InputFormWithFetch set={setLogin} onBlur={checkBtn} labelName={lang[langv].logIn} name='login'/>
+                                    <InputFormWithFetch set={setLogin} onBlur={checkBtn} labelName={lang[langv].login} name='login'/>
                                     <InputFormWithFetch set={setEmail} onBlur={checkBtn} labelName={lang[langv].email} name='email'/>
                                     <Password langv={langv} setPass={setPassword} onBlur={checkBtn} />
                                     <Button color="secondary" type="submit" disabled={isActiveBtn} onClick={handleSubmit} block>{lang[langv].signUp}</Button>

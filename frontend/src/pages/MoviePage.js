@@ -87,9 +87,9 @@ const MoviePage = ({curMovie, loading, location, movieReady, videoPath, progress
 
                                 ))}
                             </Form.Control>
-                            <MediaElement
+                            {sources.length && (<MediaElement
                                 onErr={onError}
-                                id={sources[0].src || new Date().valueOf()}
+                                id={sources.length && sources[0].src || new Date().valueOf()}
                                 preload="none"
                                 controls
                                 width="100%"
@@ -98,7 +98,7 @@ const MoviePage = ({curMovie, loading, location, movieReady, videoPath, progress
                                 sources={sources}
                                 options={config}
                                 tracks={trackArr}
-                            />
+                            />)}
                         </>
 
                     ) : (
