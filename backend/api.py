@@ -4,7 +4,6 @@ from torrentUtils import TorrentUtils
 from database import updateDbByDict, deleteById, getOneByFields, getAllByFields, User, Movie, Subtitle, Commentary, \
     Token, UserWatchHistory
 from globalUtils import createHash, getDataRecursive, saveFile, createDir
-import sys
 from typing import Union
 from app import app
 from werkzeug.utils import secure_filename
