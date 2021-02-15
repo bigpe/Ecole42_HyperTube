@@ -16,3 +16,5 @@ _Backend_
 - Install deluge into your system
 - Run deluge daemon ``deluged``
 - Run backend server ``python3 app.py localhost:5006``
+
+**More information about project in subject**
