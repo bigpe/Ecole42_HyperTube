@@ -15,4 +15,4 @@ _Backend_
 - Install deps from backend ``pip (or pip3) install -r requirements.txt``
 - Install deluge into your system
 - Run deluge daemon ``deluged``
-- Run backend server ``python3 app.py 0.0.0.0:5006``
+- Run backend server ``python3 app.py localhost:5006``
